@@ -10,6 +10,7 @@ faker - https://faker.readthedocs.io/en/master/index.html
 '''
 
 # imports
+import mysql.connector as mysql
 import random
 import argparse
 from faker import Faker
@@ -26,7 +27,23 @@ if __name__ == "__main__":
                         dest="birthday", help="Set if you need birthdays generated")
     parser.add_argument("-n", default=False, action="store_true",
                         dest="name", help="Set if you need names generated")
+    parser.add_argument("-host", type=str, required=True,
+                        dest="host", help="Hostname for DB")
+    parser.add_argument("-user", type=str, required=True,
+                        dest="user", help="Username for DB")
+    parser.add_argument("-pass", type=str, required=True,
+                        dest="password", help="Password for DB")
+    parser.add_argument("-db", type=str, required=True,
+                        dest="database", help="Database to connect too")
     args = parser.parse_args()
+
+    # Connect to our MySQL server
+    mydb = mysql.connect(host=args.host, user=args.user, password=args.password, database=args.database)
+    mycursor =mydb.cursor()
+    # Command to execute
+    mycursor.execute("""SHOW TABLES""")
+
+
     random.seed()
     fake = Faker()
     if args.id:
