@@ -14,6 +14,8 @@ import mysql.connector as mysql
 import random
 import argparse
 from faker import Faker
+from dateutil.relativedelta import relativedelta
+import datetime as date
 
 # main like in C/C++
 if __name__ == "__main__":
@@ -59,71 +61,77 @@ if __name__ == "__main__":
     fake = Faker()
 
     for i in range(0, args.amount):
-        # Init variables to insert
-        ran_ID = ""
-        ran_DOB = ""
-        ran_NAME = ""
-        ran_ENAME = ""
-        ran_PHONE = ""
-        ran_EPHONE = ""
-        ran_ADDRESS = ""
-        ran_COMPANY_NAME = ""
-        ran_EMAIL = ""
-        ran_AGE = 0
+        try:
+            # Init variables to insert
+            ran_ID = ""
+            ran_DOB = ""
+            ran_NAME = ""
+            ran_ENAME = ""
+            ran_PHONE = ""
+            ran_EPHONE = ""
+            ran_ADDRESS = ""
+            ran_COMPANY_NAME = ""
+            ran_EMAIL = ""
+            ran_AGE = 0
 
-        if args.id:
-            # Print IDs
-            # Must be a string to Zero Pad
-            ran_ID = str(random.randint(0, 1e19))
-            # Print and Zero Pad if needed.
-            ran_ID = ran_ID.zfill(20)
-            print(ran_ID)
+            if args.id:
+                # Print IDs
+                # Must be a string to Zero Pad
+                ran_ID = str(random.randint(0, 1e19))
+                # Print and Zero Pad if needed.
+                ran_ID = ran_ID.zfill(20)
+                print(ran_ID)
 
-        if args.birthday:
-            # Print Birthdays
-            ran_DOB = fake.date(pattern='%d-%m-%Y', end_datetime=None)
-            print(ran_DOB)
+            if args.birthday:
+                # Print Birthdays. Lets make them in MySQL format
+                ran_DOB = fake.date(pattern='%Y-%m-%d', end_datetime=None)
+                # Calculate the Age
+                today = date.datetime.today()
+                age = relativedelta(today, date.datetime.strptime(ran_DOB, "%Y-%m-%d"))
+                ran_AGE = age.years
+                print(ran_DOB)
+                print(ran_AGE)
 
-        if args.name:
-            # Print Names
-            ran_NAME = fake.name()
-            ran_ENAME = fake.name()
-            print(ran_NAME)
+            if args.name:
+                # Print Names
+                ran_NAME = fake.name()
+                ran_ENAME = fake.name()
+                print(ran_NAME)
 
-        if args.phone:
-            # Print Phone Numbers
-            ran_PHONE = fake.phone_number()
-            ran_EPHONE = fake.phone_number()
-            print(ran_PHONE)
+            if args.phone:
+                # Print Phone Numbers
+                ran_PHONE = fake.phone_number()
+                ran_EPHONE = fake.phone_number()
+                print(ran_PHONE)
 
-        if args.address:
-            # Print Address
-            ran_ADDRESS = fake.address()
-            print(ran_ADDRESS)
+            if args.address:
+                # Print Address
+                ran_ADDRESS = fake.address()
+                print(ran_ADDRESS)
 
-        if args.company_name:
-            # Print Company Names
-            ran_COMPANY_NAME = fake.company()
-            print(ran_COMPANY_NAME)
+            if args.company_name:
+                # Print Company Names
+                ran_COMPANY_NAME = fake.company()
+                print(ran_COMPANY_NAME)
 
-        if args.email:
-            # Print Emails
-            ran_EMAIL = fake.email()
-            print(ran_EMAIL)
+            if args.email:
+                # Print Emails
+                ran_EMAIL = fake.email()
+                print(ran_EMAIL)
 
-        if args.host and args.patients:
-            # Insert data into Patients
-            mycursor.execute(insert_patients,
-                             (int(ran_ID),
-                             ran_NAME,
-                             ran_AGE,
-                             ran_DOB,
-                             ran_ADDRESS,
-                             ran_EMAIL,
-                             ran_PHONE,
-                             ran_ENAME,
-                             ran_EPHONE))
-            
-    if args.host:
-        mydb.commit()
-        mydb.close()
+            if args.host and args.patients:
+                # Insert data into Patients
+                mycursor.execute(insert_patients,
+                                (int(ran_ID),
+                                ran_NAME,
+                                ran_AGE,
+                                ran_DOB,
+                                ran_ADDRESS,
+                                ran_EMAIL,
+                                ran_PHONE,
+                                ran_ENAME,
+                                ran_EPHONE))
+                mydb.commit()
+        except KeyboardInterrupt:
+            mydb.commit()
+            mydb.close()
