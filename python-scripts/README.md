@@ -8,8 +8,10 @@ as a team come up with. Documentation will be added as needed.
 
 The sole purpose of this script is to generate random data geared towards our project.
 This script can easily be modifed to adapt to changing needs.
+The generator script uses the python Faker package. The documentation link
+is: <https://faker.readthedocs.io/en/master/> .
 
-###  Command Line Parameters
+### Command Line Parameters
 
 -a amount of records to generate
 -id flag to set if random IDs are needed. The IDs are 20 digits in length and stored as a string
@@ -21,5 +23,6 @@ This script can easily be modifed to adapt to changing needs.
 -user user name for MySQL instance
 -db database for MySQL instance
 
-### Usage
+The only required parameter is -a. All the rest are optional.
 
+### Usage

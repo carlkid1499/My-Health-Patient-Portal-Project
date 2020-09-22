@@ -31,6 +31,8 @@ if __name__ == "__main__":
                         dest="name", help="Set if you need names generated")
     parser.add_argument("-p", default=False, action="store_true",
                         dest="phone", help="Set if you need phone numbers generated")
+    parser.add_argument("-c", default=False, action="store_true",
+                        dest="company_name", help="Set if you need company names generated")                    
     parser.add_argument("-addr", default=False, action="store_true",
                         dest="address", help="Set if you need addresses generated")
     parser.add_argument("-host", type=str, required=False, default=None,
@@ -67,6 +69,8 @@ if __name__ == "__main__":
         ran_NAME = ""
         ran_PHONE = ""
         ran_ADDRESS = ""
+        ran_COMPANY_NAME = ""
+
         if args.id:
             # Print IDs
             # Must be a string to Zero Pad
@@ -101,6 +105,11 @@ if __name__ == "__main__":
             # Print Address
             ran_ADDRESS = fake.address()
             print(ran_ADDRESS)
+
+        if args.company_name:
+            # Print Company Names
+            ran_COMPANY_NAME = fake.company()
+            print(ran_COMPANY_NAME)
 
     if args.host:
         mydb.close()
