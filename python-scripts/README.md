@@ -14,13 +14,12 @@ is: <https://faker.readthedocs.io/en/master/> .
 ### Command Line Parameters
 
 -a amount of records to generate
--id flag to set if random IDs are needed. The IDs are 20 digits in length and stored as a string
--b flag to generate birthdays in the format of: %d-%m-%y
--n flag to generate names.
--p flag to generate phone numbers
+-v for verbose output
+-patients to insert into the patient table
 -addr flag to generate addresses
 -host host address for a MySQL instance
 -user user name for MySQL instance
+-pass password for the MySQL instnace
 -db database for MySQL instance
 
 The only required parameter is -a. All the rest are optional.
