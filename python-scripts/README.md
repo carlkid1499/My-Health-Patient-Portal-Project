@@ -22,6 +22,10 @@ is: <https://faker.readthedocs.io/en/master/> .
 -pass password for the MySQL instnace
 -db database for MySQL instance
 
-The only required parameter is -a. All the rest are optional.
-
 ### Usage
+
+The following example will generate 10 items and insert them into the patients table.
+
+``` python
+pyton3 generator.py -a 10 -patients -addr xxx.xxx.xxx.xxx -host mydb -user root -pass 1234 -db testDB
+```
