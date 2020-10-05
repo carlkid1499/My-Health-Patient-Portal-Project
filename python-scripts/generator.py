@@ -26,8 +26,6 @@ if __name__ == "__main__":
                         dest="verbose", help="verbose output flag")
     parser.add_argument("-patients", default=False, action="store_true",
                         dest="patients", help="Set if you need to insert into Patients table")
-    parser.add_argument("-addr", default=False, action="store_true",
-                        dest="address", help="Set if you need addresses generated")
     parser.add_argument("-host", type=str, required=False, default=None,
                         dest="host", help="Hostname for DB")
     parser.add_argument("-user", type=str, required=False, default=None,
@@ -45,7 +43,7 @@ if __name__ == "__main__":
         mycursor = mydb.cursor()
 
     # SQL Statements for tables
-    insert_patients = "INSERT INTO patients(PID, name_first, name_last, DOB, gender, address, email, phone, Emergency_name, Emergency_phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    insert_patients = "INSERT INTO PatientInfo(PID, name_first, name_last, DOB, gender, address, email, phone, Emergency_name, Emergency_phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
     # Start the Faker instance
     random.seed()
@@ -55,8 +53,8 @@ if __name__ == "__main__":
         try:
 
             # Let's generate all the data first
-            # Must be a string to Zero Pad
-            ran_ID = str(random.randint(0, 1e19))
+            # Must be a string to Zero Pad, 9223372036854775807 is bigint unsided MySQL max value
+            ran_ID = str(random.randint(0, 9223372036854775807))
             # Print and Zero Pad if needed.
             ran_ID = ran_ID.zfill(20)
             # Birthdays. Lets make them in MySQL format
