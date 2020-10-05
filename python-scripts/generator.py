@@ -22,18 +22,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="random-id-gen.py")
     parser.add_argument("-a", type=int, required=True,
                         dest="amount", help="number of ID's to generate")
-    parser.add_argument("-id", default=False, action="store_true",
-                        dest="id", help="Set if you need ID's generated")
-    parser.add_argument("-b", default=False, action="store_true",
-                        dest="birthday", help="Set if you need birthdays generated")
-    parser.add_argument("-n", default=False, action="store_true",
-                        dest="name", help="Set if you need names generated")
-    parser.add_argument("-p", default=False, action="store_true",
-                        dest="phone", help="Set if you need phone numbers generated")
-    parser.add_argument("-c", default=False, action="store_true",
-                        dest="company_name", help="Set if you need company names generated")
-    parser.add_argument("-e", default=False, action="store_true",
-                        dest="email", help="Set if you need emails generated")
+    parser.add_argument("-v", type=int, required=True,
+                        dest="verbose", help="verbose output flag")
     parser.add_argument("-patients", default=False, action="store_true",
                         dest="patients", help="Set if you need to insert into Patients table")
     parser.add_argument("-addr", default=False, action="store_true",
@@ -74,53 +64,38 @@ if __name__ == "__main__":
             ran_EMAIL = ""
             ran_AGE = 0
 
-            if args.id:
-                # Print IDs
-                # Must be a string to Zero Pad
-                ran_ID = str(random.randint(0, 1e19))
-                # Print and Zero Pad if needed.
-                ran_ID = ran_ID.zfill(20)
-                print(ran_ID)
+            # Let's generate all the data first
+            # Must be a string to Zero Pad
+            ran_ID = str(random.randint(0, 1e19))
+            # Print and Zero Pad if needed.
+            ran_ID = ran_ID.zfill(20)
+            # Birthdays. Lets make them in MySQL format
+            ran_DOB = fake.date(pattern='%Y-%m-%d', end_datetime=None)
+            # Calculate the Age
+            today = date.datetime.today()
+            age = relativedelta(today, date.datetime.strptime(ran_DOB, "%Y-%m-%d"))
+            ran_AGE = age.years
+            ran_NAME = fake.name()
+            ran_ENAME = fake.name()
+            ran_PHONE = fake.phone_number()
+            ran_EPHONE = fake.phone_number()
+            ran_ADDRESS = fake.address()
+            ran_COMPANY_NAME = fake.company()
+            ran_EMAIL = fake.email()
+            
 
-            if args.birthday:
-                # Print Birthdays. Lets make them in MySQL format
-                ran_DOB = fake.date(pattern='%Y-%m-%d', end_datetime=None)
-                # Calculate the Age
-                today = date.datetime.today()
-                age = relativedelta(today, date.datetime.strptime(ran_DOB, "%Y-%m-%d"))
-                ran_AGE = age.years
+            if args.verbose:
+                print(ran_ID)
                 print(ran_DOB)
                 print(ran_AGE)
-
-            if args.name:
-                # Print Names
-                ran_NAME = fake.name()
-                ran_ENAME = fake.name()
                 print(ran_NAME)
-
-            if args.phone:
-                # Print Phone Numbers
-                ran_PHONE = fake.phone_number()
-                ran_EPHONE = fake.phone_number()
                 print(ran_PHONE)
-
-            if args.address:
-                # Print Address
-                ran_ADDRESS = fake.address()
                 print(ran_ADDRESS)
-
-            if args.company_name:
-                # Print Company Names
-                ran_COMPANY_NAME = fake.company()
                 print(ran_COMPANY_NAME)
-
-            if args.email:
-                # Print Emails
-                ran_EMAIL = fake.email()
                 print(ran_EMAIL)
 
-            if args.host and args.patients:
-                # Insert data into Patients
+             # Insert data into Patients
+            if args.host and args.user and args.password and args.database and args.patients:
                 mycursor.execute(insert_patients,
                                 (int(ran_ID),
                                 ran_NAME,
