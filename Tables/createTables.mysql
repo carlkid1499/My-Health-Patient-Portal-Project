@@ -1,5 +1,5 @@
 CREATE TABLE `PatientInfo` (
-  `PID` int NOT NULL,
+  `PID` bigint unsigned NOT NULL,
   `name_first` varchar(45) NOT NULL,
   `name_last` varchar(45) NOT NULL,
   `DOB` date NOT NULL,
