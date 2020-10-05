@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="random-id-gen.py")
     parser.add_argument("-a", type=int, required=True,
                         dest="amount", help="number of ID's to generate")
-    parser.add_argument("-v", type=int, required=True,
+    parser.add_argument("-v", default=False, action="store_true", 
                         dest="verbose", help="verbose output flag")
     parser.add_argument("-patients", default=False, action="store_true",
                         dest="patients", help="Set if you need to insert into Patients table")
@@ -45,24 +45,14 @@ if __name__ == "__main__":
         mycursor = mydb.cursor()
 
     # SQL Statements for tables
-    insert_patients = "INSERT INTO patients(PID, Name, Age, DOB, Address, PEmail, TelNo, EContactName, EContactPhone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    insert_patients = "INSERT INTO patients(PID, name_first, name_last, DOB, gender, address, email, phone, Emergency_name, Emergency_phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
+    # Start the Faker instance
     random.seed()
     fake = Faker()
 
     for i in range(0, args.amount):
         try:
-            # Init variables to insert
-            ran_ID = ""
-            ran_DOB = ""
-            ran_NAME = ""
-            ran_ENAME = ""
-            ran_PHONE = ""
-            ran_EPHONE = ""
-            ran_ADDRESS = ""
-            ran_COMPANY_NAME = ""
-            ran_EMAIL = ""
-            ran_AGE = 0
 
             # Let's generate all the data first
             # Must be a string to Zero Pad
@@ -75,7 +65,15 @@ if __name__ == "__main__":
             today = date.datetime.today()
             age = relativedelta(today, date.datetime.strptime(ran_DOB, "%Y-%m-%d"))
             ran_AGE = age.years
-            ran_NAME = fake.name()
+            if i % 2 == 0:
+                ran_FNAME = fake.first_name_male()
+                ran_LNAME = fake.last_name_male()
+                ran_GENDER = "male"
+            else:
+                ran_FNAME = fake.first_name_female()
+                ran_LNAME = fake.last_name_female()
+                ran_GENDER = "female"
+            
             ran_ENAME = fake.name()
             ran_PHONE = fake.phone_number()
             ran_EPHONE = fake.phone_number()
@@ -88,7 +86,9 @@ if __name__ == "__main__":
                 print(ran_ID)
                 print(ran_DOB)
                 print(ran_AGE)
-                print(ran_NAME)
+                print(ran_FNAME)
+                print(ran_LNAME)
+                print(ran_GENDER)
                 print(ran_PHONE)
                 print(ran_ADDRESS)
                 print(ran_COMPANY_NAME)
@@ -98,9 +98,10 @@ if __name__ == "__main__":
             if args.host and args.user and args.password and args.database and args.patients:
                 mycursor.execute(insert_patients,
                                 (int(ran_ID),
-                                ran_NAME,
-                                ran_AGE,
+                                ran_FNAME,
+                                ran_LNAME,
                                 ran_DOB,
+                                ran_GENDER,
                                 ran_ADDRESS,
                                 ran_EMAIL,
                                 ran_PHONE,
