@@ -170,7 +170,7 @@ function updateMessages($msgStatus, $msg)
 
     <head>
         <title>SQL Sandbox</title>
-        <link href = '/css/style.css' rel = 'stylesheet'>
+        <link href = 'style.css' rel = 'stylesheet'>
     </head>
 
     <body>
@@ -197,7 +197,7 @@ function updateMessages($msgStatus, $msg)
         </div>
       </section>
 
-      <form action = "/php/sandbox.php" method = "post" id = "options">
+      <form action = "sandbox.php" method = "post" id = "options">
 
       <!-- QUERY OPTIONS SECTION -->
 
@@ -255,7 +255,7 @@ function updateMessages($msgStatus, $msg)
       </form>
 
       <!-- OUTPUT SECTION -->
-      <form action = "/php/sandbox.php" method = "post">
+      <form action = "sandbox.php" method = "post">
 
         <section class = "block-of-text">
           <fieldset>
@@ -297,12 +297,12 @@ function updateMessages($msgStatus, $msg)
       </form>
 
       <section class = "block-of-text">
-        <a href="/php/sandbox.php"><input type = "submit" name = "reset" value = "Reset Page"/></a>
+        <a href="sandbox.php"><input type = "submit" name = "reset" value = "Reset Page"/></a>
       </section>
 
       <?php $conn->close(); ?>
 
-      <script src = "/js/effects.js"></script>
+      <script src = "effects.js"></script>
 
     </body>
 </html>
