@@ -1,6 +1,7 @@
 <?php
 //========== Global Parameters ==========
 
+$test_var = "this is a test";
 $msgIndex = 0;
 
 $targetDB = '';
@@ -12,22 +13,23 @@ $selection = '';
 
 $errorMsg = array('');
 $successMsg = array('');
-$defaultTables = ['information_schema', 'mysql', 'performance_schema', 'sakila', 'sys', 'world'];
+$defaultTables = ['PatientInfo'];
 
 $search_result = null;
 
 //========== Database Connection ==========
 
 $servername = "localhost";
-$username = "root";
-$password = "<your password>";
-$dbname = "information_schema";
+$username = "myhealth2";
+$password = "CIOjh^J8h^?b";
+$dbname = "myhealth2";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conn -> connect_error) {
   die("Connection failed: ".$conn -> connect_error);
+  echo "Connection failed: to DB";
 }
 
 //========== Button Actions ==========

@@ -1,8 +1,8 @@
 <?php
 //source: https://www.w3schools.com/php/php_mysql_connect.asp
 $servername = "localhost";
-$username = "username";
-$password = "password";
+$username = "myhealth2";
+$password = "CIOjh^J8h^?b";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password);

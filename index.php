@@ -1,3 +1,7 @@
+<?php  
+  include 'php/sandbox.php';
+  echo $test_var;
+  ?>
 <!------------- HTML ------------->
 <!DOCTYPE html>
 <html>
@@ -7,7 +11,6 @@
   <link href='css/style.css' rel='stylesheet'>
   <script src="js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
-  <?php require 'php/sandbox.php'; ?>
 </head>
 
 <body>
@@ -34,7 +37,7 @@
     </div>
   </section>
 
-  <form action="sandbox.php" method="post" id="options">
+  <form action="index.php" method="post" id="options">
 
     <!-- QUERY OPTIONS SECTION -->
 
@@ -93,7 +96,7 @@
   </form>
 
   <!-- OUTPUT SECTION -->
-  <form action="sandbox.php" method="post">
+  <form action="index.php" method="post">
 
     <section class="block-of-text">
       <fieldset>
