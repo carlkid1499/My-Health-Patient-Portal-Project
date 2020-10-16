@@ -1,7 +1,7 @@
-<?php  
-  include 'php/sandbox.php';
-  echo $test_var;
-  ?>
+<?php
+include 'php/sandbox.php';
+echo $test_var;
+?>
 <!------------- HTML ------------->
 <!DOCTYPE html>
 <html>
@@ -47,26 +47,24 @@
 
         <!-- populate drop-down list -->
         <?php
-              
-              $list = '<option name = "sqldblist">Select Database</option>';
 
-              //Extract list of all databases
-              $q = 'show databases;';
-              if ($dblist = mysqli_query($conn, $q))
-              {
-                while($row = mysqli_fetch_array($dblist))
-                {
-                  $val = $row['Database'];
-                  if (array_search($val, $defaultTables) === false) # exclude defauls mysql tables
-                  {
-                    $list .= '<option';
-                    $list .= $val == $targetDB ? ' selected = \'selected\'>' : '>';
-                    $list .= $val.'</option>';
-                  }
-                }
-                mysqli_free_result($dblist);
-              }
-              ?>
+        $list = '<option name = "sqldblist">Select Database</option>';
+
+        //Extract list of all databases
+        $q = 'show databases;';
+        if ($dblist = mysqli_query($conn, $q)) {
+          while ($row = mysqli_fetch_array($dblist)) {
+            $val = $row['Database'];
+            if (array_search($val, $defaultTables) === false) # exclude defauls mysql tables
+            {
+              $list .= '<option';
+              $list .= $val == $targetDB ? ' selected = \'selected\'>' : '>';
+              $list .= $val . '</option>';
+            }
+          }
+          mysqli_free_result($dblist);
+        }
+        ?>
 
         <select name="sqldblist">
           <?php echo $list; ?>
@@ -84,8 +82,7 @@
       <fieldset>
         <legend>Input</legend>
 
-        <textarea class="FormElement" name="inputQuery" id="input" cols="40" rows="10"
-          placeholder="Type Query Here"><?php echo $inputQuery; ?></textarea>
+        <textarea class="FormElement" name="inputQuery" id="input" cols="40" rows="10" placeholder="Type Query Here"><?php echo $inputQuery; ?></textarea>
 
         <br>
 
@@ -102,35 +99,25 @@
       <fieldset>
         <legend>Output</legend>
 
-        <?php $messages = array_merge($successMsg, $errorMsg); asort($messages); ?>
-        <?php foreach ($messages as $msg):?>
-        <b><?php if ($msg !== '') { echo $msg.'<br>';} ?></b>
-        <?php endforeach; ?>
+        <?php
 
-        <br>
 
-        <?php if($search_result and !is_bool($search_result)): ?>
-        <table>
-          <!-- table header -->
-          <tr>
-            <?php foreach ($columns as $col):?>
-            <th><?php echo trim($col, ",");?></th>
-            <?php endforeach; ?>
-          </tr>
+        if ($search_result != NULL) {
+          //output data of each row
+          
+          if($search_result->num_rows > 0)
+          {
+            while ($row = $search_result->fetch_assoc()) {
+              echo "PID: " .$row["PID"]. " First Name: " .$row["name_first"]. " Last Name: " .$row["name_last"]. " DOB: " .$row["DOB"]. "<br>";
+            }
+          }
+          else
+          {
+            echo "0 results!";
+          }
+        }
+        ?>
 
-          <!-- populate table -->
-          <?php if ($search_result and $search_result != ''):?>
-          <?php while($row = mysqli_fetch_array($search_result)):?>
-          <tr>
-            <?php foreach ($columns as $col):?>
-            <td><?php echo $row[trim($col, ",")];?></td>
-            <?php endforeach; ?>
-          </tr>
-          <?php endwhile;?>
-          <?php endif?>
-        </table>
-
-        <?php endif?>
 
       </fieldset>
     </section>
@@ -142,4 +129,5 @@
 
   <?php $conn->close(); ?>
 </body>
+
 </html>
