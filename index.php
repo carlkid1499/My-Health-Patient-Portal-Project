@@ -102,36 +102,9 @@
       <fieldset>
         <legend>Output</legend>
 
-        <?php $messages = array_merge($successMsg, $errorMsg); asort($messages); ?>
-        <?php foreach ($messages as $msg):?>
-        <b><?php if ($msg !== '') { echo $msg.'<br>';} ?></b>
-        <?php endforeach; ?>
-
-        <br>
-
-        <?php if($search_result and !is_bool($search_result)): ?>
-
-        <table>
-          <!-- table header -->
-          <tr>
-            <?php foreach ($columns as $col):?>
-            <th><?php echo trim($col, ",");?></th>
-            <?php endforeach; ?>
-          </tr>
-
-          <!-- populate table -->
-          <?php if ($search_result and $search_result != ''):?>
-          <?php while($row = mysqli_fetch_array($search_result)):?>
-          <tr>
-            <?php foreach ($columns as $col):?>
-            <td><?php echo $row[trim($col, ",")];?></td>
-            <?php endforeach; ?>
-          </tr>
-          <?php endwhile;?>
-          <?php endif?>
-        </table>
-
-        <?php endif?>
+        <?php echo $result
+        ?>
+        
 
       </fieldset>
     </section>
