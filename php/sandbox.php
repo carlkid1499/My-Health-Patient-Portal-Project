@@ -1,7 +1,7 @@
 <?php
 //========== Global Parameters ==========
 
-$test_var = "this is a test";
+$test_var = date("l jS \of F Y h:i:s A");
 $msgIndex = 0;
 
 $targetDB = '';
