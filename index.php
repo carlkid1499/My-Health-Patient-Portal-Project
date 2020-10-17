@@ -8,14 +8,22 @@ echo $test_var;
 
 <head>
   <title>SQL Sandbox</title>
-  <link href='css/style.css' rel='stylesheet'>
-  <script src="js/effects.js"></script>
+  <link href='/css/style.css' rel='stylesheet'>
+  <script src="/js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
 </head>
 
 <body>
 
   <h2>SQL Sandbox</h2>
+
+  <!-- This is the search bar: https://www.w3schools.com/howto/howto_css_search_button.asp -->
+  <section class="seachbar-section">
+    <form class="searchbar" id="searchbard" action="/index.php" method="post">
+      <input type="text" placeholder="Search: First Name, Last Name, DOB" name="searchbar-text">
+      <button type="searchbar-button" id="searchbar-button" value="searchbar-button" onclick="return checkInput();">search</button>
+    </form>
+  </section>
 
   <section class="block-of-text" style="display: none;">
     <button class="collapsible">See Example Usage</button>
@@ -104,15 +112,12 @@ echo $test_var;
 
         if ($search_result != NULL) {
           //output data of each row
-          
-          if($search_result->num_rows > 0)
-          {
+
+          if ($search_result->num_rows > 0) {
             while ($row = $search_result->fetch_assoc()) {
-              echo "PID: " .$row["PID"]. " First Name: " .$row["name_first"]. " Last Name: " .$row["name_last"]. " DOB: " .$row["DOB"]. "<br>";
+              echo "PID: " . $row["PID"] . " First Name: " . $row["name_first"] . " Last Name: " . $row["name_last"] . " DOB: " . $row["DOB"] . "<br>";
             }
-          }
-          else
-          {
+          } else {
             echo "0 results!";
           }
         }

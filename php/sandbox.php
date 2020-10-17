@@ -62,4 +62,34 @@ if (isset($_POST['submit'])) {
     $search_result = $conn ->query($inputQuery);
   } 
 }
-?>
+
+// Seachbar submit button
+if (isset($_POST['searchbar-button'])) {
+  $search = "";
+  $selection = $_POST['sqldblist'];
+  if ($selection !== 'Select Database') { $targetDB = $selection; }
+
+  // Create connection
+  $conn = new mysqli($servername, $username, $password, $targetDB);
+  // Check connection
+  if ($conn -> connect_error) {
+    die($conn -> connect_error);
+  }
+
+  $search_result = null;
+  $searchbar_text = trim($_POST['searchbar-text']);
+
+  if (strpos(strtolower('###'.$searchbar_tex), 'create database')) {
+    //updateMessages('error', 'Database creation not allowed on this platform.');
+  }
+  else if (strpos(strtolower('###'.$searchbar_tex), 'drop database')) // prefixing with ### 
+  {
+    //updateMessages('error', 'Database deletion not allowed on this platform.');
+  }
+  // else
+  {
+    // Send the Query to the PHP SQL
+    $search_result = $conn ->query($searchbar_tex);
+  }
+  echo $search_result; 
+}

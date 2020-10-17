@@ -1,15 +1,10 @@
 <?php
-//source: https://www.w3schools.com/php/php_mysql_connect.asp
-$servername = "localhost";
-$username = "myhealth2";
-$password = "CIOjh^J8h^?b";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password);
+# This is a query to search by First Name, Last Name, DOB
+# Values must be set before the query is run.
+$name_first = "";
+$name_last = "";
+$DOB = "";
+$fisrt_last_dob_query = "SELECT * FROM myhealth2.PatientInfo WHERE name_first like '$name_first' AND name_last like '$name_last' AND DOB='$DOB'";
 
-// Check connection
-if (mysqli_connect_error()) {
-  die("Database connection failed: " . mysqli_connect_error());
-}
-echo "Connected successfully";
 ?>

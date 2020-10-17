@@ -19,7 +19,7 @@ section {
   background: white;
   margin: 0 auto 1em;
   height: relative;
-  max-width: 700px;
+  max-width: 1000px;
   border-radius: .5em;
   color: white;
   img, p {
@@ -81,3 +81,40 @@ section {
 .active:after {
   content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
+
+/* ----- Begin: This is the style css for the search bad ----- */
+* {
+  box-sizing: border-box;
+}
+
+form.searchbar input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 100%;
+  background: #f1f1f1;
+}
+
+form.searchbar searchbar-button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
+}
+
+form.searchbar searchbar-button:hover {
+  background: #0b7dda;
+}
+
+form.searchbar::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+/* ----- End: This is the style css for the search bad ----- */
