@@ -7,7 +7,7 @@ echo $test_var;
 <html>
 
 <head>
-  <title>SQL Sandbox</title>
+  <title>My Health Patient Portal Sandbox</title>
   <link href='/css/style.css' rel='stylesheet'>
   <script src="/js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
@@ -15,34 +15,20 @@ echo $test_var;
 
 <body>
 
-  <h2>SQL Sandbox</h2>
+  <h2>My Health Patient Portal Sandbox</h2>
 
   <!-- This is the search bar: https://www.w3schools.com/howto/howto_css_search_button.asp -->
   <section class="seachbar-section">
     <form class="searchbar" id="searchbard" action="/index.php" method="post">
-      <input type="text" placeholder="Search: First Name, Last Name, DOB" name="searchbar-text">
+      <input type="text" placeholder="Select Search by option..." name="searchbar-text">
       <button type="searchbar-button" id="searchbar-button" value="searchbar-button" onclick="return checkInput();">search</button>
+      <select name="search_by_options_list">
+        <option name = "search_by_options" id="search_by_options">Search by:</option>
+        <option name = "search_by_options" id="search_by_options">Search by: First Name, Last Name, DOB</option>
+        <option name = "search_by_options" id="search_by_options">Search by: Patient ID </option>
+        <option name = "search_by_options" id="search_by_options">Search by: Patient Phone Number </option>
+      </select>
     </form>
-  </section>
-
-  <section class="block-of-text" style="display: none;">
-    <button class="collapsible">See Example Usage</button>
-    <div class="content">
-      <fieldset class="side">
-        <legend>Sample Database</legend>
-
-      </fieldset>
-
-      <fieldset class="side">
-        <legend>Sample Updates</legend>
-
-      </fieldset>
-
-      <fieldset class="side">
-        <legend>Sample Queries</legend>
-
-      </fieldset>
-    </div>
   </section>
 
   <form action="index.php" method="post" id="options">
