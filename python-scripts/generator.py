@@ -28,6 +28,8 @@ if __name__ == "__main__":
                         dest="patients", help="Set if you need to insert into Patients table")
     parser.add_argument("-host", type=str, required=False, default=None,
                         dest="host", help="Hostname for DB")
+    parser.add_argument("-port", type=int, required=False, default=None,
+                        dest="port", help="Port number for DB")
     parser.add_argument("-user", type=str, required=False, default=None,
                         dest="user", help="Username for DB")
     parser.add_argument("-pass", type=str, required=False, default=None,
@@ -38,7 +40,7 @@ if __name__ == "__main__":
 
     if args.host:
         # Connect to our MySQL server.
-        mydb = mysql.connect(host=args.host, user=args.user,
+        mydb = mysql.connect(host=args.host,port=args.port, user=args.user,
                              password=args.password, database=args.database)
         mycursor = mydb.cursor()
 
@@ -106,6 +108,10 @@ if __name__ == "__main__":
                                 ran_ENAME,
                                 ran_EPHONE))
                 mydb.commit()
+            else:
+                print("Error Inserting into PatientInfo: One of hostname, username, password, database name, or patients flag is missing!")
+                break
+
         except KeyboardInterrupt:
             mydb.commit()
             mydb.close()
