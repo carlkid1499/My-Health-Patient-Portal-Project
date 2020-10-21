@@ -17,6 +17,7 @@ is: <https://faker.readthedocs.io/en/master/> .
 -v for verbose output
 -patients to insert into the patient table
 -host host address for a MySQL instance
+-port Port number for a MySQL instance
 -user user name for MySQL instance
 -pass password for the MySQL instnace
 -db database for MySQL instance
@@ -26,5 +27,5 @@ is: <https://faker.readthedocs.io/en/master/> .
 The following example will generate 10 items and insert them into the patients table.
 
 ``` python
-pyton3 generator.py -a 10 -patients -host localhost -user root -pass 1234 -db testDB
+pyton3 generator.py -a 10 -patients -host localhost -port 3306 -user root -pass 1234 -db testDB
 ```
