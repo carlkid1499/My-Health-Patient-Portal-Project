@@ -6,10 +6,6 @@ This was derived from this tutorial:
 https://www.tutorialspoint.com/php/php_login_example.htm
 */
 
-# import another php file and access it's variables
-include 'sandbox.php';
-echo $test_var;
-
 # Start the session
 ob_start();
 session_start();
@@ -22,8 +18,8 @@ session_start();
 
 <head>
   <title>Login Page</title>
-  <link href='../css/login.css' rel='stylesheet'>
-  <script src="../js/effects.js"></script>
+  <link href="css/login.css" rel='stylesheet'>
+  <script src="js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
 </head>
 
@@ -53,6 +49,8 @@ session_start();
           $_SESSION['username'] = 'tutorialspoint';
 
           echo 'You have entered valid use name and password';
+          # Send us to the desired page, ideally in prod this should be a link address
+          header('Location: php/healthcare_worker_portal.php');
         }
         else if (
           # For now we put the username and password here. Later we can check it against a database
@@ -65,6 +63,8 @@ session_start();
           $_SESSION['username'] = 'patient';
 
           echo 'You have entered valid use name and password';
+          # Send us to the desired page, ideally in prod this should be a link address
+          header('Location: php/patient_portal.php');
         }
 
         else {
@@ -84,7 +84,7 @@ session_start();
         <button class="btn btn-lg btn-primary btn-block" type="submit" name="login">Login</button>
       </form>
 
-      Click here to clean <a href="logout.php" tite="Logout">Session.
+      Click here to clean <a href="php/logout.php" tite="Logout">Session.
 
     </div>
   </section>
