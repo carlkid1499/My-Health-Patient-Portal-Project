@@ -1,5 +1,3 @@
-use myhealth2fulltest;
-
 # Create the Patient Information Table
 CREATE TABLE PatientInfo (
   PID bigint unsigned UNIQUE PRIMARY KEY NOT NULL,
@@ -42,4 +40,14 @@ CREATE TABLE PatientRecords (
     PatientPayment INT
 );
 
-#
+# Create the Insurance Providers table
+CREATE TABLE IF NOT EXISTS InsProvier (
+	CompanyID INT UNSIGNED UNIQUE PRIMARY KEY NOT NULL,
+    Company VARCHAR(255),
+    # This will reference InsPlans PlanID eventually
+    PlanID INT UNSIGNED,
+    Category VARCHAR(255),
+	Address VARCHAR (255),
+    Email VARCHAR (255),
+    Phone VARCHAR (45)
+);
