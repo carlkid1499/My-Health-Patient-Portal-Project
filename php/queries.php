@@ -5,6 +5,13 @@
 $name_first = "";
 $name_last = "";
 $DOB = "";
-$fisrt_last_dob_query = "SELECT * FROM myhealth2.PatientInfo WHERE name_first like '$name_first' AND name_last like '$name_last' AND DOB='$DOB'";
+$first_last_dob_query = "SELECT * FROM myhealth2.PatientInfo WHERE name_first like '%$name_first%' AND name_last like '%$name_last%' AND DOB='$DOB'";
+
+# This query will search for a given PID
+$PID = NULL;
+$patient_id_query = "SELECT * FROM myhealth2.PatientInfo WHERE PID='$PID'";
+
+$phone_number = "";
+$phone_number_query = "SELECT * FROM myhealth2.PatientInfo WHERE phone like '%$phone_number%'";
 
 ?>
