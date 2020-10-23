@@ -11,6 +11,7 @@ $first_last_dob_query = "SELECT * FROM myhealth2.PatientInfo WHERE name_first li
 $PID = NULL;
 $patient_id_query = "SELECT * FROM myhealth2.PatientInfo WHERE PID='$PID'";
 
+# This query will search for a given phone number.
 $phone_number = "";
 $phone_number_query = "SELECT * FROM myhealth2.PatientInfo WHERE phone like '%$phone_number%'";
 

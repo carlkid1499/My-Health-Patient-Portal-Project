@@ -39,36 +39,54 @@ session_start();
         && !empty($_POST['password'])
       ) {
 
-        if (
-          # For now we put the username and password here. Later we can check it against a database
-          $_POST['username'] == 'doctor' &&
-          $_POST['password'] == 'doctor'
-        ) {
-          $_SESSION['valid'] = true;
-          $_SESSION['timeout'] = time();
-          $_SESSION['username'] = 'tutorialspoint';
-
-          echo 'You have entered valid use name and password';
-          # Send us to the desired page, ideally in prod this should be a link address
-          header('Location: php/healthcare_worker_portal.php');
+        // Create connection for log in
+        $conn = new mysqli("localhost", "myhealth2", "CIOjh^J8h^?b", "myhealth2");
+        // Check if connection is valid
+        if ($conn->connect_error) {
+          die("Connection failed: " . $conn->connect_error);
+          $msg = "Connection failed: to DB";
         }
-        else if (
-          # For now we put the username and password here. Later we can check it against a database
-          $_POST['username'] == 'patient' &&
-          $_POST['password'] == 'patient'
-        )
+
+        // Get the information from the forms
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        // Query the users database for the information
+        $results = $conn ->query("SELECT * FROM users WHERE UserName like '%$username%' AND UserPassword like '%$password%' ");
+
+        // If we get a match grant access
+        if($results->num_rows >0)
         {
+          // Set the Session values to access later
           $_SESSION['valid'] = true;
           $_SESSION['timeout'] = time();
-          $_SESSION['username'] = 'patient';
+          $_SESSION['username'] = $username;
+          $_SESSION['userid'] = NULL;
+          $_SESSION['isemployee'] = NULL;
+          $_SESSION['pid'] = NULL;
 
-          echo 'You have entered valid use name and password';
-          # Send us to the desired page, ideally in prod this should be a link address
-          header('Location: php/patient_portal.php');
-        }
-
-        else {
-          $msg = 'Wrong username or password';
+          // Get the Query Results
+          while ($row = $results->fetch_assoc()) {
+            $_SESSION['userid'] = $row["UserID"];
+            $_SESSION['isemployee'] = $row["IsEmployee"];
+            $_SESSION['pid'] = $row["PID"];
+          }
+          // Now we check to see if we have a Patient or Worker
+          if($_SESSION['isemployee'] == 0)
+          {
+            //  We have a Patient
+            header('Location: php/patient_portal.php');
+          }
+          else if ($_SESSION['isemployee'] == 1)
+          {
+            // We have a Worker
+            header('Location: php/healthcare_worker_portal.php');
+          }
+          else
+          {
+            // Error
+            $msg = "Something went wrong please try again! If the error continues contact support@suppor.com";
+          }
         }
       }
       ?>

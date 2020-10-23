@@ -8,6 +8,14 @@
 include 'sandbox.php';
 echo $test_var;
 
+
+# Start the session again to access session variables
+session_start();
+# Grab all the session values
+$username = $_SESSION['username'];
+$userid = $_SESSION['userid'];
+$isemployee = $_SESSION['isemployee'];
+$pid = $_SESSION['pid'];
 ?>
 
 <!------------- HTML ------------->
@@ -23,7 +31,7 @@ echo $test_var;
 
 <body>
 
-  <h2>Healthcare Worker Portal</h2>
+  <h2>Healthcare Worker Portal: <?php echo " Welcome - $username"?></h2>
   <!-- This is the search bar: https://www.w3schools.com/howto/howto_css_search_button.asp -->
   <section class="seachbar-section">
     <form class="searchbar" id="searchbard" action="healthcare_worker_portal.php" method="post">
