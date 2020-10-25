@@ -105,11 +105,11 @@ session_start();
       <!-- Let's put any actions the user can take. i.e update info, view records, etc -->
     <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="sign-out-button" type="submit" name="logout">logout
+      <button class="signup-button" type="submit" name="signup">signup
         <!-- If the logout button is pushed -->
-        <?php if(isset($_POST['logout']))
+        <?php if(isset($_POST['signup']))
         {
-          header('Location: php/logout.php');
+          header('Location: php/signup.php');
         } 
         ?>
         </button>
