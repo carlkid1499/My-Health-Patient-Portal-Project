@@ -52,7 +52,7 @@ session_start();
         $password = $_POST['password'];
 
         // Query the users database for the information
-        $results = $conn ->query("SELECT * FROM users WHERE UserName like '%$username%' AND UserPassword like '%$password%' ");
+        $results = $conn ->query("SELECT * FROM Users WHERE UserName like '%$username%' AND UserPassword like '%$password%' ");
 
         // If we get a match grant access
         if($results->num_rows >0)
@@ -102,11 +102,21 @@ session_start();
         <button class="btn btn-lg btn-primary btn-block" type="submit" name="login">Login</button>
       </form>
 
-      Click here to clean <a href="php/logout.php" tite="Logout">Session.
-
+      <!-- Let's put any actions the user can take. i.e update info, view records, etc -->
+    <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="sign-out-button" type="submit" name="logout">logout
+        <!-- If the logout button is pushed -->
+        <?php if(isset($_POST['logout']))
+        {
+          header('Location: php/logout.php');
+        } 
+        ?>
+        </button>
+    </form>
     </div>
   </section>
-
+  <?php $conn->close(); ?>
 </body>
 
 </html>
