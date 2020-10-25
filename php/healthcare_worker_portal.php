@@ -129,8 +129,19 @@ $pid = $_SESSION['pid'];
     </section>
   </form>
 
-  <section class="block-of-text">
-    <a href="healthcare_worker_portal.php"><input type="submit" name="reset" value="Reset Page" /></a>
+  <section name="options">
+    <!-- Let's put any actions the user (patient) can take. i.e update info, view records, etc -->
+    <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="sign-out-button" type="submit" name="logout">logout
+        <!-- If the logout button is pushed -->
+        <?php if(isset($_POST['logout']))
+        {
+          header('Location: logout.php');
+        } 
+        ?>
+        </button>
+    </form>
   </section>
 
   <?php $conn->close(); ?>
