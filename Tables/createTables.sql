@@ -1,15 +1,15 @@
 # Create the Patient Information Table
 CREATE TABLE PatientInfo (
-  PID bigint unsigned UNIQUE PRIMARY KEY NOT NULL,
-  name_first varchar(45) NOT NULL,
-  name_last varchar(45) NOT NULL,
-  DOB date NOT NULL,
-  Gender varchar(10) DEFAULT NULL,
-  address varchar(200) NOT NULL,
-  email varchar(45) DEFAULT NULL,
-  phone varchar(45) NOT NULL,
-  Emergency_name varchar(45) DEFAULT NULL,
-  Emergency_phone varchar(45) DEFAULT NULL
+  PID BIGINT  unsigned UNIQUE PRIMARY KEY NOT NULL,
+  name_first VARCHAR(45) NOT NULL,
+  name_last VARCHAR(45) NOT NULL,
+  DOB DATE NOT NULL,
+  Gender VARCHAR(10) DEFAULT NULL,
+  address VARCHAR(200) NOT NULL,
+  email VARCHAR(45) DEFAULT NULL,
+  phone VARCHAR(45) NOT NULL,
+  Emergency_name VARCHAR(45) DEFAULT NULL,
+  Emergency_phone VARCHAR(45) DEFAULT NULL
 );
 
 # Create the Patient Notes table
@@ -50,4 +50,61 @@ CREATE TABLE IF NOT EXISTS InsProvier (
 	Address VARCHAR (255),
     Email VARCHAR (255),
     Phone VARCHAR (45)
+);
+
+#Create Enrolled table
+CREATE TABLE Enrolled(
+    PlanID INT UNSIGNED,
+    PID BIGINT UNSIGNED NOT NULL,
+    Company VARCHAR(255),
+    FOREIGN KEY(PlanID) REFERENCES InsPlans,
+    FOREIGN KEY(PID) REFERENCES PatientInfo,
+    FOREIGN KEY(Company) REFERENCES InsPlans
+);
+
+#Create InsPlans table
+CREATE TABLE InsPlans(
+    PlanID INT UNSIGNED,
+    Company VARCHAR(255),
+    AnnualPrem BIGINT,
+    AnnualDeductible BIGINT,
+    AnnualCoverageLimit BIGINT,
+    LifetimeCoverage BIGINT,
+    Network VARCHAR(255),
+    PRIMARY KEY(PlanID)
+);
+
+#Create Coverage table
+CREATE TABLE Coverage(
+    PlanID INT UNSIGNED,
+    Company VARCHAR(255),
+    TreatmentCategory VARCHAR(255),
+    FOREIGN KEY(PlanID) REFERENCES InsPlans,
+    FOREIGN KEY(Company) REFERENCES InsPlans
+);
+
+#Create Membership table
+CREATE TABLE Membership(
+    ProvID BIGINT UNSIGNED UNIQUE PRIMARY KEY NOT NULL,
+    Network VARCHAR(255),
+    FOREIGN KEY(Network) REFERENCES InsPlans
+);
+
+#Create InsCategories Table
+CREATE TABLE InsCategories(
+    Company VARCHAR(255),
+    TreatmentCategory VARCHAR(255),
+    Subcategory VARCHAR(255),
+    FOREIGN KEY(TreatmentCategory) REFERENCES Coverage
+);
+
+#Create Costs Table
+CREATE TABLE Costs(
+    Company VARCHAR(255),
+    Treament VARCHAR(255),
+    AllowedCost BIGINT,
+    InNetworkCoverage BIGINT,
+    OutNetworkCoverage BIGINT,
+    FullDeductible BIGINT,
+    FOREIGN KEY(Company) REFERENCES InsPlans
 );
