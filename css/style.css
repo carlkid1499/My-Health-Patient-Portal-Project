@@ -1,0 +1,120 @@
+table, tr, th, td
+{
+    border: 1px solid black;
+}
+
+h1, h2 {
+  text-align: center;
+  color: black;
+  font-weight: 200;
+  margin-top: 0;
+}
+
+h2 {
+  margin-bottom: 1em;
+}
+
+section {
+  display: block;
+  background: white;
+  margin: 0 auto 1em;
+  height: relative;
+  max-width: 1000px;
+  border-radius: .5em;
+  color: white;
+  img, p {
+    padding: 1em;
+  }
+}
+
+.hide {
+  display: none;
+}
+
+.none {
+  display:none;
+}
+
+.block-of-text  {
+  position: relative;
+  top: 50%;
+  color: black;
+}
+
+.side  {
+  float: left;
+}
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+
+.collapsible:after {
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  font-size: 13px;
+  color: white;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+/* ----- Begin: This is the style css for the search bad ----- */
+* {
+  box-sizing: border-box;
+}
+
+form.searchbar input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 100%;
+  background: #f1f1f1;
+}
+
+form.searchbar searchbar-button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
+}
+
+form.searchbar searchbar-button:hover {
+  background: #0b7dda;
+}
+
+form.searchbar::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+/* ----- End: This is the style css for the search bad ----- */
