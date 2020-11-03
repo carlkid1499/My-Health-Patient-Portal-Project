@@ -43,7 +43,8 @@ CREATE TABLE IF NOT EXISTS PatientRecords (
 #Create InsPlans table
 CREATE TABLE IF NOT EXISTS InsPlans(
     PlanID INT UNSIGNED PRIMARY KEY,
-    Company VARCHAR(255) UNIQUE,
+    CompanyID INT UNSIGNED UNIQUE DEFAULT NULL,
+    FOREIGN KEY(CompanyID) REFERENCES InsProvider(CompanyID),
     AnnualPrem BIGINT,
     AnnualDeductible BIGINT,
     AnnualCoverageLimit BIGINT,
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS InsPlans(
 # Create the Insurance Providers table
 CREATE TABLE IF NOT EXISTS InsProvider (
 	CompanyID INT UNSIGNED UNIQUE PRIMARY KEY NOT NULL,
-    Company VARCHAR(255) UNIQUE,
+    Company VARCHAR(255),
     # This will reference InsPlans PlanID eventually
     PlanID INT UNSIGNED,
     FOREIGN KEY(PlanID) REFERENCES InsPlans(PlanID),
@@ -67,10 +68,10 @@ CREATE TABLE IF NOT EXISTS InsProvider (
 #Create Coverage table
 CREATE TABLE IF NOT EXISTS Coverage(
     PlanID INT UNSIGNED,
-    Company VARCHAR(255) UNIQUE,
+    CompanyID INT UNSIGNED,
+    FOREIGN KEY(CompanyID) REFERENCES InsProvider(CompanyID),
     TreatmentCategory VARCHAR(255) UNIQUE,
-    FOREIGN KEY(PlanID) REFERENCES InsPlans(PlanID),
-    FOREIGN KEY(Company) REFERENCES InsPlans(Company)
+    FOREIGN KEY(PlanID) REFERENCES InsPlans(PlanID)
 );
 
 #Create Membership table
@@ -82,7 +83,8 @@ CREATE TABLE IF NOT EXISTS Membership(
 
 #Create InsCategories Table
 CREATE TABLE IF NOT EXISTS InsCategories(
-    Company VARCHAR(255),
+    CompanyID INT UNSIGNED,
+    FOREIGN KEY(CompanyID) REFERENCES InsProvider(CompanyID),
     TreatmentCategory VARCHAR(255) UNIQUE,
     Subcategory VARCHAR(255),
     FOREIGN KEY(TreatmentCategory) REFERENCES Coverage(TreatmentCategory)
@@ -90,23 +92,23 @@ CREATE TABLE IF NOT EXISTS InsCategories(
 
 #Create Costs Table
 CREATE TABLE IF NOT EXISTS Costs(
-    Company VARCHAR(255) UNIQUE,
+    CompanyID INT UNSIGNED,
+    FOREIGN KEY(CompanyID) REFERENCES InsProvider(CompanyID),
     Treament VARCHAR(255),
     AllowedCost BIGINT,
     InNetworkCoverage BIGINT,
     OutNetworkCoverage BIGINT,
-    FullDeductible BIGINT,
-    FOREIGN KEY(Company) REFERENCES InsPlans(Company)
+    FullDeductible BIGINT
 );
 
 #Create Enrolled table
 CREATE TABLE IF NOT EXISTS Enrolled(
     PlanID INT UNSIGNED,
     PID BIGINT UNSIGNED,
-    Company VARCHAR(255) UNIQUE,
+    CompanyID INT UNSIGNED,
+    FOREIGN KEY(CompanyID) REFERENCES InsProvider(CompanyID),
     FOREIGN KEY(PlanID) REFERENCES InsPlans(PlanID),
-    FOREIGN KEY(PID) REFERENCES PatientInfo(PID),
-    FOREIGN KEY(Company) REFERENCES InsPlans(Company)
+    FOREIGN KEY(PID) REFERENCES PatientInfo(PID)
 );
 
 # Create the Patient Information Table
