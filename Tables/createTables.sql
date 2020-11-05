@@ -1,6 +1,7 @@
+# Step 1. Create all the tables first
 # Create the Patient Information Table
-CREATE TABLE PatientInfo (
-  PID BIGINT  unsigned UNIQUE PRIMARY KEY NOT NULL,
+CREATE TABLE IF NOT EXISTS PatientInfo (
+  PID BIGINT unsigned UNIQUE PRIMARY KEY NOT NULL,
   name_first VARCHAR(45) NOT NULL,
   name_last VARCHAR(45) NOT NULL,
   DOB DATE NOT NULL,
@@ -13,11 +14,10 @@ CREATE TABLE PatientInfo (
 );
 
 # Create the Patient Notes table
-CREATE TABLE PatientNotes (
+CREATE TABLE IF NOT EXISTS PatientNotes (
 	# We can have multiple notes so we give each note a PNI (Patient Note ID)
 	PNI INT UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
     PID BIGINT UNSIGNED NOT NULL,
-    FOREIGN KEY (PID) REFERENCES PatientInfo(PID),
     ProvID INT NOT NULL,
     NoteTime DATE,
     DiagnosisNotes VARCHAR(255),
@@ -26,11 +26,10 @@ CREATE TABLE PatientNotes (
 );
 
 # Create the Patient Records table
-CREATE TABLE PatientRecords (
+CREATE TABLE IF NOT EXISTS PatientRecords (
 	# We can have multiple records so we give each a PRI (Patient Record ID)
 	PRI INT UNIQUE PRIMARY KEY NOT NULL AUTO_INCREMENT,
     PID BIGINT UNSIGNED NOT NULL,
-    FOREIGN KEY (PID) REFERENCES PatientInfo(PID),
 	# PROV ID GOES HERE its an FK
 	RecordTime DATE,
     Treatment VARCHAR(255),
@@ -40,8 +39,19 @@ CREATE TABLE PatientRecords (
     PatientPayment INT
 );
 
+#Create InsPlans table
+CREATE TABLE IF NOT EXISTS InsPlans(
+    PlanID INT UNSIGNED PRIMARY KEY,
+    CompanyID INT UNSIGNED UNIQUE DEFAULT NULL,
+    AnnualPrem BIGINT,
+    AnnualDeductible BIGINT,
+    AnnualCoverageLimit BIGINT,
+    LifetimeCoverage BIGINT,
+    Network VARCHAR(255) UNIQUE
+);
+
 # Create the Insurance Providers table
-CREATE TABLE IF NOT EXISTS InsProvier (
+CREATE TABLE IF NOT EXISTS InsProvider (
 	CompanyID INT UNSIGNED UNIQUE PRIMARY KEY NOT NULL,
     Company VARCHAR(255),
     # This will reference InsPlans PlanID eventually
@@ -52,59 +62,84 @@ CREATE TABLE IF NOT EXISTS InsProvier (
     Phone VARCHAR (45)
 );
 
-#Create Enrolled table
-CREATE TABLE Enrolled(
-    PlanID INT UNSIGNED,
-    PID BIGINT UNSIGNED NOT NULL,
-    Company VARCHAR(255),
-    FOREIGN KEY(PlanID) REFERENCES InsPlans,
-    FOREIGN KEY(PID) REFERENCES PatientInfo,
-    FOREIGN KEY(Company) REFERENCES InsPlans
-);
-
-#Create InsPlans table
-CREATE TABLE InsPlans(
-    PlanID INT UNSIGNED,
-    Company VARCHAR(255),
-    AnnualPrem BIGINT,
-    AnnualDeductible BIGINT,
-    AnnualCoverageLimit BIGINT,
-    LifetimeCoverage BIGINT,
-    Network VARCHAR(255),
-    PRIMARY KEY(PlanID)
-);
-
 #Create Coverage table
-CREATE TABLE Coverage(
+CREATE TABLE IF NOT EXISTS Coverage(
     PlanID INT UNSIGNED,
-    Company VARCHAR(255),
-    TreatmentCategory VARCHAR(255),
-    FOREIGN KEY(PlanID) REFERENCES InsPlans,
-    FOREIGN KEY(Company) REFERENCES InsPlans
+    CompanyID INT UNSIGNED,
+    TreatmentCategory VARCHAR(255) UNIQUE
 );
 
 #Create Membership table
-CREATE TABLE Membership(
+CREATE TABLE IF NOT EXISTS Membership(
     ProvID BIGINT UNSIGNED UNIQUE PRIMARY KEY NOT NULL,
-    Network VARCHAR(255),
-    FOREIGN KEY(Network) REFERENCES InsPlans
+    Network VARCHAR(255)
 );
 
 #Create InsCategories Table
-CREATE TABLE InsCategories(
-    Company VARCHAR(255),
-    TreatmentCategory VARCHAR(255),
-    Subcategory VARCHAR(255),
-    FOREIGN KEY(TreatmentCategory) REFERENCES Coverage
+CREATE TABLE IF NOT EXISTS InsCategories(
+    CompanyID INT UNSIGNED,
+    TreatmentCategory VARCHAR(255) UNIQUE,
+    Subcategory VARCHAR(255)
 );
 
 #Create Costs Table
-CREATE TABLE Costs(
-    Company VARCHAR(255),
+CREATE TABLE IF NOT EXISTS Costs(
+    CompanyID INT UNSIGNED,
     Treament VARCHAR(255),
     AllowedCost BIGINT,
     InNetworkCoverage BIGINT,
     OutNetworkCoverage BIGINT,
-    FullDeductible BIGINT,
-    FOREIGN KEY(Company) REFERENCES InsPlans
+    FullDeductible BIGINT
 );
+
+#Create Enrolled table
+CREATE TABLE IF NOT EXISTS Enrolled(
+    PlanID INT UNSIGNED,
+    PID BIGINT UNSIGNED,
+    CompanyID INT UNSIGNED
+);
+
+# Create the Patient Information Table
+CREATE TABLE IF NOT EXISTS Users (
+	UserID INT UNSIGNED PRIMARY KEY UNIQUE NOT NULL,
+    PID BIGINT UNSIGNED UNIQUE,
+    UserName VARCHAR(25) UNIQUE,
+    UserPassword VARCHAR(25),
+    IsEmployee BOOL
+);
+
+# Step 2 Add in constraints and such
+ALTER TABLE Costs
+  ADD CONSTRAINT FOREIGN KEY (CompanyID) REFERENCES InsProvider (CompanyID);
+
+ALTER TABLE Coverage
+  ADD CONSTRAINT FOREIGN KEY (CompanyID) REFERENCES InsProvider (CompanyID),
+  ADD CONSTRAINT FOREIGN KEY (PlanID) REFERENCES InsPlans (PlanID);
+
+ALTER TABLE Enrolled
+  ADD CONSTRAINT FOREIGN KEY (CompanyID) REFERENCES InsProvider (CompanyID),
+  ADD CONSTRAINT FOREIGN KEY (PlanID) REFERENCES InsPlans (PlanID),
+  ADD CONSTRAINT FOREIGN KEY (PID) REFERENCES PatientInfo (PID);
+
+ALTER TABLE InsCategories
+  ADD CONSTRAINT FOREIGN KEY (CompanyID) REFERENCES InsProvider (CompanyID),
+  ADD CONSTRAINT FOREIGN KEY (TreatmentCategory) REFERENCES Coverage (TreatmentCategory);
+
+ALTER TABLE InsProvider
+  ADD CONSTRAINT FOREIGN KEY (PlanID) REFERENCES InsPlans (PlanID),
+  ADD CONSTRAINT FOREIGN KEY (CompanyID) REFERENCES InsPlans (CompanyID);
+
+ALTER TABLE Membership
+  ADD CONSTRAINT FOREIGN KEY (Network) REFERENCES Insplans (Network);
+
+ALTER TABLE PatientNotes
+  ADD CONSTRAINT FOREIGN KEY (PID) REFERENCES PatientInfo (PID);
+
+ALTER TABLE PatientRecords
+  ADD CONSTRAINT FOREIGN KEY (PID) REFERENCES PatientInfo (PID);
+
+ALTER TABLE Users
+  ADD CONSTRAINT FOREIGN KEY (PID) REFERENCES PatientInfo (PID);
+ 
+ #  Step 3. Save your changes
+COMMIT;
