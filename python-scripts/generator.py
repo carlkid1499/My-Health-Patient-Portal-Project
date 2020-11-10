@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="random-id-gen.py")
     parser.add_argument("-a", type=int, required=True,
                         dest="amount", help="number of ID's to generate")
-    parser.add_argument("-v", default=False, action="store_true", 
+    parser.add_argument("-v", default=False, action="store_true",
                         dest="verbose", help="verbose output flag")
     parser.add_argument("-patients", default=False, action="store_true",
                         dest="patients", help="Set if you need to insert into  Patients table")
@@ -44,16 +44,16 @@ if __name__ == "__main__":
 
     if args.host:
         # Connect to our MySQL server.
-        mydb = mysql.connect(host=args.host,port=args.port, user=args.user,
+        mydb = mysql.connect(host=args.host, port=args.port, user=args.user,
                              password=args.password, database=args.database)
-        
+
         # Any query results will be returned as a named dictionary
         mycursor = mydb.cursor(dictionary=True)
 
     # SQL Statements for tables
     insert_patients = "INSERT INTO PatientInfo(PID, name_first, name_last, DOB, gender, address, email, phone, Emergency_name, Emergency_phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     insert_insprovider = "INSERT INTO InsProvider(CompanyID, Company, PlanID, Category, Address, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    insert_insplans = "INSERT INTO  InsPlans(PlanID, CompanyID, AnnualPrem, AnnualDeductible, AnnualCoverageLimit, LifetimeCoverage, Network) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    insert_insplans = "Update myhealth2.InsPlans SET AnnualPrem=%s, AnnualDeductible=%s, AnnualCoverageLimit=%s, LifetimeCoverage=%s WHERE InsPlans.PlanID=%s"
 
     # Start the Faker instance
     random.seed()
@@ -74,7 +74,8 @@ if __name__ == "__main__":
                 ran_DOB = fake.date(pattern='%Y-%m-%d', end_datetime=None)
                 # Calculate the Age
                 today = date.datetime.today()
-                age = relativedelta(today, date.datetime.strptime(ran_DOB, "%Y-%m-%d"))
+                age = relativedelta(
+                    today, date.datetime.strptime(ran_DOB, "%Y-%m-%d"))
                 ran_AGE = age.years
                 if i % 2 == 0:
                     ran_FNAME = fake.first_name_male()
@@ -84,13 +85,13 @@ if __name__ == "__main__":
                     ran_FNAME = fake.first_name_female()
                     ran_LNAME = fake.last_name_female()
                     ran_GENDER = "female"
-                
+
                 ran_ENAME = fake.name()
                 ran_PHONE = fake.phone_number()
                 ran_EPHONE = fake.phone_number()
                 ran_ADDRESS = fake.address()
                 ran_EMAIL = fake.email()
-                
+
                 if args.verbose:
                     print(ran_ID)
                     print(ran_DOB)
@@ -105,22 +106,23 @@ if __name__ == "__main__":
                 # Check to make sure the connection stuff is present
                 if args.host and args.port and args.user and args.password and args.database:
                     mycursor.execute(insert_patients,
-                                        (int(ran_ID),
-                                        ran_FNAME,
-                                        ran_LNAME,
-                                        ran_DOB,
-                                        ran_GENDER,
-                                        ran_ADDRESS,
-                                        ran_EMAIL,
-                                        ran_PHONE,
-                                        ran_ENAME,
-                                        ran_EPHONE))
+                                     (int(ran_ID),
+                                         ran_FNAME,
+                                         ran_LNAME,
+                                         ran_DOB,
+                                         ran_GENDER,
+                                         ran_ADDRESS,
+                                         ran_EMAIL,
+                                         ran_PHONE,
+                                         ran_ENAME,
+                                         ran_EPHONE))
                     mydb.commit()
-                
+
                 else:
-                    print("Error Inserting into PatientInfo: One of hostname, username, password, database name, or patients flag is missing!")
+                    print(
+                        "Error Inserting into PatientInfo: One of hostname, username, password, database name, or patients flag is missing!")
                     break
-            
+
             # Insert into the Insurance Provider table
             elif args.provider:
 
@@ -143,18 +145,18 @@ if __name__ == "__main__":
                     print(ran_CompanyAddress)
                     print(ran_CompanyEmail)
                     print(ran_CompanyPhone)
-                    
+
                 # Check to make sure the connection stuff is present
                 if args.host and args.port and args.user and args.password and args.database:
 
                     mycursor.execute(insert_insprovider,
-                                        (ran_CompanyID,
-                                        ran_CompanyName,
-                                        ran_PlanID,
-                                        ran_Category,
-                                        ran_CompanyAddress,
-                                        ran_CompanyEmail,
-                                        ran_CompanyPhone))
+                                     (ran_CompanyID,
+                                         ran_CompanyName,
+                                         ran_PlanID,
+                                         ran_Category,
+                                         ran_CompanyAddress,
+                                         ran_CompanyEmail,
+                                         ran_CompanyPhone))
                     mydb.commit()
             # Insert into the Plans table
             elif args.plans:
@@ -163,40 +165,45 @@ if __name__ == "__main__":
                 Instead all we need to generate are: AnnualPrem, AnnualDeductible, AnnualCoverageLimit, 
                 LifetimeCoverage and Network for the InsPlans table.
                 '''
-                
-                # First grab all the CompanyID's and PlanID's from the InsProvider table.
-                sqlquery = """SELECT CompanyID,PlanID FROM InsProvider"""
 
-                mycursor.execute(sqlquery)
+                # First grab all CompanyID's and PlanID's and insert into InsPlans table
+                sqlquery1 = """INSERT INTO InsPlans(PlanID,CompanyID) SELECT CompanyID,PlanID FROM InsProvider"""
+                mycursor.execute(sqlquery1)
+
+                # First grab all the PlanID's from the InsProvider table.
+                sqlquery2 = """SELECT PlanID FROM InsPlans"""
+
+                mycursor.execute(sqlquery2)
                 results = mycursor.fetchall()
-                
+
                 # Check the results
                 if results:
-
                     for row in results:
-                            # AnnualPrem, AnnualDeductible, AnnualCoverageLimit, LifetimeCoverage, Network
-                            ran_AnnualPrem = random.randint(2500, 15000)
-                            ran_AnnualDeductible = random.randint(1000, 10000)
-                            ran_CoverageLimit = random.randint(25000, 150000)
-                            ran_LifetimeCoverage = random.randint(5e5, 2e6)
+                        # AnnualPrem, AnnualDeductible, AnnualCoverageLimit, LifetimeCoverage, Network
+                        ran_AnnualPrem = random.randint(2500, 15000)
+                        ran_AnnualDeductible = random.randint(1000, 10000)
+                        ran_CoverageLimit = random.randint(25000, 150000)
+                        ran_LifetimeCoverage = random.randint(5e5, 2e6)
 
-                            # This is a list of different insurance networks
-                            net_list = ['Blue Shield', 'Red Shield', 'Orange Shield', 'Yellow Shield', 'Green Shield', 'Purple Shield', 'Indigo Shield',  'White Shield', 'Black Shield']
-                            ran_Network = fake.word(ext_word_list=net_list)
+                        # This is a list of different insurance networks
+                        net_list = ['Blue Shield', 'Red Shield', 'Orange Shield', 'Yellow Shield',
+                                    'Green Shield', 'Purple Shield', 'Indigo Shield',  'White Shield', 'Black Shield']
+                        #ran_Network = fake.word(ext_word_list=net_list)
 
-                            if args.verbose:
-                                print("ran_AnnualPrem", ran_AnnualPrem)
-                                print("ran_AnnualDeductible", ran_AnnualDeductible)
-                                print("ran_CoverageLimit", ran_CoverageLimit)
-                                print("ran_LifetimeCoverage", ran_LifetimeCoverage)
-                                print("ran_Network", ran_Network)
-                            
-                            # Insert into  InsPlans table
-                            mycursor.execute(insert_insplans,(row["PlanID"], row["CompanyID"],
-                                                                ran_AnnualPrem, ran_AnnualDeductible,
-                                                                ran_CoverageLimit, ran_LifetimeCoverage,
-                                                                ran_Network))
-                            #print(row['CompanyID'])
+                        if args.verbose:
+                            print("ran_AnnualPrem", ran_AnnualPrem)
+                            print("ran_AnnualDeductible", ran_AnnualDeductible)
+                            print("ran_CoverageLimit", ran_CoverageLimit)
+                            print("ran_LifetimeCoverage", ran_LifetimeCoverage)
+                            #print("ran_Network", ran_Network)
+                            print(row['PlanID'])
+
+                        # Insert into  InsPlans table
+                        mycursor.execute(insert_insplans, (ran_AnnualPrem, ran_AnnualDeductible,
+                                                           ran_CoverageLimit, ran_LifetimeCoverage,
+                                                           row["PlanID"]
+                                                           ))
+                        mydb.commit()
                 else:
                     print("Error: No CompanyID, PlanID found in InsProvider")
                     print("Please insert into Provider table first!")
