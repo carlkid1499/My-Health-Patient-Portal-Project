@@ -30,6 +30,8 @@ if __name__ == "__main__":
                         dest="provider", help="Set if you need to insert into Insurance Provider table")
     parser.add_argument("-plans", default=False, action="store_true",
                         dest="plans", help="Set if you need to insert into InsPlans table")
+    parser.add_argument("-precs", default=False, action="store_true",
+                        dest="patient_records", help="Set if you need to insert into the PatientRecords table")
     parser.add_argument("-host", type=str, required=False, default=None,
                         dest="host", help="Hostname for DB")
     parser.add_argument("-port", type=int, required=False, default=None,
@@ -51,9 +53,10 @@ if __name__ == "__main__":
         mycursor = mydb.cursor(dictionary=True)
 
     # SQL Statements for tables
-    insert_patients = "INSERT INTO PatientInfo(PID, name_first, name_last, DOB, gender, address, email, phone, Emergency_name, Emergency_phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    insert_insprovider = "INSERT INTO InsProvider(CompanyID, Company, PlanID, Category, Address, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    insert_insplans = "Update myhealth2.InsPlans SET AnnualPrem=%s, AnnualDeductible=%s, AnnualCoverageLimit=%s, LifetimeCoverage=%s WHERE InsPlans.PlanID=%s"
+    insert_patients = """INSERT INTO PatientInfo(PID, name_first, name_last, DOB, gender, address, email, phone, Emergency_name, Emergency_phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    insert_insprovider = """INSERT INTO InsProvider(CompanyID, Company, PlanID, Category, Address, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+    insert_insplans = """Update myhealth2.InsPlans SET AnnualPrem=%s, AnnualDeductible=%s, AnnualCoverageLimit=%s, LifetimeCoverage=%s WHERE InsPlans.PlanID=%s"""
+    insert_patientrecords = """INSERT INTO PatientRecords(PID, RecordTime, TCatID, CostToIns, CostToPatient, InsPayment, PatientPayment) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
 
     # Start the Faker instance
     random.seed()
@@ -179,23 +182,17 @@ if __name__ == "__main__":
                 # Check the results
                 if results:
                     for row in results:
-                        # AnnualPrem, AnnualDeductible, AnnualCoverageLimit, LifetimeCoverage, Network
+                        # AnnualPrem, AnnualDeductible, AnnualCoverageLimit, LifetimeCoverage
                         ran_AnnualPrem = random.randint(2500, 15000)
                         ran_AnnualDeductible = random.randint(1000, 10000)
                         ran_CoverageLimit = random.randint(25000, 150000)
                         ran_LifetimeCoverage = random.randint(5e5, 2e6)
-
-                        # This is a list of different insurance networks
-                        net_list = ['Blue Shield', 'Red Shield', 'Orange Shield', 'Yellow Shield',
-                                    'Green Shield', 'Purple Shield', 'Indigo Shield',  'White Shield', 'Black Shield']
-                        #ran_Network = fake.word(ext_word_list=net_list)
 
                         if args.verbose:
                             print("ran_AnnualPrem", ran_AnnualPrem)
                             print("ran_AnnualDeductible", ran_AnnualDeductible)
                             print("ran_CoverageLimit", ran_CoverageLimit)
                             print("ran_LifetimeCoverage", ran_LifetimeCoverage)
-                            #print("ran_Network", ran_Network)
                             print(row['PlanID'])
 
                         # Insert into  InsPlans table
@@ -207,6 +204,54 @@ if __name__ == "__main__":
                 else:
                     print("Error: No CompanyID, PlanID found in InsProvider")
                     print("Please insert into Provider table first!")
+
+            # Are we inserting into Patient Records
+            elif args.patient_records:
+                ''' Please note that PID and Treatment have been aleady generated '''
+
+                # PID, RecordTime, TCatID, CostToIns, CostToPatient, InsPayment, PatientPayment
+
+                # First we get a current list of PID's and TCatID's
+                sqlquery1 = """SELECT PID,DOB FROM PatientInfo"""
+                mycursor.execute(sqlquery1)
+                resultsq1 = mycursor.fetchall()
+
+                # Now we get a current list of TCatID's from TreatmentCategory
+                sqlquery2 = """SELECT TCatID FROM TreatmentCategory"""
+                mycursor.execute(sqlquery2)
+                resultsq2 = mycursor.fetchall()
+
+                for row in resultsq1:
+                    # Generate random RecordTime, CostToIns, CostToPatient, InsPayment, PatientPayment
+                    
+                    # Calculate a random RecordTime
+                    today = date.datetime.today()
+                    DOB = date.datetime.strptime(str(row["DOB"]), "%Y-%m-%d")                  
+                    rtimedelta = relativedelta(
+                        today, DOB)
+                    # Need to fix how i calc the timedelta. it currently outputs current run time. 11/19/2020
+                    timedelta = date.timedelta(rtimedelta.years*365 + rtimedelta.day)
+                    # datetime object: year, month, day, hour, minute, seconds
+                    ran_recordtime = DOB + rtimedelta
+                    ran_costtoins = random.randint(10,10000)
+                    ran_costtopatient = random.randint(1,ran_costtoins)
+                    ran_inspayment = ran_costtoins - ran_costtopatient
+                    ran_patientpayment = random.randint(1,ran_costtopatient)
+                    ran_tcatid = random.randint(2,len(resultsq2))
+
+                    if args.verbose:
+                        print("ran_recordtime", ran_recordtime)
+                        print("ran_costtoins", ran_costtoins)
+                        print("ran_costtopatient", ran_costtopatient)
+                        print("ran_inspayment", ran_inspayment)
+                        print("ran_patientpayment", ran_patientpayment)
+                        print("ran_tcatid", ran_tcatid)
+
+                    # Check to make sure the connection stuff is present
+                    if args.host and args.port and args.user and args.password and args.database:
+                        mycursor.execute(insert_patientrecords,
+                                     (row['PID'], ran_recordtime, ran_tcatid, ran_costtoins, ran_costtopatient, ran_inspayment, ran_patientpayment))
+                        mydb.commit()
 
         except KeyboardInterrupt:
             mydb.commit()
