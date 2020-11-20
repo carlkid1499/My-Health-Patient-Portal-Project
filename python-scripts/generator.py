@@ -229,10 +229,15 @@ if __name__ == "__main__":
                     DOB = date.datetime.strptime(str(row["DOB"]), "%Y-%m-%d")                  
                     rtimedelta = relativedelta(
                         today, DOB)
-                    # Need to fix how i calc the timedelta. it currently outputs current run time. 11/19/2020
-                    timedelta = date.timedelta(rtimedelta.years*365 + rtimedelta.day)
+                    # We add 2 in case any rtimedelta values are 0
+                    ran_days = random.randint(1,rtimedelta.years*365 + rtimedelta.days + 2)
+                    ran_seconds = random.randint(1,rtimedelta.seconds + 2)
+                    ran_minutes = random.randint(1,rtimedelta.minutes + 2)
+                    ran_hours = random.randint(1,rtimedelta.hours + 2)
+                    timedelta = date.timedelta(days=ran_days, seconds=ran_seconds, minutes=ran_minutes, hours=ran_hours)
+            
                     # datetime object: year, month, day, hour, minute, seconds
-                    ran_recordtime = DOB + rtimedelta
+                    ran_recordtime = DOB + timedelta
                     ran_costtoins = random.randint(10,10000)
                     ran_costtopatient = random.randint(1,ran_costtoins)
                     ran_inspayment = ran_costtoins - ran_costtopatient
