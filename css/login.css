@@ -5,10 +5,10 @@ table, tr, th, td
 
 section {
   display: block;
-  background: white;
-  margin: 0 auto 1em;
+  background: rgb(172, 234, 250);
+  margin: 0 auto 0 auto;
   height: relative;
-  max-width: 1000px;
+  max-width: 600px;
   border-radius: .5em;
   color: white;
 }
@@ -42,7 +42,7 @@ body {
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
-  color: #017572;
+  color: #004240;
 }
 
 .form-signin .form-signin-heading,
@@ -72,18 +72,45 @@ body {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
-  border-color:#017572;
+  border-color:#004643;
 }
 
 .form-signin input[type="password"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  border-color:#017572;
+  border-color:#004643;
 }
 
 h2{
   text-align: center;
   color: #017572;
+}
+
+h3{
+  text-align: center;
+  color: #004643;
+}
+
+button.buttonLogin {
+  display:block;
+  margin-left: 40px;
+  margin-top: 15px;
+  width: 70px;
+  height: 40px;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+button.buttonSignUp {
+  display:block;
+  margin-left: 40px;
+  margin-top: 15px;
+  width: 70px;
+  height: 40px;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
 }
 /* ----- End: Login CSS ---*/
