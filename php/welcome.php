@@ -17,8 +17,8 @@ session_start();
 
 <head>
   <title>My Health Patient Portal</title>
-  <link href="localhost/cs360/css/welcome.css" rel='stylesheet' type="buttons/text">
-  <link href="localhost/cs360/css/normalize.css" rel='stylesheet' type="normalize">
+  <link href="css/welcome.css" rel="stylesheet">
+  <link href="css/normalize.css" rel="stylesheet">
   <script src="js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
 </head>
@@ -37,7 +37,7 @@ session_start();
                     <!-- If the login button is pushed -->
                     <?php if(isset($_POST['login']))
                     {
-                    header('Location: login.php');
+                    header('Location: php/login.php');
                     } 
                     ?>
                 </button>
@@ -46,7 +46,7 @@ session_start();
                 <!-- If the signup button is pushed -->
                     <?php if(isset($_POST['signup']))
                     {
-                    header('Location: signup.php');
+                    header('Location: php/signup.php');
                     } 
                     ?>
                 </button>
