@@ -32,6 +32,8 @@ if __name__ == "__main__":
                         dest="plans", help="Set if you need to insert into InsPlans table")
     parser.add_argument("-precs", default=False, action="store_true",
                         dest="patient_records", help="Set if you need to insert into the PatientRecords table")
+    parser.add_argument("-pnotes", default=False, action="store_true",
+                        dest="patient_notes", help="Set if you need to insert into the PatientNotes table")
     parser.add_argument("-host", type=str, required=False, default=None,
                         dest="host", help="Hostname for DB")
     parser.add_argument("-port", type=int, required=False, default=None,
@@ -57,7 +59,7 @@ if __name__ == "__main__":
     insert_insprovider = """INSERT INTO InsProvider(CompanyID, Company, PlanID, Category, Address, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
     insert_insplans = """Update myhealth2.InsPlans SET AnnualPrem=%s, AnnualDeductible=%s, AnnualCoverageLimit=%s, LifetimeCoverage=%s WHERE InsPlans.PlanID=%s"""
     insert_patientrecords = """INSERT INTO PatientRecords(PID, RecordTime, TCatID, CostToIns, CostToPatient, InsPayment, PatientPayment) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-
+    insert_patientnotes = """Update myhealth2.PatientNotes SET ProvID=%s, DiagnosisNotes=%s, DrRecommendations=%s, Treatment=%s WHERE PatientNotes.PNI=%s"""
     # Start the Faker instance
     random.seed()
     fake = Faker()
@@ -221,28 +223,31 @@ if __name__ == "__main__":
                 mycursor.execute(sqlquery2)
                 resultsq2 = mycursor.fetchall()
 
+                record_counter = 0
                 for row in resultsq1:
                     # Generate random RecordTime, CostToIns, CostToPatient, InsPayment, PatientPayment
-                    
+
                     # Calculate a random RecordTime
                     today = date.datetime.today()
-                    DOB = date.datetime.strptime(str(row["DOB"]), "%Y-%m-%d")                  
+                    DOB = date.datetime.strptime(str(row["DOB"]), "%Y-%m-%d")
                     rtimedelta = relativedelta(
                         today, DOB)
                     # We add 2 in case any rtimedelta values are 0
-                    ran_days = random.randint(1,rtimedelta.years*365 + rtimedelta.days + 2)
-                    ran_seconds = random.randint(1,rtimedelta.seconds + 2)
-                    ran_minutes = random.randint(1,rtimedelta.minutes + 2)
-                    ran_hours = random.randint(1,rtimedelta.hours + 2)
-                    timedelta = date.timedelta(days=ran_days, seconds=ran_seconds, minutes=ran_minutes, hours=ran_hours)
-            
+                    ran_days = random.randint(
+                        1, rtimedelta.years*365 + rtimedelta.days + 2)
+                    ran_seconds = random.randint(1, rtimedelta.seconds + 2)
+                    ran_minutes = random.randint(1, rtimedelta.minutes + 2)
+                    ran_hours = random.randint(1, rtimedelta.hours + 2)
+                    timedelta = date.timedelta(
+                        days=ran_days, seconds=ran_seconds, minutes=ran_minutes, hours=ran_hours)
+
                     # datetime object: year, month, day, hour, minute, seconds
                     ran_recordtime = DOB + timedelta
-                    ran_costtoins = random.randint(10,10000)
-                    ran_costtopatient = random.randint(1,ran_costtoins)
+                    ran_costtoins = random.randint(10, 10000)
+                    ran_costtopatient = random.randint(1, ran_costtoins)
                     ran_inspayment = ran_costtoins - ran_costtopatient
-                    ran_patientpayment = random.randint(1,ran_costtopatient)
-                    ran_tcatid = random.randint(2,len(resultsq2))
+                    ran_patientpayment = random.randint(1, ran_costtopatient)
+                    ran_tcatid = random.randint(2, len(resultsq2))
 
                     if args.verbose:
                         print("ran_recordtime", ran_recordtime)
@@ -255,8 +260,42 @@ if __name__ == "__main__":
                     # Check to make sure the connection stuff is present
                     if args.host and args.port and args.user and args.password and args.database:
                         mycursor.execute(insert_patientrecords,
-                                     (row['PID'], ran_recordtime, ran_tcatid, ran_costtoins, ran_costtopatient, ran_inspayment, ran_patientpayment))
+                                         (row['PID'], ran_recordtime, ran_tcatid, ran_costtoins, ran_costtopatient, ran_inspayment, ran_patientpayment))
                         mydb.commit()
+                        record_counter = record_counter + 1
+                print("Commited:", record_counter,
+                      " records to PatientRecords")
+
+            elif args.patient_notes:
+                # First we grab all the PatientNotes by ID
+                sqlquery = """SELECT PNI FROM PatientNotes"""
+                mycursor.execute(sqlquery)
+                resultsq = mycursor.fetchall()
+
+                counter = 0
+                for row in resultsq:
+                    # Now we generate the random data for the PatientNotes columns
+
+                    # At the moment 550 is the max number of HealthProviders we have this can be changed later
+                    ran_provid = random.randint(1, 550)
+                    ran_diagnosisnotes = fake.text(max_nb_chars=255)
+                    ran_drrecommendations = fake.text(max_nb_chars=255)
+                    ran_treatment = random.randint(0, 1)
+
+                    if args.verbose:
+                        print("PNI: ", row['PNI'])
+                        print("ran_provid:", ran_provid)
+                        print("ran_diagnosisnotes:", ran_diagnosisnotes)
+                        print("ran_drrecommendations:", ran_drrecommendations)
+                        print("ran_treatment", ran_treatment)
+
+                    # Check to make sure the connection stuff is present
+                    if args.host and args.port and args.user and args.password and args.database:
+                        mycursor.execute(insert_patientnotes,
+                                         (ran_provid, ran_diagnosisnotes, ran_drrecommendations, ran_treatment, row['PNI']))
+                        mydb.commit()
+                        counter = counter + 1
+                print("Commited:", counter, " records to PatientNotes")
 
         except KeyboardInterrupt:
             mydb.commit()
