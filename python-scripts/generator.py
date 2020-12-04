@@ -33,7 +33,9 @@ if __name__ == "__main__":
     parser.add_argument("-precs", default=False, action="store_true",
                         dest="patient_records", help="Set if you need to insert into the PatientRecords table")
     parser.add_argument("-pnotes", default=False, action="store_true",
-                        dest="patient_notes", help="Set if you need to insert into the PatientNotes table")
+                        dest="patient_notes", help="Set if you need to insert into the HealthProvider table")
+    parser.add_argument("-hprovider", default=False, action="store_true",
+                        dest="health_provider", help="Set if you need to insert into the PatientNotes table")
     parser.add_argument("-host", type=str, required=False, default=None,
                         dest="host", help="Hostname for DB")
     parser.add_argument("-port", type=int, required=False, default=None,
@@ -60,6 +62,7 @@ if __name__ == "__main__":
     insert_insplans = """Update myhealth2.InsPlans SET AnnualPrem=%s, AnnualDeductible=%s, AnnualCoverageLimit=%s, LifetimeCoverage=%s WHERE InsPlans.PlanID=%s"""
     insert_patientrecords = """INSERT INTO PatientRecords(PID, RecordTime, TCatID, CostToIns, CostToPatient, InsPayment, PatientPayment) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
     insert_patientnotes = """Update myhealth2.PatientNotes SET ProvID=%s, DiagnosisNotes=%s, DrRecommendations=%s, Treatment=%s WHERE PatientNotes.PNI=%s"""
+    insert_healthprovider = """Update myhealth2.HealthProvider SET ProvAddr=%s WHERE HealthProvider.ProvID=%s"""
     # Start the Faker instance
     random.seed()
     fake = Faker()
@@ -296,6 +299,30 @@ if __name__ == "__main__":
                         mydb.commit()
                         counter = counter + 1
                 print("Commited:", counter, " records to PatientNotes")
+            
+            elif args.health_provider:
+                # First we grab all the HealthProvider ID;s (ProvID)
+                sqlquery = """SELECT ProvID FROM HealthProvider"""
+                mycursor.execute(sqlquery)
+                resultsq = mycursor.fetchall()
+
+                health_counter = 0
+                for row in resultsq:
+                    # Generate the address
+                    ran_HEALTHADDRESS = fake.address()
+
+                    if args.verbose:
+                        print("ProvID", row["ProvID"])
+                        print("ProvAddr:", ran_HEALTHADDRESS)
+                    
+                    # Check to make sure the connection stuff is present
+                    if args.host and args.port and args.user and args.password and args.database:
+                        mycursor.execute(insert_healthprovider,
+                                         (ran_HEALTHADDRESS,row["ProvID"]))
+                        mydb.commit()
+                        health_counter = health_counter + 1
+                print("Commited:", health_counter, " records to HealthProvider")
+
 
         except KeyboardInterrupt:
             mydb.commit()
