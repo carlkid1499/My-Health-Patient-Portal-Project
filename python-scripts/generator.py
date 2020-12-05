@@ -38,6 +38,8 @@ if __name__ == "__main__":
                         dest="health_provider", help="Set if you need to insert into the PatientNotes table")
     parser.add_argument("-membership", default=False, action="store_true",
                         dest="membership", help="Set if you need to insert into the Membership table")
+    parser.add_argument("-costs", default=False, action="store_true",
+                        dest="costs", help="Set if you need to insert into the Costs table")
     parser.add_argument("-host", type=str, required=False, default=None,
                         dest="host", help="Hostname for DB")
     parser.add_argument("-port", type=int, required=False, default=None,
@@ -66,6 +68,7 @@ if __name__ == "__main__":
     insert_patientnotes = """Update myhealth2.PatientNotes SET ProvID=%s, DiagnosisNotes=%s, DrRecommendations=%s, Treatment=%s WHERE PatientNotes.PNI=%s"""
     insert_healthprovider = """Update myhealth2.HealthProvider SET ProvAddr=%s WHERE HealthProvider.ProvID=%s"""
     insert_membership = """INSERT INTO myhealth2.Membership(ProvID, NetworkID) VALUES(%s, %s)"""
+    insert_costs = """INSERT INTO myhealth2.Costs(CompanyID, TCatID, AllowedCost, InNetworkCoverage, OutNetworkCoverage, FullDeductible) VALUES (%s, %s, %s, %s, %s, %s)"""
     # Start the Faker instance
     random.seed()
     fake = Faker()
@@ -302,7 +305,7 @@ if __name__ == "__main__":
                         mydb.commit()
                         counter = counter + 1
                 print("Commited:", counter, " records to PatientNotes")
-            
+
             elif args.health_provider:
                 # First we grab all the HealthProvider ID;s (ProvID)
                 sqlquery = """SELECT ProvID FROM HealthProvider"""
@@ -317,15 +320,16 @@ if __name__ == "__main__":
                     if args.verbose:
                         print("ProvID", row["ProvID"])
                         print("ProvAddr:", ran_HEALTHADDRESS)
-                    
+
                     # Check to make sure the connection stuff is present
                     if args.host and args.port and args.user and args.password and args.database:
                         mycursor.execute(insert_healthprovider,
-                                         (ran_HEALTHADDRESS,row["ProvID"]))
+                                         (ran_HEALTHADDRESS, row["ProvID"]))
                         mydb.commit()
                         health_counter = health_counter + 1
-                print("Commited:", health_counter, " records to HealthProvider")
-            
+                print("Commited:", health_counter,
+                      " records to HealthProvider")
+
             elif args.membership:
                 # First we need to grab a few things a list of ProvID, NetworkID
                 sqlquery1 = """SELECT ProvID FROM HealthProvider"""
@@ -346,14 +350,56 @@ if __name__ == "__main__":
                     if args.verbose:
                         print("ProvID: ", row["ProvID"])
                         print("NetworkID: ", ran_networkid)
-                    
+
                     # Check to make sure the connection stuff is present
                     if args.host and args.port and args.user and args.password and args.database:
                         mycursor.execute(insert_membership,
                                          (row["ProvID"], ran_networkid))
                         mydb.commit()
                         membership_counter = membership_counter + 1
-                print("Commited:", membership_counter, " records to Membership")
+                print("Commited:", membership_counter,
+                      " records to Membership")
+
+            elif args.costs:
+                # First lets grab some information, list of CompanyID's and TCatID's
+                sqlquery1 = """SELECT CompanyID FROM InsProvider"""
+                sqlquery2 = """SELECT TCatID  FROM TreatmentCategory"""
+
+                # Now we execute said queries
+                mycursor.execute(sqlquery1)
+                resultsq1 = mycursor.fetchall()
+
+                mycursor.execute(sqlquery2)
+                resultsq2 = mycursor.fetchall()
+
+                # For each Company ID
+                for q1row in resultsq1:
+                    # For each TCatID
+                    for q2row in resultsq2:
+
+                        # We generate some random data
+                        ran_allowedcost = random.randint(1e3, 10e3)
+                        ran_innetworkcoverage = random.randint(1e3, 100e3)
+                        ran_outnetworkcoverage = random.randint(1e3, 50e3)
+                        ran_fulldeductible = random.randint(1e3, 10e3)
+
+                        if args.verbose:
+                            print("CompanyID:", q1row["CompanyID"])
+                            print("TCatID:", q2row["TCatID"])
+                            print("AllowedCost:", ran_allowedcost)
+                            print("InNetworkCoverage:", ran_innetworkcoverage)
+                            print("OutNetworkCoverage:",
+                                  ran_outnetworkcoverage)
+                            print("FullDeductible:", ran_fulldeductible)
+                            print("")
+
+                        # Now we can insert into the costs table
+                        # Check to make sure the connection stuff is present
+                        if args.host and args.port and args.user and args.password and args.database:
+                            mycursor.execute(insert_costs,
+                                             (q1row["CompanyID"], q2row["TCatID"], ran_allowedcost,
+                                              ran_innetworkcoverage, ran_outnetworkcoverage, ran_fulldeductible))
+                            mydb.commit()
 
         except KeyboardInterrupt:
             mydb.commit()
