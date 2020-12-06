@@ -25,9 +25,24 @@ $pid = $_SESSION['pid'];
 <head>
   <title>Healthcare Worker Portal </title>
   <link href='../css/style.css' rel='stylesheet'>
+  <link href="../css/welcome.css" rel='stylesheet'>
+  <link href="../css/blue_theme.css" rel='stylesheet'>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <script src="../js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
 </head>
+
+<div class="w3-bar w3-theme-d5">
+  <button class="w3-bar-item w3-button">Home</button>
+  <button class="w3-bar-item w3-button">Button</button>
+  <button class="w3-bar-item w3-button">Button</button>
+</div>
+
+<div class="header w3-theme-d2">
+    
+        <h1><b>My Health Patient Portal</b></h1>
+    
+</div>
 
 <body>
 
