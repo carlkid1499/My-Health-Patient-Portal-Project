@@ -42,6 +42,8 @@ if __name__ == "__main__":
                         dest="costs", help="Set if you need to insert into the Costs table")
     parser.add_argument("-coverage", default=False, action="store_true",
                         dest="coverage", help="Set if you need to insert into Coverage table")
+    parser.add_argument("-enrolled", default=False, action="store_true",
+                        dest="enrolled", help="Set if you need to insert into Enrolled table")
     parser.add_argument("-host", type=str, required=False, default=None,
                         dest="host", help="Hostname for DB")
     parser.add_argument("-port", type=int, required=False, default=None,
@@ -72,6 +74,7 @@ if __name__ == "__main__":
     insert_membership = """INSERT INTO myhealth2.Membership(ProvID, NetworkID) VALUES(%s, %s)"""
     insert_costs = """INSERT INTO myhealth2.Costs(CompanyID, TCatID, AllowedCost, InNetworkCoverage, OutNetworkCoverage, FullDeductible) VALUES (%s, %s, %s, %s, %s, %s)"""
     insert_coverage = """INSERT INTO myhealth2.Coverage(PlanID, CompanyID, TCatID) VALUES (%s, %s, %s)"""
+    insert_enrolled = """INSERT INTO myhealth2.Enrolled(PlanID, PID, CompanyID) VALUES(%s, %s, %s)"""
 
     # Start the Faker instance
     random.seed()
@@ -430,7 +433,7 @@ if __name__ == "__main__":
                             print("CompanyID:", q1row["CompanyID"])
                             print("TCatID:", q2row["TCatID"])
 
-                        # Now we can insert into the costs table
+                        # Now we can insert into the Coverage table
                         # Check to make sure the connection stuff is present
                         if args.host and args.port and args.user and args.password and args.database:
                             mycursor.execute(insert_coverage,
@@ -438,6 +441,40 @@ if __name__ == "__main__":
                             mydb.commit()
                             coverage_counter = coverage_counter + 1
                 print("Commited:", coverage_counter, "records")
+
+            elif args.enrolled:
+                # First lets get some data, a list of PlanID,Company, and PID's
+                sqlquery1 = """SELECT PlanID,CompanyID FROM InsPlans"""
+                sqlquery2 = """SELECT PID FROM PatientInfo"""
+
+                # Now we execute the queries
+                mycursor.execute(sqlquery1)
+                resultsq1 = mycursor.fetchall()
+
+                mycursor.execute(sqlquery2)
+                resultsq2 = mycursor.fetchall()
+
+                enrolled_counter = 0
+                # For each PlanID, Company
+                for q1row in resultsq1:
+
+                    # We grab a random PID
+                    ran_pid = random.randint(0, len(resultsq2)-1)
+
+                    if args.verbose:
+                        print("PlanID:", q1row["PlanID"])
+                        print("ran_pid:", resultsq2[ran_pid]["PID"])
+                        print("CompandID", q1row["CompanyID"])
+                        print("")
+
+                    # Now we insert into the enrolled table
+                    # Check to make sure the connection stuff is present
+                    if args.host and args.port and args.user and args.password and args.database:
+                        mycursor.execute(insert_enrolled,
+                                         (q1row["PlanID"], resultsq2[ran_pid]["PID"], q1row["CompanyID"]))
+                        mydb.commit()
+                        enrolled_counter = enrolled_counter + 1
+                print("Commited: ", enrolled_counter, "Enrolled Records")
 
         except KeyboardInterrupt:
             mydb.commit()
