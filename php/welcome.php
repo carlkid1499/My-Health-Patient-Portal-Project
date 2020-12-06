@@ -18,6 +18,7 @@ if ($conn->connect_error) {
 
 ?>
 
+<!--test for git commit-->
 <!------------- HTML ------------->
 <!DOCTYPE html>
 <html lang="en">
