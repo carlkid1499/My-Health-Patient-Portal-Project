@@ -40,6 +40,8 @@ if __name__ == "__main__":
                         dest="membership", help="Set if you need to insert into the Membership table")
     parser.add_argument("-costs", default=False, action="store_true",
                         dest="costs", help="Set if you need to insert into the Costs table")
+    parser.add_argument("-coverage", default=False, action="store_true",
+                        dest="coverage", help="Set if you need to insert into Coverage table")
     parser.add_argument("-host", type=str, required=False, default=None,
                         dest="host", help="Hostname for DB")
     parser.add_argument("-port", type=int, required=False, default=None,
@@ -69,6 +71,8 @@ if __name__ == "__main__":
     insert_healthprovider = """Update myhealth2.HealthProvider SET ProvAddr=%s WHERE HealthProvider.ProvID=%s"""
     insert_membership = """INSERT INTO myhealth2.Membership(ProvID, NetworkID) VALUES(%s, %s)"""
     insert_costs = """INSERT INTO myhealth2.Costs(CompanyID, TCatID, AllowedCost, InNetworkCoverage, OutNetworkCoverage, FullDeductible) VALUES (%s, %s, %s, %s, %s, %s)"""
+    insert_coverage = """INSERT INTO myhealth2.Coverage(PlanID, CompanyID, TCatID) VALUES (%s, %s, %s)"""
+
     # Start the Faker instance
     random.seed()
     fake = Faker()
@@ -400,6 +404,40 @@ if __name__ == "__main__":
                                              (q1row["CompanyID"], q2row["TCatID"], ran_allowedcost,
                                               ran_innetworkcoverage, ran_outnetworkcoverage, ran_fulldeductible))
                             mydb.commit()
+
+            elif args.coverage:
+                #  First we get some data from the database, get a list of PlanID's, ComapnyID's, and TCatID's
+                sqlquery1 = """SELECT PlanID,CompanyID FROM InsPlans"""
+                sqlquery2 = """SELECT TCatID  FROM TreatmentCategory"""
+
+                # Now we execute the queries
+                mycursor.execute(sqlquery1)
+                resultsq1 = mycursor.fetchall()
+
+                mycursor.execute(sqlquery2)
+                resultsq2 = mycursor.fetchall()
+
+                coverage_counter = 0
+                #  For each PlanID,CompanyID
+                for q1row in resultsq1:
+                    # For each TCatID
+                    for q2row in resultsq2:
+
+                        # We insert all TCatID's
+
+                        if args.verbose:
+                            print("PlanID:", q1row["PlanID"])
+                            print("CompanyID:", q1row["CompanyID"])
+                            print("TCatID:", q2row["TCatID"])
+
+                        # Now we can insert into the costs table
+                        # Check to make sure the connection stuff is present
+                        if args.host and args.port and args.user and args.password and args.database:
+                            mycursor.execute(insert_coverage,
+                                             (q1row["PlanID"], q1row["CompanyID"], q2row["TCatID"]))
+                            mydb.commit()
+                            coverage_counter = coverage_counter + 1
+                print("Commited:", coverage_counter, "records")
 
         except KeyboardInterrupt:
             mydb.commit()
