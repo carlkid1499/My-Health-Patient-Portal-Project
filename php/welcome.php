@@ -1,145 +1,61 @@
+<?php
+/* This is the signup php file. The goal if for a new/existing patient
+to sign up for an account username and password.
+*/
+
+# Start the session
+ob_start();
+session_start();
+# Declare Global Vars for file
+$msg = "";
+// Create connection for log in
+$conn = new mysqli("localhost", "myhealth2", "CIOjh^J8h^?b", "myhealth2");
+// Check if connection is valid
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+  $msg = "Connection failed: to DB";
+}
+
+?>
+
 <!------------- HTML ------------->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to My Health Portal</title>
-    <link href="css/welcome.css" rel='stylesheet'>
-    <link href="css/blue_theme.css" rel='stylesheet'>
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <script src="js/effects.js"></script>
-    <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome to My Health Portal</title>
+  <link href="css/welcome.css" rel='stylesheet'>
+  <link href="css/blue_theme.css" rel='stylesheet'>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <script src="js/effects.js"></script>
 
-        /* Full-width input fields */
-        input[type=text], input[type=password] {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-        }
+  <style>
+    @-webkit-keyframes animatezoom {
+      from {-webkit-transform: scale(0)} 
+      to {-webkit-transform: scale(1)}
+      }
+    
+    @keyframes animatezoom {
+      from {transform: scale(0)} 
+      to {transform: scale(1)}
+      }
 
-        /* Set a style for all buttons */
-        button {
-        background-color: #007183;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-        }
-
-        button:hover {
-        opacity: 0.8;
-        }
-
-        /* Extra styles for the cancel button */
-        .cancelbtn {
-        width: auto;
-        padding: 10px 18px;
-        background-color: #f44336;
-        }
-
-        /* Center the image and position the close button */
-        .imgcontainer {
-        text-align: center;
-        margin: 24px 0 12px 0;
-        position: relative;
-        }
-
-        img.avatar {
-        width: 40%;
-        max-width: 200px;
-        border-radius: 50%;
-        }
-
-        .container {
-        padding: 16px;
-        }
-
-        span.psw {
-        float: right;
-        padding-top: 16px;
-        }
-
-        /* The Modal (background) */
-        .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        padding-top: 60px;
-        }
-
-        /* Modal Content/Box */
-        .modal-content {
-        background-color: #fefefe;
-        margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-        border: 1px solid #888;
-        width: 80%; /* Could be more or less, depending on screen size */
-        max-width: 800px;
-        }
-
-        /* The Close Button (x) */
-        .close {
-        position: absolute;
-        right: 25px;
-        top: 0;
-        color: #000;
-        font-size: 35px;
-        font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-        color: red;
-        cursor: pointer;
-        }
-
-        /* Add Zoom Animation */
-        .animate {
-        -webkit-animation: animatezoom 0.6s;
-        animation: animatezoom 0.6s
-        }
-
-        @-webkit-keyframes animatezoom {
-        from {-webkit-transform: scale(0)} 
-        to {-webkit-transform: scale(1)}
-        }
-        
-        @keyframes animatezoom {
-        from {transform: scale(0)} 
-        to {transform: scale(1)}
-        }
-
-        /* Change styles for span and cancel button on extra small screens */
-        @media screen and (max-width: 300px) {
-        span.psw {
-            display: block;
-            float: none;
-        }
-        .cancelbtn {
-            width: 100%;
-        }
-        }
-</style>
-
+    /* Change styles for span and cancel button on extra small screens */
+    @media screen and (max-width: 300px) {
+      span.psw {
+          display: block;
+          float: none;
+      }
+      .cancelbtn {
+          width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-
-<!-- Sidebar -->
-
-
-<!--main content -->
+<!--top bar -->
 <div class="w3-bar w3-theme-d5">
   <button class="w3-bar-item w3-button">Home</button>
   <button class="w3-bar-item w3-button">Button</button>
@@ -147,30 +63,29 @@
 </div>
 
 <div class="header w3-theme-d2">
-    
-        <h1><b>My Health Patient Portal</b></h1>
-    
+  <h1><b>My Health Patient Portal</b></h1>
 </div>
 
-<div class="content">
-    <div class="center">
-        <button class="w3-button w3-xlarge w3-round w3-black w3-ripple" 
-        onclick="document.getElementById('id01').style.display='block'" style="width:auto;"
-            id="btnlogin" type="submit" name="login">Login
-                    <!-- If the login button is pushed -->
-                    
-        </button>
-        <button class="w3-button w3-xlarge w3-round w3-black w3-ripple" 
-        onclick="document.getElementById('id02').style.display='block'" style="width:auto;"
-            id="btnsignup" type="submit" name="signup">Create Account
-                <!-- If the signup button is pushed -->
-                    <?php if(isset($_POST['signup']))
-                    {
-                    header('Location: php/signup.php');
-                    } 
-                    ?>
-        </button>
-    </div>
+<div class="content background">
+
+  <div class="center">
+    <button class="w3-button w3-xlarge w3-round w3-black w3-ripple" 
+    onclick="document.getElementById('id01').style.display='block'" style="width:auto;"
+      id="btnlogin" type="submit" name="login">Login
+          <!-- If the login button is pushed -->
+                
+    </button>
+    <button class="w3-button w3-xlarge w3-round w3-black w3-ripple" 
+    onclick="document.getElementById('id02').style.display='block'" style="width:auto;"
+      id="btnsignup" type="submit" name="signup">Create Account
+          <!-- If the signup button is pushed -->
+          <?php if(isset($_POST['signup']))
+          {
+          header('Location: php/signup.php');
+          } 
+          ?>
+    </button>
+  </div>
 </div>
 
 <div class="footer w3-theme-d2 center">
@@ -262,8 +177,8 @@
                                                     ?>" method="post">
         </form>
 
-        <div class="container" style="background-color:#f1f1f1">
-            <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+        <div class="container">
+          <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
         </div>
     </div>
   </form>
@@ -274,49 +189,100 @@
 <div id="id02" class="modal">
   
   <form class="modal-content animate" action="/action_page.php" method="post">
-    <div class="imgcontainer">
-      <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
-      <img src="assets/user_icon.png" alt="Avatar" class="avatar">
-    </div>
+  <div class="center">
+    <h3>Create Account</h3>
+  </div>
 
+  <div class="container">
+  <section class="signup_area" id="signup_area">
+    <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                  ?>" method="post">
+      <input type="text" class="form-signup" name="pid" placeholder="Patient ID" required></br></br>
+      <input type="text" class="form-signup" name="name_first" placeholder="First Name" required></br></br>
+      <input type="text" class="form-signup" name="name_last" placeholder="Last Name" required></br></br>
+      <input type="text" class="form-signup" name="username" placeholder="username" required></br></br>
+      <input type="password" class="form-control" name="password" placeholder="password" required>
+      <input type="password" class="form-control" name="retype_password" placeholder="retype password" required>
+      <button class="submit-button" type="submit" name="submit">submit
+        <!-- If the submit button is pushed, we need to process the data. If successfull we need to redirect to the patient portal -->
+        <?php if (isset($_POST['submit'])) {
+          // Process the form information
+          // Now we check if the password files match. Strip whitespace first
+          if (trim($_POST['password']) == trim($_POST['retype_password'])) {
+            // passwords match yay, lets process !
+            $pid = trim($_POST['pid']);
+            $name_first = trim($_POST['name_first']);
+            $name_last = trim($_POST['name_last']);
+            $password = trim($_POST['password']);
+            $username = trim($_POST['username']);
+            // We retrieve and update data based on the PID, first lets check if the PID is valid
+            // Query the PatientInfo database for the information
+            $results = $conn->query("SELECT PID FROM PatientInfo WHERE PID='$pid' AND name_first='$name_first' AND name_last='$name_last'");
+
+            // Check if results is NULL, if it is the PID doesn't exist
+            if ($results == NULL) {
+              $msg = "Not a valid Patient ID, please contact tech support!";
+            } else {
+              // Create a random UserID. Max is unsigned int for mysql
+              $userid = rand(1, 4294967295);
+              // Check if it already exists in the table/DB.
+              $results = $conn->query("SELECT UserID FROM Users WHERE UserID='$userid'");
+              if ($results != NULL) {
+                // We need to insert into the Users table with the info provied
+                $results = $conn->query("INSERT INTO Users (UserID, PID, Username, UserPassword, IsEmployee) VALUES ('$userid','$pid', '$username', '$password', 0)");
+                if($results != NULL)
+                {
+                  // If we get here we inserted into users successfully
+                  header('Location: ../index.php');
+                }
+                else
+                {
+                  $msg = "error creating account please try again or contact support";
+                }
+              } else {
+                $msg = "We ran into an error please try again or contact support!";
+              }
+            }
+          }
+        } else {
+          $msg = "password field did not match! Please try again!";
+        }
+        ?>
+      </button>
+    </form>
+  </section>
     <div class="container">
-      <label for="uname"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" name="uname" required>
-
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" required>
-        
-      <button type="submit">Login</button>
-    </div>
-
-    <div class="container" style="background-color:#f1f1f1">
-      <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
-    </div>
+        <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
+      </div>
+  </div>
   </form>
 </div>
 
 </div>
 
 <script>
-    // Get the modal
-    var modal = document.getElementById('id01');
+  // Get the modal
+  var modal = document.getElementById('id01');
 
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
 
-    var modal2 = document.getElementById('id02');
+  var modal2 = document.getElementById('id02');
 
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == modal2) {
-            modal2.style.display = "none";
-        }
-    }
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal2) {
+          modal2.style.display = "none";
+      }
+  }
 </script>
+
+  <?php echo "$msg" ?>
+  <?php $conn->close(); ?>
 
 </body>
 </html>
