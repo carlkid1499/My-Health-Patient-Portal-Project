@@ -1,4 +1,20 @@
 <?php
+date_default_timezone_set("America/Los_Angeles");
+$date = date("l jS \of F Y h:i:s A");
+//========== Database Connection ==========
+
+$dbservername = "localhost";
+$dbusername = "myhealth2";
+$dbpassword = "CIOjh^J8h^?b";
+$dbname = "myhealth2";
+
+// Create connection
+$conn = new mysqli($dbservername, $dbusername, $dbpassword, $dbname);
+// Check connection
+if ($conn -> connect_error) {
+  die("Connection failed: ".$conn -> connect_error);
+  echo "Connection failed: to DB";
+}
 
 # This is a query to search by First Name, Last Name, DOB
 # Values must be set before the query is run.

@@ -4,10 +4,6 @@
 * through this page.
 */
 
-# import another php file and access it's variables
-include 'sandbox.php';
-echo $test_var;
-
 # Start the session again to access session variables
 session_start();
 # Grab all the session values
@@ -16,8 +12,13 @@ $userid = $_SESSION['userid'];
 $isemployee = $_SESSION['isemployee'];
 $pid = $_SESSION['pid'];
 
+# import another php file and access it's variables
+include 'queries.php';
+echo $date;
+
 # Global Vars
-$records_btn = null;
+global $records_btn;
+global $results;
 ?>
 
 <!------------- HTML ------------->
@@ -64,14 +65,6 @@ $records_btn = null;
       $phone = NULL;
       $e_name = NULL;
       $e_phone = NULL;
-
-      // Create connection for log in
-      $conn = new mysqli("localhost", "myhealth2", "CIOjh^J8h^?b", "myhealth2");
-      // Check if connection is valid
-      if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-        $msg = "Connection failed: to DB";
-      }
 
       // Query the PatientInfo database for the information
       $results = $conn->query("SELECT * FROM PatientInfo WHERE PID='$pid'");
@@ -132,30 +125,51 @@ $records_btn = null;
 
   <!-- Lets create a patient records section -->
   <section name="patientrecords">
-    <table name="patientrecords_table">
+    <?php if ($records_btn) {
+      $results = $conn->query("SELECT * FROM PatientRecords WHERE PID='$pid'");
+      // Did we get any results
+      if ($results->num_rows > 0) {
 
-      <?php if ($records_btn) {
-
+        # Create the table
         echo "<!-- Populate table column names -->
+        <table name=\"patientrecords_table\">
         <tr>
-          <th> Patient ID </th>
-          <th> First name </th>
-          <th> Last name </th>
-          <th> Birthday </th>
-          <th> Gender </th>
-          <th> Address </th>
-          <th> Email </th>
-          <th> Phone </th>
-          <th> Emergency Contact Name </th>
-          <th> Emergency Phone Number </th>
+          <th> Record Time </th>
+          <th> TCatID </th>
+          <th> CostToIns </th>
+          <th> CostToPatient </th>
+          <th> InsPayment </th>
+          <th> PatientPayment </th>
         </tr>";
+
+        // Get the Query Results
+        while ($row = $results->fetch_assoc()) {
+          $recordtime = $row["RecordTime"];
+          $tcatid = $row["TCatID"];
+          $costtoins = $row["CostToIns"];
+          $costtopatient = $row["CostToPatient"];
+          $inspayment = $row["InsPayment"];
+          $patientpayment = $row["PatientPayment"];
+
+          # Print each table row
+          echo "<tr>
+        <td>$recordtime</td>
+        <td>$tcatid</td>
+        <td>$costtoins</td>
+        <td>$costtopatient</td>
+        <td>$inspayment</td>
+        <td>$patientpayment</td>
+        </tr>";
+        }
+
+        # Close the table
+        echo "</table>";
       }
-      ?>
-    </table>
-
+    } else {
+      $records_btn = false;
+    }
+    ?>
   </section>
-
-  <?php $conn->close(); ?>
 </body>
 
 </html>
