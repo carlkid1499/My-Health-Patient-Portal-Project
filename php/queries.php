@@ -16,8 +16,17 @@ if ($conn -> connect_error) {
   echo "Connection failed: to DB";
 }
 
-# Get Patient Records
-$patient_records="SELECT * FROM PatientRecords WHERE PID='$pid'";
+# Get Patient Records Query
+$patient_records = $conn->prepare("SELECT RecordTime, TCatID, PatientPayment FROM PatientRecords WHERE PID=?");
+
+# Get the Treatment Category Name Query
+$treament_category = $conn->prepare("SELECT TreatmentCategory FROM TreatmentCategory WHERE TCatID=?");
+
+# Get Patient Notes Query
+$patient_notes = $conn->prepare("SELECT ProvID, NoteTime, DiagnosisNotes, DrRecommendations FROM PatientNotes WHERE PID=?");
+
+# Get the Provider Name Query
+$healthprovider_name =  $conn->prepare("SELECT ProvName, ProvAddr FROM HealthProvider WHERE ProvID=?");
 
 # This is a query to search by First Name, Last Name, DOB
 # Values must be set before the query is run.

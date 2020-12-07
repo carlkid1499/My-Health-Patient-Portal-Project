@@ -18,7 +18,7 @@ echo $date;
 
 # Global Vars
 global $records_btn;
-global $results;
+global $record_results;
 ?>
 
 <!------------- HTML ------------->
@@ -67,12 +67,12 @@ global $results;
       $e_phone = NULL;
 
       // Query the PatientInfo database for the information
-      $results = $conn->query("SELECT * FROM PatientInfo WHERE PID='$pid'");
+      $record_results = $conn->query("SELECT * FROM PatientInfo WHERE PID='$pid'");
 
       // Did we get any results
-      if ($results->num_rows > 0) {
+      if ($record_results->num_rows > 0) {
         // Get the Query Results
-        while ($row = $results->fetch_assoc()) {
+        while ($row = $record_results->fetch_assoc()) {
           $name_fisrt = $row["name_first"];
           $name_last = $row["name_last"];
           $DOB = $row["DOB"];
@@ -126,48 +126,86 @@ global $results;
   <!-- Lets create a patient records section -->
   <section name="patientrecords">
     <?php if ($records_btn) {
-      $results = $conn->query($patient_records);
+      // Grab the information needed.
+      $patient_records->bind_param("i", $pid);
+      $patient_records->execute();
+      $record_results = $patient_records->get_result();
+
+      $patient_notes->bind_param("i", $pid);
+      $patient_notes->execute();
+      $note_results = $patient_notes->get_result();
+
+      $treament_category_name = null;
+      $provid_name = null;
+      $provid = null;
+      $notetime = null;
+      $diagnosisnotes = null;
+      $drrecommendations = null;
+
       // Did we get any results
-      if ($results->num_rows > 0) {
+      if ($record_results->num_rows >0) {
 
         # Create the table
         echo "<!-- Populate table column names -->
         <table name=\"patientrecords_table\">
         <tr>
           <th> Record Time </th>
-          <th> TCatID </th>
-          <th> CostToIns </th>
-          <th> CostToPatient </th>
-          <th> InsPayment </th>
-          <th> PatientPayment </th>
+          <th> Treatment Category</th>
+          <th> Patient Payment </th>
+          <th> Provider Name </th>
+          <th> Note Time </th>
+          <th> Diagnosis Notes </th>
+          <th> Dr. Recommendations </th>
         </tr>";
 
         // Get the Query Results
-        while ($row = $results->fetch_assoc()) {
+        while ($row = $record_results->fetch_assoc()) {
           $recordtime = $row["RecordTime"];
           $tcatid = $row["TCatID"];
-          $costtoins = $row["CostToIns"];
-          $costtopatient = $row["CostToPatient"];
-          $inspayment = $row["InsPayment"];
           $patientpayment = $row["PatientPayment"];
-          $treament_category_results = $conn->query("SELECT TreatmentCategory FROM TreatmentCategory WHERE TCatID='$tcatid'");
-          $treament_category_name = null;
+          $treament_category->bind_param("i", $tcatid);
+          $treament_category->execute();
+          $treament_category_results = $treament_category->get_result();
+          
+
           if($treament_category_results->num_rows >0)
           {
             $tcatrow = $treament_category_results->fetch_assoc();
             $treament_category_name = $tcatrow["TreatmentCategory"];
-            echo "Test";
           }
 
           # Print each table row
           echo "<tr>
         <td>$recordtime</td>
         <td>$treament_category_name</td>
-        <td>$costtoins</td>
-        <td>$costtopatient</td>
-        <td>$inspayment</td>
         <td>$patientpayment</td>
         </tr>";
+        }
+
+        while($row = $note_results->fetch_assoc())
+        {
+            $provid = $row["ProvID"];
+            $notetime = $row["NoteTime"];
+            $diagnosisnotes = $row["DiagnosisNotes"];
+            $drrecommendations = $row["DrRecommendations"];
+
+            $healthprovider_name->bind_param("i", $provid);
+            $healthprovider_name->execute();
+            $healthprovider_name_results = $healthprovider_name->get_result();
+
+            if($healthprovider_name_results->num_rows>0)
+            {
+              $provid_row = $healthprovider_name_results->fetch_assoc();
+              $provid_name = $provid_row["ProvName"];
+            }
+
+            # Print each table row
+          echo "
+          <tr>
+          <td>$provid_name</td>
+          <td>$notetime</td>
+          <td>$diagnosisnotes</td>
+          </tr>";
         }
 
         # Close the table
