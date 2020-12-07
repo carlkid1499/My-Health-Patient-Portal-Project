@@ -170,7 +170,7 @@ if ($conn->connect_error) {
             <h4 class="form-signin-heading"><?php echo $msg; ?></h4>
             <input type="text" class="form-control" name="username" placeholder="username" required autofocus></br>
             <input type="password" class="form-control" name="password" placeholder="password" required>
-            <button id="btnlogin" type="submit" name="login">Login</button>
+            <button type="submit" name="login" class="loginbtn">Login</button>
         </form>
 
         <!-- form for password imput-->
@@ -189,9 +189,12 @@ if ($conn->connect_error) {
 <!--modal called to display signup form-->
 <div id="id02" class="modal">
   
-  <form class="modal-content animate" action="/action_page.php" method="post">
-  <div class="center">
-    <h3>Create Account</h3>
+  <form class="modal-content animate" method="post">
+  <div class="imgcontainer">
+    <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+    <div class="center">
+      <h3>Create Account</h3>
+    </div>
   </div>
 
   <div class="container">
@@ -204,7 +207,7 @@ if ($conn->connect_error) {
       <input type="text" class="form-signup" name="username" placeholder="username" required></br></br>
       <input type="password" class="form-control" name="password" placeholder="password" required>
       <input type="password" class="form-control" name="retype_password" placeholder="retype password" required>
-      <button class="submit-button" type="submit" name="submit">submit
+      <button class="loginbtn" type="submit" name="submit">submit
         <!-- If the submit button is pushed, we need to process the data. If successfull we need to redirect to the patient portal -->
         <?php if (isset($_POST['submit'])) {
           // Process the form information
@@ -234,7 +237,7 @@ if ($conn->connect_error) {
                 if($results != NULL)
                 {
                   // If we get here we inserted into users successfully
-                  header('Location: ../index.php');
+                  header('Location: index.php');
                 }
                 else
                 {
@@ -254,7 +257,7 @@ if ($conn->connect_error) {
   </section>
     <div class="container">
         <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
-      </div>
+    </div>
   </div>
   </form>
 </div>
@@ -263,21 +266,13 @@ if ($conn->connect_error) {
 
 <script>
   // Get the modal
-  var modal = document.getElementById('id01');
+  var modals = document.getElementsByClassName('modal');
 
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = function(event) {
-      if (event.target == modal) {
-          modal.style.display = "none";
-      }
-  }
-
-  var modal2 = document.getElementById('id02');
-
-  // When the user clicks anywhere outside of the modal, close it
-  window.onclick = function(event) {
-      if (event.target == modal2) {
-          modal2.style.display = "none";
+    for(i=0; i<modals.length;i++)
+      if (event.target == modals[i]) {
+          modals[i].style.display = "none";
       }
   }
 </script>

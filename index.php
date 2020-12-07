@@ -1,7 +1,7 @@
 <?php
 # import another php file and access it's variables
 include 'php/sandbox.php';
-echo $test_var; ?>
+?>
 
 <!------------- HTML ------------->
 <!DOCTYPE html>

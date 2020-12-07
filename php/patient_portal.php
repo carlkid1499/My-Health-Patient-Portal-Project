@@ -6,7 +6,6 @@
 
 # import another php file and access it's variables
 include 'sandbox.php';
-echo $test_var;
 
 # Start the session again to access session variables
 session_start();
@@ -23,9 +22,8 @@ $pid = $_SESSION['pid'];
 
 <head>
   <title>Patient Portal </title>
-  <link href='../css/style.css' rel='stylesheet'>
-  <link href="css/welcome.css" rel='stylesheet'>
-  <link href="css/blue_theme.css" rel='stylesheet'>
+  <link href='../css/welcome.css' rel='stylesheet'>
+  <link href="../css/blue_theme.css" rel='stylesheet'>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <script src="../js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
@@ -35,21 +33,30 @@ $pid = $_SESSION['pid'];
   <button class="w3-bar-item w3-button">Home</button>
   <button class="w3-bar-item w3-button">Button</button>
   <button class="w3-bar-item w3-button">Button</button>
+  <button class="w3-bar-item w3-button logoutbtn" style="float: right;">Logout
+    <!-- If the logout button is pushed -->
+    <?php if(isset($_POST['logout']))
+        {
+          header('Location: logout.php');
+        } 
+        ?>
+    </button>
 </div>
 
 <div class="header w3-theme-d2">
-    
-        <h1><b>My Health Patient Portal</b></h1>
-    
+    <h1><b>My Health Patient Portal</b></h1>
 </div>
 
 <body>
+<div class="container">
+<div class="center">
 
   <h2>Patient Portal: <?php echo " Welcome - $username"?></h2>
 
-  <section name="patientinfo">
+  <section name="patientinfo" class="center">
     <!-- This is the place where we get/print and patient informaton in the database. The patient must have access to only his/her info and no one else -->
-    <table name="patientinfo_table">
+    <table name="patientinfo_table" class="center" style="width=95%;" border="3" cellpadding="1">
+    <tbody>
       <!-- Populate table column names -->
       <tr>
         <th> Patient ID </th> 
@@ -117,15 +124,19 @@ $pid = $_SESSION['pid'];
         <td><?php echo "$e_name"?></td>
         <td><?php echo "$e_phone"?></td>
       </tr>
+      </tbody>
     </table>
   </section>
+</div>
+</div>
+<div class="center">
   <section name="options">
     <!-- Let's put any actions the user (patient) can take. i.e update info, view records, etc -->
     <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="update-info-button" type="submit" name="update information">update information</button>
-      <button class="records-button" type="submit" name="records">view records</button> 
-      <button class="sign-out-button" type="submit" name="logout">logout
+      <button class="portal" type="submit" name="update information">update information</button>
+      <button class="portal" type="submit" name="records">view records</button> 
+      <button class="logoutbtn right" type="submit" name="logout">Logout
         <!-- If the logout button is pushed -->
         <?php if(isset($_POST['logout']))
         {
@@ -136,6 +147,7 @@ $pid = $_SESSION['pid'];
       </button>
     </form>
   </section>
+</div>
   <?php $conn->close(); ?>
 </body>
 </html>

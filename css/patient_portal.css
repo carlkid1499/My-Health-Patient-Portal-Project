@@ -1,0 +1,48 @@
+/* ----- Begin: This is the style css for the search bad ----- */
+* {
+  box-sizing: border-box;
+}
+
+form.searchbar input[type=text] {
+  padding: 12px;
+  font-size: 17px;
+  border: 1px solid grey;
+  width: 60%;
+  background: #f1f1f1;
+  text-align: center;
+}
+
+form.searchbar::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+/* ----- End: This is the style css for the search bad ----- */
+
+table, tr, th, td{
+  border: 3px solid black;
+  border-collapse: collapse;
+}
+
+.block-of-text{
+  width: 75%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.doctor-query{
+  width: 75%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.searchbtn{
+  width: 20% ;
+}
+
+.align-middle{
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+}

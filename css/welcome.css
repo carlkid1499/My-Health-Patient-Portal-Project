@@ -79,6 +79,17 @@ padding: 20px;
   background-color: #f44336;
   }
 
+.loginbtn{
+  width: 100%;
+  padding: 10px 18px;
+  background-color: #007183;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+}
+
 /* Center the image and position the close button */
 .imgcontainer {
   text-align: center;
@@ -165,9 +176,22 @@ button {
   margin: 8px 0;
   border: none;
   cursor: pointer;
-  width: 100%;
   }
 
 button:hover {
   opacity: 0.8;
   }
+
+table.center{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.logoutbtn{
+  background-color: red !important;
+  color:white !important;
+}
+
+.right{
+  text-align: right;
+}

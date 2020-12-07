@@ -6,7 +6,6 @@
 
 # import another php file and access it's variables
 include 'sandbox.php';
-echo $test_var;
 
 
 # Start the session again to access session variables
@@ -24,8 +23,8 @@ $pid = $_SESSION['pid'];
 
 <head>
   <title>Healthcare Worker Portal </title>
-  <link href='../css/style.css' rel='stylesheet'>
-  <link href="../css/welcome.css" rel='stylesheet'>
+  <link href='../css/welcome.css' rel='stylesheet'>
+  <link href='../css/patient_portal.css' rel='stylesheet'>
   <link href="../css/blue_theme.css" rel='stylesheet'>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <script src="../js/effects.js"></script>
@@ -36,31 +35,44 @@ $pid = $_SESSION['pid'];
   <button class="w3-bar-item w3-button">Home</button>
   <button class="w3-bar-item w3-button">Button</button>
   <button class="w3-bar-item w3-button">Button</button>
+  <button class="w3-bar-item w3-button logoutbtn" name="logout" type="submit" style="float: right;">Logout
+    <!-- If the logout button is pushed -->
+    <?php if(isset($_POST['logout']))
+        {
+          header('Location: logout.php');
+        } 
+        ?>
+    </button>
 </div>
 
-<div class="header w3-theme-d2">
-    
-        <h1><b>My Health Patient Portal</b></h1>
-    
+<div class="header w3-theme-d2">  
+  <h1><b>My Health Patient Portal</b></h1>
 </div>
 
 <body>
-
+<div class="center">
   <h2>Healthcare Worker Portal: <?php echo " Welcome - $username"?></h2>
   <!-- This is the search bar: https://www.w3schools.com/howto/howto_css_search_button.asp -->
+  <div class="container">
   <section class="seachbar-section">
-    <form class="searchbar" id="searchbard" action="healthcare_worker_portal.php" method="post">
-      <input type="text" placeholder="Select Search by option..." name="searchbar-text">
-      <button type="searchbar-button" id="searchbar-button" value="searchbar-button" onclick="return checkInput();">search</button>
-      <select name="search_by_options_list">
-        <option name="search_by_options" id="search_by_options">Search by:</option>
-        <option name="search_by_options" id="search_by_options">Search by: First Name, Last Name, DOB</option>
-        <option name="search_by_options" id="search_by_options">Search by: Patient ID </option>
-        <option name="search_by_options" id="search_by_options">Search by: Patient Phone Number </option>
-      </select>
+    <form class="searchbar" id="searchbard" action="healthcare_worker_portal.php" method="post" style="margin:auto; max-width=60%">
+      <input type="text" placeholder="Patient Search Criteria" name="searchbar-text">
     </form>
+  </div>
+  <div>
+    <div class="container">
+    <select name="search_by_options_list" class="align-middle">
+      <option name="search_by_options" id="search_by_options">Search by:</option>
+      <option name="search_by_options" id="search_by_options">Search by: First Name, Last Name, DOB</option>
+      <option name="search_by_options" id="search_by_options">Search by: Patient ID </option>
+      <option name="search_by_options" id="search_by_options">Search by: Patient Phone Number </option>
+    </select>
+      </div>
+    <button class="searchbtn" id="searchbar-button" value="searchbar-button" onclick="return checkInput();">search</button>
+  </div>
   </section>
-
+</div>
+<div class>
   <form action="healthcare_worker_portal.php" method="post" id="options">
 
     <!-- QUERY OPTIONS SECTION -->
@@ -101,7 +113,6 @@ $pid = $_SESSION['pid'];
     </section>
 
     <!-- INPUT SECTION -->
-
     <section class="block-of-text">
       <fieldset>
         <legend>Input</legend>
@@ -143,12 +154,13 @@ $pid = $_SESSION['pid'];
       </fieldset>
     </section>
   </form>
-
+</div>
+<div class="doctor-query container">
   <section name="options">
     <!-- Let's put any actions the user (patient) can take. i.e update info, view records, etc -->
     <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="sign-out-button" type="submit" name="logout">logout
+      <button class="logoutbtn " type="submit" name="logout">Logout
         <!-- If the logout button is pushed -->
         <?php if(isset($_POST['logout']))
         {
@@ -158,7 +170,7 @@ $pid = $_SESSION['pid'];
         </button>
     </form>
   </section>
-
+</div>
   <?php $conn->close(); ?>
 </body>
 
