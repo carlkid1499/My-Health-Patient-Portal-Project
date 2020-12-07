@@ -16,6 +16,9 @@ if ($conn -> connect_error) {
   echo "Connection failed: to DB";
 }
 
+# Get Patient Records
+$patient_records="SELECT * FROM PatientRecords WHERE PID='$pid'";
+
 # This is a query to search by First Name, Last Name, DOB
 # Values must be set before the query is run.
 $name_first = "";

@@ -126,7 +126,7 @@ global $results;
   <!-- Lets create a patient records section -->
   <section name="patientrecords">
     <?php if ($records_btn) {
-      $results = $conn->query("SELECT * FROM PatientRecords WHERE PID='$pid'");
+      $results = $conn->query($patient_records);
       // Did we get any results
       if ($results->num_rows > 0) {
 
@@ -150,11 +150,19 @@ global $results;
           $costtopatient = $row["CostToPatient"];
           $inspayment = $row["InsPayment"];
           $patientpayment = $row["PatientPayment"];
+          $treament_category_results = $conn->query("SELECT TreatmentCategory FROM TreatmentCategory WHERE TCatID='$tcatid'");
+          $treament_category_name = null;
+          if($treament_category_results->num_rows >0)
+          {
+            $tcatrow = $treament_category_results->fetch_assoc();
+            $treament_category_name = $tcatrow["TreatmentCategory"];
+            echo "Test";
+          }
 
           # Print each table row
           echo "<tr>
         <td>$recordtime</td>
-        <td>$tcatid</td>
+        <td>$treament_category_name</td>
         <td>$costtoins</td>
         <td>$costtopatient</td>
         <td>$inspayment</td>
