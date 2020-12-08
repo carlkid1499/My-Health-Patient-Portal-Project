@@ -1,0 +1,197 @@
+
+body {
+margin: 0;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the top navigation bar */
+.topnav {
+overflow: hidden;
+background-color: #9cd6cf;
+}
+
+/* Style the topnav links */
+.topnav a {
+float: left;
+display: block;
+color: #000000;
+text-align: center;
+padding: 20px 20px;
+text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+background-color: #ddd;
+color: black;
+}
+
+/* Style the content */
+.content {
+background-color: #ddd;
+padding: 20px;
+height: 400px; /* Should be removed. Only for demonstration */
+}
+
+/* Style the footer */
+.footer {
+background-color: #9cd6cf;
+padding: 20px;
+}
+
+.header{
+text-align: center;
+padding: 20px;
+
+}
+
+.center{
+  text-align: center;
+  opacity: 1;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-color:#004643;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-color:#004643;
+}
+
+.background{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("../assets/hex_opac.png");
+  background-size: 50% relative;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+  }
+
+.loginbtn{
+  width: 100%;
+  padding: 10px 18px;
+  background-color: #007183;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+  }
+
+img.avatar {
+  width: 40%;
+  max-width: 200px;
+  border-radius: 50%;
+  }
+
+.container {
+  padding: 16px;
+  }
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+  }
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+  }
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+  max-width: 800px;
+  }
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+  }
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+  }
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+  }
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  }
+
+  /* Set a style for all buttons */
+button {
+  background-color: #007183;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  }
+
+button:hover {
+  opacity: 0.8;
+  }
+
+table.center{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.logoutbtn{
+  background-color: red !important;
+  color:white !important;
+}
+
+.right{
+  text-align: right;
+}

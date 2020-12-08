@@ -18,17 +18,32 @@ session_start();
 
 <head>
   <title>Login Page</title>
-  <link href="css/login.css" rel='stylesheet'>
+  <link href="../css/welcome.css" rel='stylesheet'>
+  <link href="../css/blue_theme.css" rel='stylesheet'>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <script src="js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
 </head>
 
+<div class="w3-bar w3-theme-d5">
+  <button class="w3-bar-item w3-button">Home</button>
+  <button class="w3-bar-item w3-button">Button</button>
+  <button class="w3-bar-item w3-button">Button</button>
+</div>
+
+<div class="header w3-theme-d2">
+    
+        <h1><b>My Health Patient Portal</b></h1>
+    
+</div>
+
 <body>
 
-  <h2>My Health Patient Portal Login Page</h2>
+  <h2>My Health Patient Portal Login</h2>
 
   <section class="login_area" id="login_area">
-    <h2>Enter Username and Password</h2>
+  <div class="center">
+    <h3>Enter Username and Password</h3>
     <div class="container form-signin">
 
       <?php
@@ -80,12 +95,12 @@ session_start();
           else if ($_SESSION['isemployee'] == 1)
           {
             // We have a Worker
-            header('Location: php/healthcare_worker_portal.php');
+            header('Location: healthcare_worker_portal.php');
           }
           else
           {
             // Error
-            $msg = "Something went wrong please try again! If the error continues contact support@suppor.com";
+            $msg = "Something went wrong please try again! If the error continues contact support@support.com";
           }
         }
       }
@@ -99,13 +114,13 @@ session_start();
         <h4 class="form-signin-heading"><?php echo $msg; ?></h4>
         <input type="text" class="form-control" name="username" placeholder="username" required autofocus></br>
         <input type="password" class="form-control" name="password" placeholder="password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" name="login">Login</button>
+        <button id="btnlogin" type="submit" name="login">Login</button>
       </form>
 
       <!-- Let's put any actions the user can take. i.e update info, view records, etc -->
     <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="signup-button" type="submit" name="signup">signup
+      <button id="btnsignup" type="submit" name="signup">signup
         <!-- If the logout button is pushed -->
         <?php if(isset($_POST['signup']))
         {
@@ -115,8 +130,8 @@ session_start();
         </button>
     </form>
     </div>
+  </div>
   </section>
-  <?php $conn->close(); ?>
 </body>
 
 </html>
