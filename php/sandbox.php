@@ -1,4 +1,19 @@
 <?php
+//========== Database Connection ==========
+
+$dbservername = "localhost";
+$dbusername = "myhealth2";
+$dbpassword = "CIOjh^J8h^?b";
+$dbname = "myhealth2";
+
+// Create connection
+$conn = new mysqli($dbservername, $dbusername, $dbpassword, $dbname);
+// Check connection
+if ($conn -> connect_error) {
+  die("Connection failed: ".$conn -> connect_error);
+  echo "Connection failed: to DB";
+}
+
 //========== Global Parameters ==========
 
 $test_var = date("l jS \of F Y h:i:s A");
@@ -16,21 +31,6 @@ $successMsg = array('');
 $defaultTables = ['PatientInfo'];
 
 $search_result = null;
-
-//========== Database Connection ==========
-
-$servername = "localhost";
-$username = "myhealth2";
-$password = "CIOjh^J8h^?b";
-$dbname = "myhealth2";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn -> connect_error) {
-  die("Connection failed: ".$conn -> connect_error);
-  echo "Connection failed: to DB";
-}
 
 //========== Button Actions ==========
 
