@@ -14,7 +14,7 @@ $pid = $_SESSION['pid'];
 
 # import another php file and access it's variables
 include 'queries.php';
-echo $date;
+#echo $date;
 
 # Global Vars
 global $records_btn;
@@ -137,25 +137,22 @@ global $record_results;
 
       $treament_category_name = null;
       $provid_name = null;
+      $provid_address = null;
       $provid = null;
       $notetime = null;
       $diagnosisnotes = null;
       $drrecommendations = null;
 
       // Did we get any results
-      if ($record_results->num_rows >0) {
+      if ($record_results->num_rows > 0) {
 
-        # Create the table
-        echo "<!-- Populate table column names -->
+        # Create the records table
+        echo "
         <table name=\"patientrecords_table\">
         <tr>
           <th> Record Time </th>
           <th> Treatment Category</th>
           <th> Patient Payment </th>
-          <th> Provider Name </th>
-          <th> Note Time </th>
-          <th> Diagnosis Notes </th>
-          <th> Dr. Recommendations </th>
         </tr>";
 
         // Get the Query Results
@@ -166,10 +163,9 @@ global $record_results;
           $treament_category->bind_param("i", $tcatid);
           $treament_category->execute();
           $treament_category_results = $treament_category->get_result();
-          
 
-          if($treament_category_results->num_rows >0)
-          {
+
+          if ($treament_category_results->num_rows > 0) {
             $tcatrow = $treament_category_results->fetch_assoc();
             $treament_category_name = $tcatrow["TreatmentCategory"];
           }
@@ -181,35 +177,46 @@ global $record_results;
         <td>$patientpayment</td>
         </tr>";
         }
+        # Close the records table
+        echo "</table>";
 
-        while($row = $note_results->fetch_assoc())
-        {
-            $provid = $row["ProvID"];
-            $notetime = $row["NoteTime"];
-            $diagnosisnotes = $row["DiagnosisNotes"];
-            $drrecommendations = $row["DrRecommendations"];
+        # Create the notestable
+        echo "
+        <table name=\"patientnotes_table\">
+        <tr>
+          <th> Provider Name </th>
+          <th> Provider Address </th>
+          <th> Note Time </th>
+          <th> Diagnosis Notes </th>
+          <th> Dr. Recommendations </th>
+        </tr>";
 
-            $healthprovider_name->bind_param("i", $provid);
-            $healthprovider_name->execute();
-            $healthprovider_name_results = $healthprovider_name->get_result();
+        while ($row = $note_results->fetch_assoc()) {
+          $provid = $row["ProvID"];
+          $notetime = $row["NoteTime"];
+          $diagnosisnotes = $row["DiagnosisNotes"];
+          $drrecommendations = $row["DrRecommendations"];
 
-            if($healthprovider_name_results->num_rows>0)
-            {
-              $provid_row = $healthprovider_name_results->fetch_assoc();
-              $provid_name = $provid_row["ProvName"];
-            }
+          $healthprovider_name->bind_param("i", $provid);
+          $healthprovider_name->execute();
+          $healthprovider_name_results = $healthprovider_name->get_result();
 
-            # Print each table row
+          if ($healthprovider_name_results->num_rows > 0) {
+            $provid_row = $healthprovider_name_results->fetch_assoc();
+            $provid_name = $provid_row["ProvName"];
+            $provid_address = $provid_row["ProvAddr"];
+          }
+
+          # Print each table row
           echo "
           <tr>
           <td>$provid_name</td>
+          <td>$provid_address</td>
           <td>$notetime</td>
           <td>$diagnosisnotes</td>
+          <td>$drrecommendations</td>
           </tr>";
         }
-
-        # Close the table
-        echo "</table>";
       }
     } else {
       $records_btn = false;
