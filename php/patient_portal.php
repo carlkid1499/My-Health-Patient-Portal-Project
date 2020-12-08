@@ -5,7 +5,7 @@
 */
 
 # import another php file and access it's variables
-include 'sandbox.php';
+include 'queries.php';
 
 # Start the session again to access session variables
 session_start();
@@ -27,16 +27,10 @@ $phone = NULL;
 $e_name = NULL;
 $e_phone = NULL;
 
-// Create connection for log in
-$conn = new mysqli("localhost", "myhealth2", "CIOjh^J8h^?b", "myhealth2");
-// Check if connection is valid
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-  $msg = "Connection failed: to DB";
-}
-
 // Query the PatientInfo database for the information
-$results = $conn ->query("SELECT * FROM PatientInfo WHERE PID='$pid'");
+$patient_id_query->bind_param("i",$pid);
+$patient_id_query->execute();
+$results = $patient_id_query->get_result();
 
 // Did we get any results
 if($results->num_rows >0)
@@ -54,6 +48,10 @@ if($results->num_rows >0)
     $e_phone = $row["Emergency_phone"];
   } 
 }
+
+# Global Vars
+global $records_btn;
+global $record_results;
 ?>
 <!--end of php section-->
 
@@ -160,15 +158,149 @@ if($results->num_rows >0)
   <section name="options">
     <!-- Let's put any actions the user (patient) can take. i.e update info, view records, etc -->
     
-      <button class="portal" type="submit" name="update information">update information</button>
-      <button class="portal" type="submit" name="records">view records</button>
-<!--bring up form to make an appointment-->
+
+
+
+     <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="update-info-button" type="submit" name="update information">update information</button>
+      <button class="records-button" type="submit" name="records">view records
+        <!-- If the view records button is pushed -->
+        <?php if (isset($_POST['records'])) {
+          $records_btn = true;
+        }
+        ?>
+      </button>
+    </form>
+
+      <!--bring up form to make an appointment-->
       <button class="portal" onclick="document.getElementById('id01').style.display='block'" style="width:auto;"
         type="submit" name="appointment">Make Appointment
       </button>
 
   </section>
 </div>
+
+
+
+
+
+
+
+
+
+<!-- Lets create a patient records section -->
+<section name="patientrecords">
+    <?php if ($records_btn) {
+      // Grab the information needed.
+      $patient_records->bind_param("i", $pid);
+      $patient_records->execute();
+      $record_results = $patient_records->get_result();
+
+      $patient_notes->bind_param("i", $pid);
+      $patient_notes->execute();
+      $note_results = $patient_notes->get_result();
+
+      $treament_category_name = null;
+      $provid_name = null;
+      $provid_address = null;
+      $provid = null;
+      $notetime = null;
+      $diagnosisnotes = null;
+      $drrecommendations = null;
+
+      // Did we get any results
+      if ($record_results->num_rows > 0) {
+
+        # Create the records table
+        echo "
+        <table name=\"patientrecords_table\">
+        <tr>
+          <th> Record Time </th>
+          <th> Treatment Category</th>
+          <th> Patient Payment </th>
+        </tr>";
+
+        // Get the Query Results
+        while ($row = $record_results->fetch_assoc()) {
+          $recordtime = $row["RecordTime"];
+          $tcatid = $row["TCatID"];
+          $patientpayment = $row["PatientPayment"];
+          $treament_category->bind_param("i", $tcatid);
+          $treament_category->execute();
+          $treament_category_results = $treament_category->get_result();
+
+
+          if ($treament_category_results->num_rows > 0) {
+            $tcatrow = $treament_category_results->fetch_assoc();
+            $treament_category_name = $tcatrow["TreatmentCategory"];
+          }
+
+          # Print each table row
+          echo "<tr>
+        <td>$recordtime</td>
+        <td>$treament_category_name</td>
+        <td>$patientpayment</td>
+        </tr>";
+        }
+        # Close the records table
+        echo "</table>";
+
+        # Create the notestable
+        echo "
+        <table name=\"patientnotes_table\">
+        <tr>
+          <th> Provider Name </th>
+          <th> Provider Address </th>
+          <th> Note Time </th>
+          <th> Diagnosis Notes </th>
+          <th> Dr. Recommendations </th>
+        </tr>";
+
+        while ($row = $note_results->fetch_assoc()) {
+          $provid = $row["ProvID"];
+          $notetime = $row["NoteTime"];
+          $diagnosisnotes = $row["DiagnosisNotes"];
+          $drrecommendations = $row["DrRecommendations"];
+
+          $healthprovider_name->bind_param("i", $provid);
+          $healthprovider_name->execute();
+          $healthprovider_name_results = $healthprovider_name->get_result();
+
+          if ($healthprovider_name_results->num_rows > 0) {
+            $provid_row = $healthprovider_name_results->fetch_assoc();
+            $provid_name = $provid_row["ProvName"];
+            $provid_address = $provid_row["ProvAddr"];
+          }
+
+          # Print each table row
+          echo "
+          <tr>
+          <td>$provid_name</td>
+          <td>$provid_address</td>
+          <td>$notetime</td>
+          <td>$diagnosisnotes</td>
+          <td>$drrecommendations</td>
+          </tr>";
+        }
+      }
+    } else {
+      $records_btn = false;
+    }
+    ?>
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!--modal called to display login form-->
 <div id="id01" class="modal">
