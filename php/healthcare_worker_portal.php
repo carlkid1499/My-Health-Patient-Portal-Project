@@ -32,17 +32,43 @@ $pid = $_SESSION['pid'];
 </head>
 
 <div class="w3-bar w3-theme-d5">
-  <button class="w3-bar-item w3-button">Home</button>
-  <button class="w3-bar-item w3-button">Button</button>
-  <button class="w3-bar-item w3-button">Button</button>
-  <button class="w3-bar-item w3-button logoutbtn" name="logout" type="submit" style="float: right;">Logout
-    <!-- If the logout button is pushed -->
-    <?php if(isset($_POST['logout']))
+<!--Home Button-->
+  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="w3-bar-item w3-button" name="home" type="submit">Home
+        <!-- If the logout button is pushed -->
+        <?php if(isset($_POST['home']))
+        {
+          header('Location: ../index.php');
+        } 
+        ?>
+        </button>
+  </form>
+<!--Refresh Page Button-->
+  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="w3-bar-item w3-button" name="refresh" type="submit">Refresh Page
+        <!-- If the logout button is pushed -->
+        <?php if(isset($_POST['reload']))
+        {
+          header('Location: healthcare_worker_portal.php');
+        } 
+        ?>
+        </button>
+  </form>
+<!--Logout Button-->
+  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="w3-bar-item w3-button logoutbtn" name="logout" type="submit" style="float: right;">Logout
+        <!-- If the logout button is pushed -->
+        <?php if(isset($_POST['logout']))
         {
           header('Location: logout.php');
         } 
         ?>
-    </button>
+        </button>
+  </form>
+
 </div>
 
 <div class="header w3-theme-d2">  
@@ -55,7 +81,7 @@ $pid = $_SESSION['pid'];
   <!-- This is the search bar: https://www.w3schools.com/howto/howto_css_search_button.asp -->
   <div class="container">
   <section class="seachbar-section">
-    <form class="searchbar" id="searchbard" action="healthcare_worker_portal.php" method="post" style="margin:auto; max-width=60%">
+    <form class="searchbar" id="searchbard" action="healthcare_worker_portal.php" method="post" style="margin:auto; max-width=75%">
       <input type="text" placeholder="Patient Search Criteria" name="searchbar-text">
     </form>
   </div>
@@ -155,22 +181,7 @@ $pid = $_SESSION['pid'];
     </section>
   </form>
 </div>
-<div class="doctor-query container">
-  <section name="options">
-    <!-- Let's put any actions the user (patient) can take. i.e update info, view records, etc -->
-    <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
-                                                    ?>" method="post">
-      <button class="logoutbtn " type="submit" name="logout">Logout
-        <!-- If the logout button is pushed -->
-        <?php if(isset($_POST['logout']))
-        {
-          header('Location: logout.php');
-        } 
-        ?>
-        </button>
-    </form>
-  </section>
-</div>
+
   <?php $conn->close(); ?>
 </body>
 

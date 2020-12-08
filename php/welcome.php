@@ -58,9 +58,18 @@ if ($conn->connect_error) {
 
 <!--top bar -->
 <div class="w3-bar w3-theme-d5">
-  <button class="w3-bar-item w3-button">Home</button>
-  <button class="w3-bar-item w3-button">Button</button>
-  <button class="w3-bar-item w3-button">Button</button>
+<!--Home Button-->
+  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="w3-bar-item w3-button" name="home" type="submit">Home
+        <!-- If the logout button is pushed -->
+        <?php if(isset($_POST['home']))
+        {
+          header('Location: index.php');
+        } 
+        ?>
+        </button>
+  </form>
 </div>
 
 <div class="header w3-theme-d2">
@@ -79,12 +88,6 @@ if ($conn->connect_error) {
     <button class="w3-button w3-xlarge w3-round w3-black w3-ripple" 
     onclick="document.getElementById('id02').style.display='block'" style="width:auto;"
       id="btnsignup" type="submit" name="signup">Create Account
-          <!-- If the signup button is pushed -->
-          <?php if(isset($_POST['signup']))
-          {
-          header('Location: php/signup.php');
-          } 
-          ?>
     </button>
   </div>
 </div>
@@ -94,7 +97,7 @@ if ($conn->connect_error) {
 </div>
 
 
-<!--modal called to display signup form-->
+<!--modal called to display login form-->
 <div id="id01" class="modal">
   
   <form class="modal-content animate" method="post">
@@ -248,9 +251,10 @@ if ($conn->connect_error) {
               }
             }
           }
-        } else {
-          $msg = "password field did not match! Please try again!";
-        }
+          else {
+            $msg = "password field did not match! Please try again!";
+          }
+        } 
         ?>
       </button>
     </form>
@@ -264,6 +268,7 @@ if ($conn->connect_error) {
 
 </div>
 
+<!--JS to close modal window on click outside of window-->
 <script>
   // Get the modal
   var modals = document.getElementsByClassName('modal');

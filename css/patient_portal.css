@@ -7,7 +7,7 @@ form.searchbar input[type=text] {
   padding: 12px;
   font-size: 17px;
   border: 1px solid grey;
-  width: 60%;
+  max-width: 60%;
   background: #f1f1f1;
   text-align: center;
 }
@@ -25,13 +25,13 @@ table, tr, th, td{
 }
 
 .block-of-text{
-  width: 75%;
+  max-width: 75%;
   margin-right: auto;
   margin-left: auto;
 }
 
 .doctor-query{
-  width: 75%;
+  max-width: 75%;
   margin-right: auto;
   margin-left: auto;
 }
