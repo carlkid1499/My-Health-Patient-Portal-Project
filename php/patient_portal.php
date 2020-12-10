@@ -346,15 +346,15 @@ global $record_results;
         <section class="update_information" id="update_information">
           <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                         ?>" method="post">
-            <input type="text" class="form-signup" name="name_first" placeholder=<?php echo "$name_first" ?> required></br></br>
-            <input type="text" class="form-signup" name="name_last" placeholder=<?php echo "$name_last" ?> required></br></br>
-            <input type="text" class="form-signup" name="DOB" placeholder=<?php echo "$DOB" ?> required></br></br>
-            <input type="text" class="form-signup" name="gender" placeholder=<?php echo "$gender" ?> required></br></br>
-            <input type="text" class="form-signup" name="address" placeholder=<?php echo "$address" ?> required></br></br>
-            <input type="text" class="form-signup" name="email" placeholder=<?php echo "$email" ?> required></br></br>
-            <input type="text" class="form-signup" name="phone" placeholder=<?php echo "$phone" ?> required></br></br>
-            <input type="text" class="form-signup" name="ename" placeholder=<?php echo "$e_name" ?> required></br></br>
-            <input type="text" class="form-signup" name="ephone" placeholder=<?php echo "$e_phone" ?> required></br></br>
+            <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $name_first ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $DOB ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="gender" placeholder="<?php echo $gender ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="address" placeholder="<?php echo $address ?>" required></br></br>
+            <input type="text" class="form-signup" name="email" placeholder="<?php echo $email ?>" required></br></br>
+            <input type="text" class="form-signup" name="phone" placeholder="<?php echo $phone ?>" required></br></br>
+            <input type="text" class="form-signup" name="ename" placeholder="<?php echo $e_name ?>" required></br></br>
+            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo $e_phone ?>" required></br></br>
 
             <button class="loginbtn" type="submit" name="submit">submit
             </button>
