@@ -30,22 +30,16 @@ $e_phone = NULL;
 // Query the PatientInfo database for the information
 $patient_id_query->bind_param("i",$pid);
 $patient_id_query->execute();
-$results = $patient_id_query->get_result();
 
 // Did we get any results
-if($results->num_rows >0)
+if($patient_id_query->bind_result($name_first,$name_last,$DOB,$gender,$address,
+$email,$phone,$e_name,$e_phone))
 {
   // Get the Query Results
-  while ($row = $results->fetch_assoc()) {
-    $name_first = $row["name_first"];
-    $name_last = $row["name_last"];
-    $DOB = $row["DOB"];
-    $gender = $row["Gender"];
-    $address = $row["address"];
-    $email = $row["email"];
-    $phone = $row["phone"];
-    $e_name = $row["Emergency_name"];
-    $e_phone = $row["Emergency_phone"];
+  while ($patient_id_query->fetch()) {
+  // Do stuff with the $vars, in this case we only get one result
+  // Leaving this while loop in here for reference
+  // Each iteration of the loop the bind_results($vars) get updated with info
   } 
 }
 
