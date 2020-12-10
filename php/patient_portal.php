@@ -30,22 +30,16 @@ $e_phone = NULL;
 // Query the PatientInfo database for the information
 $patient_id_query->bind_param("i",$pid);
 $patient_id_query->execute();
-$results = $patient_id_query->get_result();
 
 // Did we get any results
-if($results->num_rows >0)
+if($patient_id_query->bind_result($name_first,$name_last,$DOB,$gender,$address,
+$email,$phone,$e_name,$e_phone))
 {
   // Get the Query Results
-  while ($row = $results->fetch_assoc()) {
-    $name_first = $row["name_first"];
-    $name_last = $row["name_last"];
-    $DOB = $row["DOB"];
-    $gender = $row["Gender"];
-    $address = $row["address"];
-    $email = $row["email"];
-    $phone = $row["phone"];
-    $e_name = $row["Emergency_name"];
-    $e_phone = $row["Emergency_phone"];
+  while ($patient_id_query->fetch()) {
+  // Do stuff with the $vars, in this case we only get one result
+  // Leaving this while loop in here for reference
+  // Each iteration of the loop the bind_results($vars) get updated with info
   } 
 }
 
@@ -187,64 +181,60 @@ global $record_results;
   </div>
 
   <div class="container">
-  <section class="signup_area" id="signup_area">
-    <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
-                                                  ?>" method="post">
-      <input type="text" class="form-signup" name="pid" placeholder="Patient ID" required></br></br>
-      <input type="text" class="form-signup" name="name_first" placeholder="First Name" required></br></br>
-      <input type="text" class="form-signup" name="name_last" placeholder="Last Name" required></br></br>
-      <input type="text" class="form-signup" name="username" placeholder="username" required></br></br>
-      <input type="password" class="form-control" name="password" placeholder="password" required>
-      <input type="password" class="form-control" name="retype_password" placeholder="retype password" required>
-      <button class="loginbtn" type="submit" name="submit">submit
-        <!-- If the submit button is pushed, we need to process the data. If successfull we need to redirect to the patient portal -->
-        <?php if (isset($_POST['submit'])) {
-          // Process the form information
-          // Now we check if the password files match. Strip whitespace first
-          if (trim($_POST['password']) == trim($_POST['retype_password'])) {
-            // passwords match yay, lets process !
-            $pid = trim($_POST['pid']);
-            $name_first = trim($_POST['name_first']);
-            $name_last = trim($_POST['name_last']);
-            $password = trim($_POST['password']);
-            $username = trim($_POST['username']);
-            // We retrieve and update data based on the PID, first lets check if the PID is valid
-            // Query the PatientInfo database for the information
-            $results = $conn->query("SELECT PID FROM PatientInfo WHERE PID='$pid' AND name_first='$name_first' AND name_last='$name_last'");
+  <section class="update_information" id="update_information">
+          <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                        ?>" method="post">
+            <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $name_first ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $DOB ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="gender" placeholder="<?php echo $gender ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="address" placeholder="<?php echo $address ?>"></br></br>
+            <input type="text" class="form-signup" name="email" placeholder="<?php echo $email ?>"></br></br>
+            <input type="text" class="form-signup" name="phone" placeholder="<?php echo $phone ?>"></br></br>
+            <input type="text" class="form-signup" name="ename" placeholder="<?php echo $e_name ?>"></br></br>
+            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo $e_phone ?>"></br></br>
 
-            // Check if results is NULL, if it is the PID doesn't exist
-            if ($results == NULL) {
-              $msg = "Not a valid Patient ID, please contact tech support!";
-            } else {
-              // Create a random UserID. Max is unsigned int for mysql
-              $userid = rand(1, 4294967295);
-              // Check if it already exists in the table/DB.
-              $results = $conn->query("SELECT UserID FROM Users WHERE UserID='$userid'");
-              if ($results != NULL) {
-                // We need to insert into the Users table with the info provied
-                $results = $conn->query("INSERT INTO Users (UserID, PID, Username, UserPassword, IsEmployee) VALUES ('$userid','$pid', '$username', '$password', 0)");
-                if($results != NULL)
-                {
-                  // If we get here we inserted into users successfully
-                  header('Location: index.php');
-                }
+            <button class="portal" type="submit" name="update_information">submit
+              <!-- If the update information button is pushed -->
+              <?php if (isset($_POST['update_information'])) {
+                // Clean the input
+                $new_address = trim($_POST['address']);
+                $new_email = trim($_POST['email']);
+                $new_phone = trim($_POST['phone']);
+                $new_ename = trim($_POST['ename']);
+                $new_ephone = trim($_POST['ephone']);
+
+                // Check if any values are empty
+                if($new_address == NULL)
+                  $new_address = $address;
+
+                if($new_email == NULL)
+                  $new_email = $email;
+
+                if($new_phone == NULL)
+                  $new_phone = $phone;
+
+                if($new_ename == NULL)
+                  $new_ename = $e_name;
+
+                if($new_ephone == NULL)
+                  $new_ephone = $e_phone;
+                  
+                // Run the update information query
+                $update_info->bind_param("sssssi", $new_address, $new_email, $new_phone, $new_ename, $new_ephone, $pid);
+                $rtval = $update_info->execute();
+
+                // Check the return value for error
+                if($rtval)
+                  echo "Success!";
                 else
-                {
-                  $msg = "error creating account please try again or contact support";
-                }
-              } else {
-                $msg = "We ran into an error please try again or contact support!";
+                  echo "No Success!";
               }
-            }
-          }
-          else {
-            $msg = "password field did not match! Please try again!";
-          }
-        } 
-        ?>
-      </button>
-    </form>
-  </section>
+              ?>
+
+            </button>
+          </form>
+        </section>
     <div class="container">
         <button type="button" onclick="document.getElementById('update-info').style.display='none'" class="cancelbtn">Cancel</button>
     </div>
