@@ -199,13 +199,13 @@ global $record_results;
       $patient_notes->execute();
       $note_results = $patient_notes->get_result();
 
-      $treament_category_name = null;
-      $provid_name = null;
-      $provid_address = null;
-      $provid = null;
-      $notetime = null;
-      $diagnosisnotes = null;
-      $drrecommendations = null;
+      $treament_category_name = NULL;
+      $provid_name = NULL;
+      $provid_address = NULL;
+      $provid = NULL;
+      $notetime = NULL;
+      $diagnosisnotes = NULL;
+      $drrecommendations = NULL;
 
       // Did we get any results
       if ($record_results->num_rows > 0) {
@@ -350,13 +350,50 @@ global $record_results;
             <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last ?>" disabled="disabled"></br></br>
             <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $DOB ?>" disabled="disabled"></br></br>
             <input type="text" class="form-signup" name="gender" placeholder="<?php echo $gender ?>" disabled="disabled"></br></br>
-            <input type="text" class="form-signup" name="address" placeholder="<?php echo $address ?>" required></br></br>
-            <input type="text" class="form-signup" name="email" placeholder="<?php echo $email ?>" required></br></br>
-            <input type="text" class="form-signup" name="phone" placeholder="<?php echo $phone ?>" required></br></br>
-            <input type="text" class="form-signup" name="ename" placeholder="<?php echo $e_name ?>" required></br></br>
-            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo $e_phone ?>" required></br></br>
+            <input type="text" class="form-signup" name="address" placeholder="<?php echo $address ?>"></br></br>
+            <input type="text" class="form-signup" name="email" placeholder="<?php echo $email ?>"></br></br>
+            <input type="text" class="form-signup" name="phone" placeholder="<?php echo $phone ?>"></br></br>
+            <input type="text" class="form-signup" name="ename" placeholder="<?php echo $e_name ?>"></br></br>
+            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo $e_phone ?>"></br></br>
 
-            <button class="loginbtn" type="submit" name="submit">submit
+            <button class="portal" type="submit" name="update_information">submit
+              <!-- If the update information button is pushed -->
+              <?php if (isset($_POST['update_information'])) {
+                // Clean the input
+                $new_address = trim($_POST['address']);
+                $new_email = trim($_POST['email']);
+                $new_phone = trim($_POST['phone']);
+                $new_ename = trim($_POST['ename']);
+                $new_ephone = trim($_POST['ephone']);
+
+                // Check if any values are empty
+                if($new_address == NULL)
+                  $new_address = $address;
+
+                if($new_email == NULL)
+                  $new_email = $email;
+
+                if($new_phone == NULL)
+                  $new_phone = $phone;
+
+                if($new_ename == NULL)
+                  $new_ename = $e_name;
+
+                if($new_ephone == NULL)
+                  $new_ephone = $e_phone;
+                  
+                // Run the update information query
+                $update_info->bind_param("sssssi", $new_address, $new_email, $new_phone, $new_ename, $new_ephone, $pid);
+                $rtval = $update_info->execute();
+
+                // Check the return value for error
+                if($rtval)
+                  echo "Success!";
+                else
+                  echo "No Success!";
+              }
+              ?>
+
             </button>
           </form>
         </section>
