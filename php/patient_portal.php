@@ -257,12 +257,32 @@ global $record_results;
   <section class="make_appointment" id="make_appointment">
     <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                   ?>" method="post">
-      <input type="date" class="form-signup" name="appointment_date" placeholder="Patient ID" required></br></br>
-      <input type="text" class="form-signup" name="name_first" placeholder=<?php echo "$name_first"?> required></br></br>
-      <input type="text" class="form-signup" name="name_last" placeholder=<?php echo "$name_last"?> required></br></br>
-      <input type="text" class="form-signup" name="username" placeholder="Reason for Visit" required></br></br>
+      <div class="center">
+      <input type="date" class="form-signup" name="appointment_date" required>
+      <span style="display:inline-block; width: 30px;"></span>
+      <input type="time" class="form-signup" name="appointment_time" placeholder="Patient ID" required>
+      </div>
+      <div class="center">
+      <p>Ex: 03/11/2020
+      <span style="display:inline-block; width: 30px;"></span>
+        Ex: 09:15 AM</p>
+      </div></br></br>
+      <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $name_first?>" disabled="disabled" required></br></br>
+      <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last?>" disabled="disabled" required></br></br>
+      <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="reason" placeholder="Reason for Visit" required></textarea></br></br>
 
-      <button class="loginbtn" type="submit" name="submit">submit
+      <button class="loginbtn" type="submit" name="create">submit
+      <!-- If the submit button is pushed, we need to process the data. If successfull we need to redirect to the patient portal -->
+        <?php if (isset($_POST['create'])) {
+          // Process the form information
+          $pid_appt = $_SESSION['pid'];
+          $date = $_POST['appointment_date'];
+          $time = $_POST['appointment_time'];
+          $reason = trim($_POST['reason']);
+
+          $conn->query("INSERT INTO Appointments (PID, Date, Time, Reason) VALUES ('$pid_appt', '$date', '$time', '$reason')");
+
+        }?>
       </button>
     </form>
   </section>
