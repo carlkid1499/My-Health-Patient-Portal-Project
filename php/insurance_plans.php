@@ -23,11 +23,6 @@ $companyid = null;
 
 $get_enrolled_query->bind_param("i", $pid);
 $get_enrolled_query->execute();
-
-# Tell Browser not to cache anything
-header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
-header("Pragma: no-cache"); // HTTP 1.0.
-header("Expires: 0");
 ?>
 <!--end of php section-->
 
@@ -111,130 +106,94 @@ header("Expires: 0");
           if ($get_enrolled_query->fetch()) {
             echo "We got results!";
           } else {
-            echo "<B> You are not enrolled! <B>";
-            echo "<div class=\"center\">
-                  <section name=\"options\">
-                  <!-- Let's put any actions the user (patient) can take. i.e see insurance plans etc -->
-    
-                  <div class=\"container\">
+            echo "<B> You are not enrolled! Select a state to begin! <B>";
+            echo "
+            <div class=\"container\">
+          <section class=\"insurance_plans\" id=\"insurance_plans\">
+          <form action=\"\" method=\"post\">
+            <div class=\"center\">
+              <p> State </p>
+              <select name=\"State\">
+                <option value=\"DEFAULT\"> State Abbr.</option>
+                <option value=\"AL\"> Alabama - AL </option>
+                <option value=\"AK\"> Alaska - AK </option>
+                <option value=\"AZ\"> Arizona - AZ </option>
+                <option value=\"AR\"> Arkansas - AR </option>
+                <option value=\"CA\"> California - CA </option>
+                <option value=\"Co\"> Colorado - CO </option>
+                <option value=\"CT\"> Connecticut - CT </option>
+                <option value=\"DE\"> Delaware - DE </option>
+                <option value=\"FL\"> Florida - FL </option>
+                <option value=\"GA\"> Georgia - GA </option>
+                <option value=\"HI\"> Hawaii - HI </option>
+                <option value=\"ID\"> Idaho - ID </option>
+                <option value=\"IL\"> Illinois - IL </option>
+                <option value=\"IN\"> Indiana - IN </option>
+                <option value=\"IA\"> Iowa - IA </option>
+                <option value=\"KS\"> Kansas - KS </option>
+                <option value=\"KY\"> Kentucky - KY </option>
+                <option value=\"LA\"> Louisiana - LA </option>
+                <option value=\"ME\"> Maine - ME </option>
+                <option value=\"MD\"> Maryland - MD </option>
+                <option value=\"MA\"> Massachusetts - MA </option>
+                <option value=\"MI\"> Michigan - MI </option>
+                <option value=\"MN\"> Minnesota - MN </option>
+                <option value=\"MS\"> Mississippi - MS </option>
+                <option value=\"MO\"> Missouri - MO </option>
+                <option value=\"MT\"> Montana - MT </option>
+                <option value=\"NE\"> Nebraska - NE </option>
+                <option value=\"NV\"> Nevada - NV </option>
+                <option value=\"NH\"> New Hampshire - NH </option>
+                <option value=\"NJ\"> New Jersey - NJ </option>
+                <option value=\"NM\"> New Mexico - NM </option>
+                <option value=\"NY\"> New York - NY </option>
+                <option value=\"NC\"> North Carolina - NC </option>
+                <option value=\"ND\"> North Dakota - ND </option>
+                <option value=\"OH\"> Ohio - OH </option>
+                <option value=\"OK\"> Oklahoma - OK </option>
+                <option value=\"OR\"> Oregon - OR </option>
+                <option value=\"PA\"> Pennsylvania - PA </option>
+                <option value=\"RI\"> Rhode Island - RI </option>
+                <option value=\"SC\"> South Carolina - SC </option>
+                <option value=\"SD\"> South Dakota - SD </option>
+                <option value=\"TN\"> Tennessee - TN </option>
+                <option value=\"TX\"> Texas - TX </option>
+                <option value=\"UT\"> Utah - UT </option>
+                <option value=\"VT\"> Vermont - VT </option>
+                <option value=\"VA\"> Virginia - VA </option>
+                <option value=\"WA\"> Washington - WA </option>
+                <option value=\"WV\"> West Virginia - WV </option>
+                <option value=\"WI\"> Wisconsin - WI </option>
+                <option value=\"WY\"> Wyoming - WY </option>
+              </select>
+              <input class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"button\" value=\"Submit\"/>
 
-                  <!--bring up form to list insurance providers and plans-->
-                  <button class=\"portal\" onclick=\"document.getElementById('insurance-plans').style.display='block'\" style=\"width:auto;\"
-                    type=\"submit\" name=\"insurance-plans\">Shop Insurace Plans
-                  </button>
-
-                  </div>
-                  </section>
-                  </div>";
+              </div>
+            <div class=\"center\">
+          </form>      
+            ";
+            
+            // Get the drop down data
+            if(isset($_POST['State']))
+              //  Check To make sure it's not the DEFAULT
+              if($_POST['State'] == "DEFAULT")
+                echo "Please select a state!  Try again!";
+              else{
+                //  We take the state and query for it in the Insurance Provider table
+              }
           }
         }
 
-        // Close the query we are done with it
-        $get_enrolled_query->close(); ?>
-
-
+      // Close the query we are done with it
+      $get_enrolled_query->close();
+      
+      
+        
+      ?>
       </section>
 
     </div>
   </div>
-
-
-  <!--modal called to display insurance providers and plans form-->
-<div id="insurance-plans" class="modal">
-  
-  <form class="modal-content animate" method="post">
-  <div class="imgcontainer">
-    <span onclick="document.getElementById('insurance-plans').style.display='none'" class="close" title="Close Modal">&times;</span>
-    <div class="center">
-      <h3>Shop for Insurace Plans</h3>
-    </div>
-  </div>
-
-  <div class="container">
-  <section class="insurance_plans" id="insurance_plans">
-    <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
-                                                  ?>" method="post">
-      <div class="center">
-        <p> State </p>
-        <select name="State">
-          <option value="DEFAULT"> State Abbr. </option>
-          <option value="AL"> Alabama - AL </option>
-          <option value="AK"> Alaska - AK </option>
-          <option value="AZ"> Arizona - AZ </option>
-          <option value="AR"> Arkansas - AR </option>
-          <option value="CA"> California - CA </option>
-          <option value="Co"> Colorado - CO </option>
-          <option value="CT"> Connecticut - CT </option>
-          <option value="DE"> Delaware - DE </option>
-          <option value="FL"> Florida - FL </option>
-          <option value="GA"> Georgia - GA </option>
-          <option value="HI"> Hawaii - HI </option>
-          <option value="ID"> Idaho - ID </option>
-          <option value="IL"> Illinois - IL </option> 
-          <option value="IN"> Indiana - IN </option>
-          <option value="IA"> Iowa - IA </option>
-          <option value="KS"> Kansas - KS </option> 
-          <option value="KY"> Kentucky - KY </option>
-          <option value="LA"> Louisiana - LA </option>
-          <option value="ME"> Maine - ME </option>
-          <option value="MD"> Maryland - MD </option>
-          <option value="MA"> Massachusetts - MA </option>
-          <option value="MI"> Michigan - MI </option>
-          <option value="MN"> Minnesota - MN </option>
-          <option value="MS"> Mississippi - MS </option>
-          <option value="MO"> Missouri - MO </option>
-          <option value="MT"> Montana - MT </option>
-          <option value="NE"> Nebraska - NE </option>
-          <option value="NV"> Nevada - NV </option>
-          <option value="NH"> New Hampshire - NH </option>
-          <option value="NJ"> New Jersey - NJ </option>
-          <option value="NM"> New Mexico - NM </option>
-          <option value="NY"> New York - NY </option>
-          <option value="NC"> North Carolina - NC </option>
-          <option value="ND"> North Dakota - ND </option>
-          <option value="OH"> Ohio - OH </option>
-          <option value="OK"> Oklahoma - OK </option>
-          <option value="OR"> Oregon - OR </option>
-          <option value="PA"> Pennsylvania - PA </option>
-          <option value="RI"> Rhode Island - RI </option>
-          <option value="SC"> South Carolina - SC </option>
-          <option value="SD"> South Dakota - SD </option>
-          <option value="TN"> Tennessee - TN </option>
-          <option value="TX"> Texas - TX </option>
-          <option value="UT"> Utah - UT </option>
-          <option value="VT"> Vermont - VT </option>
-          <option value="VA"> Virginia - VA </option>
-          <option value="WA"> Washington - WA </option>
-          <option value="WV"> West Virginia - WV </option>
-          <option value="WI"> Wisconsin - WI </option>
-          <option value="WY"> Wyoming - WY </option>
-        </select>  
-      </div>
-      <div class="center">
-
-      <button class="loginbtn" type="submit" name="create">submit
-      <!-- If the submit button is pushed, we need to process the data. If successfull we need to redirect to the patient portal -->
-        <?php if (isset($_POST['create'])) {
-          // Process the form information
-          $pid_appt = $_SESSION['pid'];
-          $date = $_POST['appointment_date'];
-          $time = $_POST['appointment_time'];
-          $reason = trim($_POST['reason']);
-
-          $conn->query("INSERT INTO Appointments (PID, Date, Time, Reason) VALUES ('$pid_appt', '$date', '$time', '$reason')");
-
-        }?>
-      </button>
-    </form>
-  </section>
-    <div class="container">
-        <button type="button" onclick="document.getElementById('insurance-plans').style.display='none'" class="cancelbtn">Cancel</button>
-    </div>
-  </div>
-  </form>
-</div>
-
-
 
   <?php $conn->close(); ?>
 </body>
