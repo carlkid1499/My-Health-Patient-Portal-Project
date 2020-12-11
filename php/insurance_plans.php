@@ -23,6 +23,8 @@ $companyid = null;
 
 $get_enrolled_query->bind_param("i", $pid);
 $get_enrolled_query->execute();
+$get_enrolled_query->store_result();
+$get_enrolled_query->bind_result($planid, $companyid);
 ?>
 <!--end of php section-->
 
@@ -101,20 +103,25 @@ $get_enrolled_query->execute();
       <section name="insuranceplans" class="center">
         <?php
         // Did we get any results
-        if ($get_enrolled_query->bind_result($planid, $companyid)) {
+        if ($get_enrolled_query->num_rows() > 0) {
           // Get the Query Results
           if ($get_enrolled_query->fetch()) {
             // Get the information
             $get_planid_info_by_id_query->bind_param("i", $planid);
             $get_planid_info_by_id_query->execute();
+            $get_planid_info_by_id_query->store_result();
+            $get_planid_info_by_id_query->bind_result($annualprem, $annualdeductible, $annualcoveragelimit, $lifetimecoverage, $network);
 
             $get_insprov_info_by_id_query->bind_param("i", $companyid);
             $get_insprov_info_by_id_query->execute();
+            $get_insprov_info_by_id_query->store_result();
+            $get_insprov_info_by_id_query->bind_result($company, $planid, $category, $address, $email, $phone);
+           
 
             // Declare storage variables
-
             $annualprem = null;
             $annualdeductible = null;
+            $annualcoveragelimit = null;
             $lifetimecoverage = null;
             $network = null;
             $company = null;
@@ -126,7 +133,7 @@ $get_enrolled_query->execute();
 
             // Print out results if there are any!
 
-            if ($get_insprov_info_by_id_query->bind_result($company, $planid, $category, $address, $email, $phone)) {
+            if ($get_insprov_info_by_id_query->num_rows() > 0) {
               # Create the Ins Provider Table
               echo "
               <center>
@@ -160,7 +167,7 @@ $get_enrolled_query->execute();
               $get_insprov_info_by_id_query->close();
             }
 
-            if ($get_planid_info_by_id_query->bind_result($annualprem, $annualdeductible, $lifetimecoverage, $network)) {
+            if ($get_planid_info_by_id_query->num_rows() > 0) {
               # Create the Ins Plans Table
               echo "
               <center>
@@ -168,6 +175,7 @@ $get_enrolled_query->execute();
               <tr>
                 <th> Annual Prem. </th>
                 <th> Annual Deduct. </th>
+                <th> Annual Coverage Limit </th>
                 <th> Lifetime Coverage </th>
                 <th> Netowkr </th>
               </tr>
@@ -178,11 +186,11 @@ $get_enrolled_query->execute();
                 echo "<tr>
                   <td>$annualprem</td>
                   <td>$annualdeductible</td>
+                  <td>$annualcoveragelimit</td>
                   <td>$lifetimecoverage</td>
                   <td>$network</td>
                   </tr>";
               }
-
               // Close the Ins Provider Table and the query
               echo "</table>";
               $get_planid_info_by_id_query->close();
