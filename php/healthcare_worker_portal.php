@@ -5,7 +5,7 @@
 */
 
 # import another php file and access it's variables
-include 'sandbox.php';
+include 'queries.php';
 
 
 # Start the session again to access session variables
