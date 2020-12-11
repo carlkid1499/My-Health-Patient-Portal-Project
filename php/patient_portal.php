@@ -43,9 +43,17 @@ $email,$phone,$e_name,$e_phone))
   } 
 }
 
+// Close the query we are done with it
+$patient_id_query->close();
+
 # Global Vars
 global $records_btn;
 global $record_results;
+
+# Tell Browser not to cache anything
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0");
 ?>
 <!--end of php section-->
 
@@ -176,7 +184,7 @@ global $record_results;
   <div class="imgcontainer">
     <span onclick="document.getElementById('update-info').style.display='none'" class="close" title="Close Modal">&times;</span>
     <div class="center">
-      <h3>Create Account</h3>
+      <h3>Update information</h3>
     </div>
   </div>
 
@@ -188,13 +196,13 @@ global $record_results;
             <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last ?>" disabled="disabled"></br></br>
             <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $DOB ?>" disabled="disabled"></br></br>
             <input type="text" class="form-signup" name="gender" placeholder="<?php echo $gender ?>" disabled="disabled"></br></br>
-            <input type="text" class="form-signup" name="address" placeholder="<?php echo $address ?>"></br></br>
-            <input type="text" class="form-signup" name="email" placeholder="<?php echo $email ?>"></br></br>
-            <input type="text" class="form-signup" name="phone" placeholder="<?php echo $phone ?>"></br></br>
-            <input type="text" class="form-signup" name="ename" placeholder="<?php echo $e_name ?>"></br></br>
-            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo $e_phone ?>"></br></br>
+            <input type="text" class="form-signup" name="address" placeholder="<?php echo "Your address: $address" ?>"></br></br>
+            <input type="text" class="form-signup" name="email" placeholder="<?php echo "Your emal: $email" ?>"></br></br>
+            <input type="text" class="form-signup" name="phone" placeholder="<?php echo "Your phone number: $phone" ?>"></br></br>
+            <input type="text" class="form-signup" name="ename" placeholder="<?php echo "Emergency Contact Name: $e_name" ?>"></br></br>
+            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo "Emergency Contact Phone: $e_phone" ?>"></br></br>
 
-            <button class="portal" type="submit" name="update_information">submit
+            <button class="loginbtn" type="submit" name="update_information">submit
               <!-- If the update information button is pushed -->
               <?php if (isset($_POST['update_information'])) {
                 // Clean the input
@@ -223,6 +231,7 @@ global $record_results;
                 // Run the update information query
                 $update_info->bind_param("sssssi", $new_address, $new_email, $new_phone, $new_ename, $new_ephone, $pid);
                 $rtval = $update_info->execute();
+                $update_info->close();
 
                 // Check the return value for error
                 if($rtval)
@@ -309,15 +318,8 @@ global $record_results;
     <!-- Lets create a patient records section -->
     <div class="container">
         <?php if ($records_btn) {
-          // Grab the information needed.
-          $patient_records->bind_param("i", $pid);
-          $patient_records->execute();
-          $record_results = $patient_records->get_result();
 
-          $patient_notes->bind_param("i", $pid);
-          $patient_notes->execute();
-          $note_results = $patient_notes->get_result();
-
+          // declare some storage variables
           $treament_category_name = null;
           $provid_name = null;
           $provid_address = null;
@@ -325,9 +327,25 @@ global $record_results;
           $notetime = null;
           $diagnosisnotes = null;
           $drrecommendations = null;
+          $recordtime = null;
+          $tcatid = null;
+          $patientpayment = null;
 
+          // Grab the information needed.
+          $patient_records->bind_param("i", $pid);
+          $patient_records->execute();
+          $patient_records->store_result();
+          $patient_records->bind_result($recordtime, $tcatid, $patientpayment);
+
+          $patient_notes->bind_param("i", $pid);
+          $patient_notes->execute();
+          $patient_notes->store_result();
+          $patient_notes->bind_result($provid, $notetime, $diagnosisnotes, $drrecommendations);
+
+          
+          /***** BEGIN: PRINTING RECORDS TABLE *****/
           // Did we get any results
-          if ($record_results->num_rows > 0) {
+          if ($patient_records->num_rows()>0) {
 
             # Create the records table
             echo "
@@ -341,18 +359,22 @@ global $record_results;
             </center>";
 
             // Get the Query Results
-            while ($row = $record_results->fetch_assoc()) {
-              $recordtime = $row["RecordTime"];
-              $tcatid = $row["TCatID"];
-              $patientpayment = $row["PatientPayment"];
+            while ($patient_records->fetch()) {
               $treament_category->bind_param("i", $tcatid);
               $treament_category->execute();
-              $treament_category_results = $treament_category->get_result();
+              $treament_category->store_result();
+              $treament_category->bind_result($treament_category_name);
 
 
-              if ($treament_category_results->num_rows > 0) {
-                $tcatrow = $treament_category_results->fetch_assoc();
-                $treament_category_name = $tcatrow["TreatmentCategory"];
+              if ($treament_category->num_rows > 0) {
+                // if we get here all is well
+                // Get the Query Results
+                while ($treament_category->fetch());
+                
+              }
+              else
+              {
+                echo "Error: Couldn't find Treatment Category Name!";
               }
 
               # Print each table row
@@ -362,10 +384,18 @@ global $record_results;
             <td>$patientpayment</td>
             </tr>";
             }
-            # Close the records table
+            # Close the records table and query
             echo "</table>";
+            $patient_records->close();
+            $treament_category->close();
+          }
+          /***** END: PRINTING RECORDS TABLE *****/
 
-            # Create the notestable
+
+          /***** BEGIN: PRINTING Patient Notes TABLE *****/
+            if ($patient_notes->num_rows > 0) {
+              // if we get here all is well
+              # Create the notestable
             echo "
             <table name=\"patientnotes_table\">
             <tr>
@@ -376,33 +406,47 @@ global $record_results;
               <th> Dr. Recommendations </th>
             </tr>";
 
-            while ($row = $note_results->fetch_assoc()) {
-              $provid = $row["ProvID"];
-              $notetime = $row["NoteTime"];
-              $diagnosisnotes = $row["DiagnosisNotes"];
-              $drrecommendations = $row["DrRecommendations"];
 
-              $healthprovider_name->bind_param("i", $provid);
-              $healthprovider_name->execute();
-              $healthprovider_name_results = $healthprovider_name->get_result();
+              while ($patient_notes->fetch()) {
 
-              if ($healthprovider_name_results->num_rows > 0) {
-                $provid_row = $healthprovider_name_results->fetch_assoc();
-                $provid_name = $provid_row["ProvName"];
-                $provid_address = $provid_row["ProvAddr"];
+                $healthprovider_name->bind_param("i", $provid);
+                $healthprovider_name->execute();
+                $healthprovider_name->store_result();
+                $healthprovider_name->bind_result($provid_name, $provid_address);
+  
+                if ($healthprovider_name->num_rows > 0) {
+                  // If we get here all is good
+                  // Get the Query Results
+                  while($healthprovider_name->fetch());
+                }
+                else
+                {
+                  echo "Error: Couldn't find Health Provider name or address!";
+                }
+  
+                # Print each table row
+                echo "
+                <tr>
+                <td>$provid_name</td>
+                <td>$provid_address</td>
+                <td>$notetime</td>
+                <td>$diagnosisnotes</td>
+                <td>$drrecommendations</td>
+                </tr>";
               }
 
-              # Print each table row
-              echo "
-              <tr>
-              <td>$provid_name</td>
-              <td>$provid_address</td>
-              <td>$notetime</td>
-              <td>$diagnosisnotes</td>
-              <td>$drrecommendations</td>
-              </tr>";
+              # Close the patient notes table
+              echo "</table>";
+              $patient_notes->close();
+              $healthprovider_name->close();
             }
-          }
+            /***** END PRINTING Patient Notes TABLE *****/
+
+            else
+            {
+              echo "Error: Couldn't find any Patient Notes!";
+            }
+        
         } else {
           $records_btn = false;
         }
