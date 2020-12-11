@@ -33,6 +33,7 @@ $healthprovider_name =  $conn->prepare("SELECT ProvName, ProvAddr FROM HealthPro
 # Update Information Query
 $update_info = $conn->prepare("UPDATE PatientInfo SET address=?, email=?, phone=?, Emergency_name=?, Emergency_phone=? WHERE PID=?");
 
+$get_enrolled_query = $conn->prepare("SELECT PlanID,CompanyID FROM Enrolled WHERE PID=?");
 
 # This is a query to search by First Name, Last Name, DOB
 # Values must be set before the query is run.

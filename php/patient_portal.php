@@ -267,7 +267,7 @@ header("Expires: 0");
   </form>
 </div>
 
-<!--modal called to display login form-->
+<!--modal called to display make appointment form-->
 <div id="make-appointment" class="modal">
   
   <form class="modal-content animate" method="post">
