@@ -46,6 +46,10 @@ $email,$phone,$e_name,$e_phone))
 // Close the query we are done with it
 $patient_id_query->close();
 
+// Save the name first and last name to access in other pages
+$_SESSION['name_first'] = $name_first; 
+$_SESSION['name_last'] = $name_last;
+
 # Global Vars
 global $records_btn;
 global $record_results;
@@ -87,11 +91,23 @@ header("Expires: 0");
 <!--Refresh Page Button-->
   <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="w3-bar-item w3-button" name="refresh" type="submit">Refresh Page
+      <button class="w3-bar-item w3-button" name="patient_portal" type="submit">Patient Portal
         <!-- If the logout button is pushed -->
-        <?php if(isset($_POST['reload']))
+        <?php if(isset($_POST['patient_portal']))
         {
           header('Location: patient_portal.php');
+        } 
+        ?>
+        </button>
+  </form>
+<!--Insurance Plans Page Button-->
+<form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="w3-bar-item w3-button" name="insurance_plans" type="submit">Insurance Plans
+        <!-- If the logout button is pushed -->
+        <?php if(isset($_POST['insurance_plans']))
+        {
+          header('Location: insurance_plans.php');
         } 
         ?>
         </button>
@@ -251,7 +267,7 @@ header("Expires: 0");
   </form>
 </div>
 
-<!--modal called to display login form-->
+<!--modal called to display make appointment form-->
 <div id="make-appointment" class="modal">
   
   <form class="modal-content animate" method="post">
