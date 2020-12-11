@@ -104,9 +104,93 @@ $get_enrolled_query->execute();
         if ($get_enrolled_query->bind_result($planid, $companyid)) {
           // Get the Query Results
           if ($get_enrolled_query->fetch()) {
-            echo "We got results!";
+            // Get the information
+            $get_planid_info_by_id_query->bind_param("i", $planid);
+            $get_planid_info_by_id_query->execute();
+
+            $get_insprov_info_by_id_query->bind_param("i", $companyid);
+            $get_insprov_info_by_id_query->execute();
+
+            // Declare storage variables
+
+            $annualprem = null;
+            $annualdeductible = null;
+            $lifetimecoverage = null;
+            $network = null;
+            $company = null;
+            $planid = null;
+            $category = null;
+            $address = null;
+            $email = null;
+            $phone = null;
+
+            // Print out results if there are any!
+
+            if ($get_insprov_info_by_id_query->bind_result($company, $planid, $category, $address, $email, $phone)) {
+              # Create the Ins Provider Table
+              echo "
+              <center>
+              <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+              <tr>
+                <th> CompanyID </th>
+                <th> Company Name</th>
+                <th> PlanID </th>
+                <th> Category </th>
+                <th> Address </th>
+                <th> Phone </th>
+                <th> Email </th>
+              </tr>
+              </center>";
+
+              while ($get_insprov_info_by_id_query->fetch()) {
+                # Print each table row
+                echo "<tr>
+                  <td>$companyid</td>
+                  <td>$company</td>
+                  <td>$planid</td>
+                  <td>$category</td>
+                  <td>$address</td>
+                  <td>$phone</td>
+                  <td>$email</td>
+                  </tr>";
+              }
+
+              // Close the Ins Provider Table and the query
+              echo "</table>";
+              $get_insprov_info_by_id_query->close();
+            }
+
+            if ($get_planid_info_by_id_query->bind_result($annualprem, $annualdeductible, $lifetimecoverage, $network)) {
+              # Create the Ins Plans Table
+              echo "
+              <center>
+              <table name=\"insplans_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+              <tr>
+                <th> Annual Prem. </th>
+                <th> Annual Deduct. </th>
+                <th> Lifetime Coverage </th>
+                <th> Netowkr </th>
+              </tr>
+              </center>";
+
+              while ($get_planid_info_by_id_query->fetch()) {
+                # Print each table row
+                echo "<tr>
+                  <td>$annualprem</td>
+                  <td>$annualdeductible</td>
+                  <td>$lifetimecoverage</td>
+                  <td>$network</td>
+                  </tr>";
+              }
+
+              // Close the Ins Provider Table and the query
+              echo "</table>";
+              $get_planid_info_by_id_query->close();
+            }
           } else {
-            echo "<B> You are not enrolled! Select a state to begin! <B>";
+            echo "<B> You are not enrolled! Select a state to begin! 
+            Then select an Insurance Provider Plan for more information!
+            <B>";
             echo "
             <div class=\"container\">
           <section class=\"insurance_plans\" id=\"insurance_plans\">
@@ -172,24 +256,86 @@ $get_enrolled_query->execute();
             <div class=\"center\">
           </form>      
             ";
-            
+
             // Get the drop down data
-            if(isset($_POST['State']))
+            if (isset($_POST['State']))
               //  Check To make sure it's not the DEFAULT
-              if($_POST['State'] == "DEFAULT")
+              if ($_POST['State'] == "DEFAULT")
                 echo "Please select a state!  Try again!";
-              else{
+              else {
                 //  We take the state and query for it in the Insurance Provider table
+                $state = $_POST['State'];
+                $state_string = "%, $state%";
+                $search_for_insprov_by_state_query->bind_param("s", $state_string);
+                $search_for_insprov_by_state_query->execute();
+
+                # Decalre the variables to store the results in
+                $companyid = null;
+                $company = null;
+                $planid = null;
+                $category = null;
+                $address = null;
+                $email = null;
+                $phone = null;
+
+                if ($search_for_insprov_by_state_query->bind_result(
+                  $companyid,
+                  $company,
+                  $planid,
+                  $category,
+                  $address,
+                  $email,
+                  $phone
+                )) {
+
+                  # Create the Ins Provider Table
+                  echo "
+                  <center>
+                  <table name=\"insplans_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+                  <tr>
+                    <th> CheckBox </th>
+                    <th> CompanyID </th>
+                    <th> Company Name</th>
+                    <th> PlanID </th>
+                    <th> Category </th>
+                    <th> Address </th>
+                    <th> Phone </th>
+                    <th> Email </th>
+                  </tr>
+                  </center>";
+
+                  // get the resuts
+                  $check_box_id = 0;
+                  while ($search_for_insprov_by_state_query->fetch()) {
+                    # Print each table row
+                    echo "<tr>
+                    <td><input type=\"checkbox\" id=\"$check_box_id\" /></td>
+                    <td>$companyid</td>
+                    <td>$company</td>
+                    <td>$planid</td>
+                    <td>$category</td>
+                    <td>$address</td>
+                    <td>$phone</td>
+                    <td>$email</td>
+                    </tr>";
+                    // increment the id
+                    $check_box_id++;
+                  }
+
+                  // Close the Ins Provider Table and the query
+                  echo "</table>";
+                  $search_for_insprov_by_state_query->close();
+                }
               }
           }
         }
 
-      // Close the query we are done with it
-      $get_enrolled_query->close();
-      
-      
-        
-      ?>
+        // Close the query we are done with it
+        $get_enrolled_query->close();
+
+
+
+        ?>
       </section>
 
     </div>
