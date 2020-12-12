@@ -30,28 +30,34 @@ $e_phone = NULL;
 // Query the PatientInfo database for the information
 $patient_id_query->bind_param("i",$pid);
 $patient_id_query->execute();
-$results = $patient_id_query->get_result();
 
 // Did we get any results
-if($results->num_rows >0)
+if($patient_id_query->bind_result($name_first,$name_last,$DOB,$gender,$address,
+$email,$phone,$e_name,$e_phone))
 {
   // Get the Query Results
-  while ($row = $results->fetch_assoc()) {
-    $name_first = $row["name_first"];
-    $name_last = $row["name_last"];
-    $DOB = $row["DOB"];
-    $gender = $row["Gender"];
-    $address = $row["address"];
-    $email = $row["email"];
-    $phone = $row["phone"];
-    $e_name = $row["Emergency_name"];
-    $e_phone = $row["Emergency_phone"];
+  while ($patient_id_query->fetch()) {
+  // Do stuff with the $vars, in this case we only get one result
+  // Leaving this while loop in here for reference
+  // Each iteration of the loop the bind_results($vars) get updated with info
   } 
 }
+
+// Close the query we are done with it
+$patient_id_query->close();
+
+// Save the name first and last name to access in other pages
+$_SESSION['name_first'] = $name_first; 
+$_SESSION['name_last'] = $name_last;
 
 # Global Vars
 global $records_btn;
 global $record_results;
+
+# Tell Browser not to cache anything
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0");
 ?>
 <!--end of php section-->
 
@@ -85,11 +91,23 @@ global $record_results;
 <!--Refresh Page Button-->
   <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="w3-bar-item w3-button" name="refresh" type="submit">Refresh Page
+      <button class="w3-bar-item w3-button" name="patient_portal" type="submit">Patient Portal
         <!-- If the logout button is pushed -->
-        <?php if(isset($_POST['reload']))
+        <?php if(isset($_POST['patient_portal']))
         {
           header('Location: patient_portal.php');
+        } 
+        ?>
+        </button>
+  </form>
+<!--Insurance Plans Page Button-->
+<form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+      <button class="w3-bar-item w3-button" name="insurance_plans" type="submit">Insurance Plans
+        <!-- If the logout button is pushed -->
+        <?php if(isset($_POST['insurance_plans']))
+        {
+          header('Location: insurance_plans.php');
         } 
         ?>
         </button>
@@ -158,138 +176,103 @@ global $record_results;
   <section name="options">
     <!-- Let's put any actions the user (patient) can take. i.e update info, view records, etc -->
     
-
-
-
-     <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
-                                                    ?>" method="post">
-      <button class="update-info-button" type="submit" name="update information">update information</button>
-      <button class="records-button" type="submit" name="records">view records
-        <!-- If the view records button is pushed -->
-        <?php if (isset($_POST['records'])) {
-          $records_btn = true;
-        }
-        ?>
+    <div class="container">
+      <button class="portal" onclick="document.getElementById('update-info').style.display='block'" style="width:auto;"
+        type="submit"  name="update-info">update information
       </button>
-    </form>
+
+      <!--bring up patient records-->
+      <button class="portal" onclick="document.getElementById('view-records').style.display='block' <?php $records_btn=true; ?>" style="width:auto;"
+        type="submit" name="view-records">View Records
+      </button>
 
       <!--bring up form to make an appointment-->
-      <button class="portal" onclick="document.getElementById('id01').style.display='block'" style="width:auto;"
-        type="submit" name="appointment">Make Appointment
+      <button class="portal" onclick="document.getElementById('make-appointment').style.display='block'" style="width:auto;"
+        type="submit" name="make-appointment">Make Appointment
       </button>
-
+    </div>
   </section>
 </div>
 
-
-<!-- Lets create a patient records section -->
-<section name="patientrecords">
-    <?php if ($records_btn) {
-      // Grab the information needed.
-      $patient_records->bind_param("i", $pid);
-      $patient_records->execute();
-      $record_results = $patient_records->get_result();
-
-      $patient_notes->bind_param("i", $pid);
-      $patient_notes->execute();
-      $note_results = $patient_notes->get_result();
-
-      $treament_category_name = null;
-      $provid_name = null;
-      $provid_address = null;
-      $provid = null;
-      $notetime = null;
-      $diagnosisnotes = null;
-      $drrecommendations = null;
-
-      // Did we get any results
-      if ($record_results->num_rows > 0) {
-
-        # Create the records table
-        echo "
-        <table name=\"patientrecords_table\">
-        <tr>
-          <th> Record Time </th>
-          <th> Treatment Category</th>
-          <th> Patient Payment </th>
-        </tr>";
-
-        // Get the Query Results
-        while ($row = $record_results->fetch_assoc()) {
-          $recordtime = $row["RecordTime"];
-          $tcatid = $row["TCatID"];
-          $patientpayment = $row["PatientPayment"];
-          $treament_category->bind_param("i", $tcatid);
-          $treament_category->execute();
-          $treament_category_results = $treament_category->get_result();
-
-
-          if ($treament_category_results->num_rows > 0) {
-            $tcatrow = $treament_category_results->fetch_assoc();
-            $treament_category_name = $tcatrow["TreatmentCategory"];
-          }
-
-          # Print each table row
-          echo "<tr>
-        <td>$recordtime</td>
-        <td>$treament_category_name</td>
-        <td>$patientpayment</td>
-        </tr>";
-        }
-        # Close the records table
-        echo "</table>";
-
-        # Create the notestable
-        echo "
-        <table name=\"patientnotes_table\">
-        <tr>
-          <th> Provider Name </th>
-          <th> Provider Address </th>
-          <th> Note Time </th>
-          <th> Diagnosis Notes </th>
-          <th> Dr. Recommendations </th>
-        </tr>";
-
-        while ($row = $note_results->fetch_assoc()) {
-          $provid = $row["ProvID"];
-          $notetime = $row["NoteTime"];
-          $diagnosisnotes = $row["DiagnosisNotes"];
-          $drrecommendations = $row["DrRecommendations"];
-
-          $healthprovider_name->bind_param("i", $provid);
-          $healthprovider_name->execute();
-          $healthprovider_name_results = $healthprovider_name->get_result();
-
-          if ($healthprovider_name_results->num_rows > 0) {
-            $provid_row = $healthprovider_name_results->fetch_assoc();
-            $provid_name = $provid_row["ProvName"];
-            $provid_address = $provid_row["ProvAddr"];
-          }
-
-          # Print each table row
-          echo "
-          <tr>
-          <td>$provid_name</td>
-          <td>$provid_address</td>
-          <td>$notetime</td>
-          <td>$diagnosisnotes</td>
-          <td>$drrecommendations</td>
-          </tr>";
-        }
-      }
-    } else {
-      $records_btn = false;
-    }
-    ?>
-  </section>
-
-
-<!--modal called to display login form-->
-<div id="id01" class="modal">
+<div id="update-info" class="modal">
   
   <form class="modal-content animate" method="post">
   <div class="imgcontainer">
-    <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+    <span onclick="document.getElementById('update-info').style.display='none'" class="close" title="Close Modal">&times;</span>
+    <div class="center">
+      <h3>Update information</h3>
+    </div>
+  </div>
+
+  <div class="container">
+  <section class="update_information" id="update_information">
+          <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                        ?>" method="post">
+            <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $name_first ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $DOB ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="gender" placeholder="<?php echo $gender ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="address" placeholder="<?php echo "Your address: $address" ?>"></br></br>
+            <input type="text" class="form-signup" name="email" placeholder="<?php echo "Your emal: $email" ?>"></br></br>
+            <input type="text" class="form-signup" name="phone" placeholder="<?php echo "Your phone number: $phone" ?>"></br></br>
+            <input type="text" class="form-signup" name="ename" placeholder="<?php echo "Emergency Contact Name: $e_name" ?>"></br></br>
+            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo "Emergency Contact Phone: $e_phone" ?>"></br></br>
+
+            <button class="loginbtn" type="submit" name="update_information">submit
+              <!-- If the update information button is pushed -->
+              <?php if (isset($_POST['update_information'])) {
+                // Clean the input
+                $new_address = trim($_POST['address']);
+                $new_email = trim($_POST['email']);
+                $new_phone = trim($_POST['phone']);
+                $new_ename = trim($_POST['ename']);
+                $new_ephone = trim($_POST['ephone']);
+
+                // Check if any values are empty
+                if($new_address == NULL)
+                  $new_address = $address;
+
+                if($new_email == NULL)
+                  $new_email = $email;
+
+                if($new_phone == NULL)
+                  $new_phone = $phone;
+
+                if($new_ename == NULL)
+                  $new_ename = $e_name;
+
+                if($new_ephone == NULL)
+                  $new_ephone = $e_phone;
+                  
+                // Run the update information query
+                $update_info->bind_param("sssssi", $new_address, $new_email, $new_phone, $new_ename, $new_ephone, $pid);
+                $rtval = $update_info->execute();
+                $update_info->close();
+
+                // Check the return value for error
+                if($rtval)
+                  echo "Success!";
+                else
+                  echo "No Success!";
+              }
+              ?>
+
+            </button>
+          </form>
+        </section>
+    <div class="container">
+        <button type="button" onclick="document.getElementById('update-info').style.display='none'" class="cancelbtn">Cancel</button>
+    </div>
+  </div>
+  </form>
+</div>
+
+<!--modal called to display make appointment form-->
+<div id="make-appointment" class="modal">
+  
+  <form class="modal-content animate" method="post">
+  <div class="imgcontainer">
+    <span onclick="document.getElementById('make-appointment').style.display='none'" class="close" title="Close Modal">&times;</span>
     <div class="center">
       <h3>Make an Appointment</h3>
     </div>
@@ -299,21 +282,197 @@ global $record_results;
   <section class="make_appointment" id="make_appointment">
     <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                   ?>" method="post">
-      <input type="date" class="form-signup" name="appointment_date" placeholder="Patient ID" required></br></br>
-      <input type="text" class="form-signup" name="name_first" placeholder=<?php echo "$name_first"?> required></br></br>
-      <input type="text" class="form-signup" name="name_last" placeholder=<?php echo "$name_last"?> required></br></br>
-      <input type="text" class="form-signup" name="username" placeholder="Reason for Visit" required></br></br>
+      <div class="center">
+      <input type="date" class="form-signup" name="appointment_date" required>
+      <span style="display:inline-block; width: 30px;"></span>
+      <input type="time" class="form-signup" name="appointment_time" placeholder="Patient ID" required>
+      </div>
+      <div class="center">
+      <p>Ex: 03/11/2020
+      <span style="display:inline-block; width: 30px;"></span>
+        Ex: 09:15 AM</p>
+      </div></br></br>
+      <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $name_first?>" disabled="disabled" required></br></br>
+      <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last?>" disabled="disabled" required></br></br>
+      <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="reason" placeholder="Reason for Visit" required></textarea></br></br>
 
-      <button class="loginbtn" type="submit" name="submit">submit
+      <button class="loginbtn" type="submit" name="create">submit
+      <!-- If the submit button is pushed, we need to process the data. If successfull we need to redirect to the patient portal -->
+        <?php if (isset($_POST['create'])) {
+          // Process the form information
+          $pid_appt = $_SESSION['pid'];
+          $date = $_POST['appointment_date'];
+          $time = $_POST['appointment_time'];
+          $reason = trim($_POST['reason']);
+
+          $conn->query("INSERT INTO Appointments (PID, Date, Time, Reason) VALUES ('$pid_appt', '$date', '$time', '$reason')");
+
+        }?>
       </button>
     </form>
   </section>
     <div class="container">
-        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+        <button type="button" onclick="document.getElementById('make-appointment').style.display='none'" class="cancelbtn">Cancel</button>
     </div>
   </div>
   </form>
 </div>
+
+<!--modal for patients to view records-->
+<div id="view-records" class="modal">
+
+  <form class="modal-content animate" method="post" style="max-width:95%">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('view-records').style.display='none'" class="close" title="Close Modal">&times;
+      
+      </span>
+      <div class="center">
+        <h3>Patient Records</h3>
+      </div>
+    </div>
+
+    <!-- Lets create a patient records section -->
+    <div class="container">
+        <?php if ($records_btn) {
+
+          // declare some storage variables
+          $treament_category_name = null;
+          $provid_name = null;
+          $provid_address = null;
+          $provid = null;
+          $notetime = null;
+          $diagnosisnotes = null;
+          $drrecommendations = null;
+          $recordtime = null;
+          $tcatid = null;
+          $patientpayment = null;
+
+          // Grab the information needed.
+          $patient_records->bind_param("i", $pid);
+          $patient_records->execute();
+          $patient_records->store_result();
+          $patient_records->bind_result($recordtime, $tcatid, $patientpayment);
+
+          $patient_notes->bind_param("i", $pid);
+          $patient_notes->execute();
+          $patient_notes->store_result();
+          $patient_notes->bind_result($provid, $notetime, $diagnosisnotes, $drrecommendations);
+
+          
+          /***** BEGIN: PRINTING RECORDS TABLE *****/
+          // Did we get any results
+          if ($patient_records->num_rows()>0) {
+
+            # Create the records table
+            echo "
+            <center>
+            <table name=\"patientrecords_table\">
+            <tr>
+              <th> Record Time </th>
+              <th> Treatment Category</th>
+              <th> Patient Payment </th>
+            </tr>
+            </center>";
+
+            // Get the Query Results
+            while ($patient_records->fetch()) {
+              $treament_category->bind_param("i", $tcatid);
+              $treament_category->execute();
+              $treament_category->store_result();
+              $treament_category->bind_result($treament_category_name);
+
+
+              if ($treament_category->num_rows > 0) {
+                // if we get here all is well
+                // Get the Query Results
+                while ($treament_category->fetch());
+                
+              }
+              else
+              {
+                echo "Error: Couldn't find Treatment Category Name!";
+              }
+
+              # Print each table row
+              echo "<tr>
+            <td>$recordtime</td>
+            <td>$treament_category_name</td>
+            <td>$patientpayment</td>
+            </tr>";
+            }
+            # Close the records table and query
+            echo "</table>";
+            $patient_records->close();
+            $treament_category->close();
+          }
+          /***** END: PRINTING RECORDS TABLE *****/
+
+
+          /***** BEGIN: PRINTING Patient Notes TABLE *****/
+            if ($patient_notes->num_rows > 0) {
+              // if we get here all is well
+              # Create the notestable
+            echo "
+            <table name=\"patientnotes_table\">
+            <tr>
+              <th> Provider Name </th>
+              <th> Provider Address </th>
+              <th> Note Time </th>
+              <th> Diagnosis Notes </th>
+              <th> Dr. Recommendations </th>
+            </tr>";
+
+
+              while ($patient_notes->fetch()) {
+
+                $healthprovider_name->bind_param("i", $provid);
+                $healthprovider_name->execute();
+                $healthprovider_name->store_result();
+                $healthprovider_name->bind_result($provid_name, $provid_address);
+  
+                if ($healthprovider_name->num_rows > 0) {
+                  // If we get here all is good
+                  // Get the Query Results
+                  while($healthprovider_name->fetch());
+                }
+                else
+                {
+                  echo "Error: Couldn't find Health Provider name or address!";
+                }
+  
+                # Print each table row
+                echo "
+                <tr>
+                <td>$provid_name</td>
+                <td>$provid_address</td>
+                <td>$notetime</td>
+                <td>$diagnosisnotes</td>
+                <td>$drrecommendations</td>
+                </tr>";
+              }
+
+              # Close the patient notes table
+              echo "</table>";
+              $patient_notes->close();
+              $healthprovider_name->close();
+            }
+            /***** END PRINTING Patient Notes TABLE *****/
+
+            else
+            {
+              echo "Error: Couldn't find any Patient Notes!";
+            }
+        
+        } else {
+          $records_btn = false;
+        }
+        ?>
+    </div>
+  </form>
+</div>
+
+<!--modal called to display update information form-->
+
 
 <!--JS to close modal window on click outside of window-->
 <script>

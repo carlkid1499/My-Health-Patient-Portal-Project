@@ -30,12 +30,22 @@ $patient_notes = $conn->prepare("SELECT ProvID, NoteTime, DiagnosisNotes, DrReco
 # Get the Provider Name Query
 $healthprovider_name =  $conn->prepare("SELECT ProvName, ProvAddr FROM HealthProvider WHERE ProvID=?");
 
+# Update Information Query
+$update_info = $conn->prepare("UPDATE PatientInfo SET address=?, email=?, phone=?, Emergency_name=?, Emergency_phone=? WHERE PID=?");
+
+$get_enrolled_query = $conn->prepare("SELECT PlanID,CompanyID FROM Enrolled WHERE PID=?");
+
+$search_for_insprov_by_state_query = $conn->prepare("SELECT * FROM InsProvider WHERE Address like ?");
+
+$get_planid_info_by_id_query = $conn->prepare("SELECT AnnualPrem, AnnualDeductible, AnnualCoverageLimit, LifetimeCoverage, Network FROM InsPlans WHERE PlanID=?");
+
+$get_insprov_info_by_id_query = $conn->prepare("SELECT Company, PlanID, Category, Address, Email, Phone FROM InsProvider WHERE CompanyID=?");
 # This is a query to search by First Name, Last Name, DOB
 # Values must be set before the query is run.
 $first_last_dob_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND DOB like ? ");
 
 # This query will search for a given PID
-$patient_id_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE PID=?");
+$patient_id_query = $conn->prepare("SELECT name_first, name_last, DOB, Gender, address, email, phone, Emergency_name, Emergency_phone FROM myhealth2.PatientInfo WHERE PID=?");
 
 # This query will search for a given phone number.
 $phone_number_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE phone like ?");

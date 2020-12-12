@@ -16,6 +16,9 @@ $userid = $_SESSION['userid'];
 $isemployee = $_SESSION['isemployee'];
 $pid = $_SESSION['pid'];
 
+if($username == "pharmacy" || $username == "Pharmacy"){
+  header('Location: pharmacy_portal.php');
+}
 
 ?>
 
