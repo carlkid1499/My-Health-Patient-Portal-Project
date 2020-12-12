@@ -1,6 +1,6 @@
 <?php
 # import another php file and access it's variables
-include 'php/sandbox.php';
+include 'php/queries.php';
 ?>
 
 <!------------- HTML ------------->

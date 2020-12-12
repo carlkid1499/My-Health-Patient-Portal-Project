@@ -5,7 +5,7 @@
 */
 
 # import another php file and access it's variables
-include 'sandbox.php';
+include 'queries.php';
 
 
 # Start the session again to access session variables
@@ -15,6 +15,11 @@ $username = $_SESSION['username'];
 $userid = $_SESSION['userid'];
 $isemployee = $_SESSION['isemployee'];
 $pid = $_SESSION['pid'];
+
+if($username == "pharmacy" || $username == "Pharmacy"){
+  header('Location: pharmacy_portal.php');
+}
+
 ?>
 
 <!------------- HTML ------------->
@@ -80,107 +85,219 @@ $pid = $_SESSION['pid'];
   <h2>Healthcare Worker Portal: <?php echo " Welcome - $username"?></h2>
   <!-- This is the search bar: https://www.w3schools.com/howto/howto_css_search_button.asp -->
   <div class="container">
-  <section class="seachbar-section">
-    <form class="searchbar" id="searchbard" action="healthcare_worker_portal.php" method="post" style="margin:auto; max-width=75%">
+  <section class="searchbar-section">
+    <form class="searchbar" id="searchbar" action="healthcare_worker_portal.php" method="post" style="margin:auto; max-width=75%">
       <input type="text" placeholder="Patient Search Criteria" name="searchbar-text">
+      <div>
+      <div class="container">
+        <select name="search_by_options_list" class="align-middle">
+          <option name="search_by_options" value="search_by_options">Search by:</option>
+          <option name="search_by_options" value="search_by_FLB">Search by: First Name, Last Name, DOB</option>
+          <option name="search_by_options" value="search_by_PID">Search by: Patient ID </option>
+          <option name="search_by_options" value="search_by_FLE">Search by: First Name, Last Name, Email</option>          
+        </select>
+      </div>
+        <button class="searchbtn" name = "searchbtn" id="searchbar-button" value="searchbar-button" onclick="return checkInput();">search</button>
+      </div>
     </form>
   </div>
-  <div>
-    <div class="container">
-    <select name="search_by_options_list" class="align-middle">
-      <option name="search_by_options" id="search_by_options">Search by:</option>
-      <option name="search_by_options" id="search_by_options">Search by: First Name, Last Name, DOB</option>
-      <option name="search_by_options" id="search_by_options">Search by: Patient ID </option>
-      <option name="search_by_options" id="search_by_options">Search by: Patient Phone Number </option>
-    </select>
-      </div>
-    <button class="searchbtn" id="searchbar-button" value="searchbar-button" onclick="return checkInput();">search</button>
-  </div>
-  </section>
+  </section> 
 </div>
-<div class>
-  <form action="healthcare_worker_portal.php" method="post" id="options">
-
-    <!-- QUERY OPTIONS SECTION -->
-
-    <section class="block-of-text">
-      <fieldset>
-        <legend>Target Database</legend>
-
-        <!-- populate drop-down list -->
-        <?php
-
-        $list = '<option name = "sqldblist">Select Database</option>';
-
-        //Extract list of all databases
-        $q = 'show databases;';
-        if ($dblist = mysqli_query($conn, $q)) {
-          while ($row = mysqli_fetch_array($dblist)) {
-            $val = $row['Database'];
-            if (array_search($val, $defaultTables) === false) # exclude defauls mysql tables
-            {
-              $list .= '<option';
-              $list .= $val == $targetDB ? ' selected = \'selected\'>' : '>';
-              $list .= $val . '</option>';
-            }
-          }
-          mysqli_free_result($dblist);
+<?php 
+if(isset($_POST["searchbtn"])){
+  if (isset($_POST["search_by_options_list"])){
+    $options_list = $_POST["search_by_options_list"];
+    $inp_string = $_POST["searchbar-text"];
+    switch($options_list)
+    {
+      case "search_by_options": 
+        echo("<ul>" . "Select an option from the dropdown menu." . "</ul>\n");
+      break;
+      case "search_by_FLB": 
+        //echo "FLB";
+        
+        if($inp_string == NULL){
+          echo("<ul>" . "Enter Firstname, Lastname and DOB" . "</ul>\n");
         }
-        ?>
+        else{           
+          list($first_name, $last_name, $DOB) = explode(",",$inp_string,3);
+          //trim whitepace after parsing
+          $first_name = trim($first_name);
+          $last_name = trim($last_name);
+          $DOB = trim($DOB);
 
-        <select name="sqldblist">
-          <?php echo $list; ?>
-        </select>
+          // Query the PatientInfo database for the information
+          $first_last_dob_query->bind_param("sss",$first_name,$last_name,$DOB);
+          $first_last_dob_query->execute();
+          $flb_results = $first_last_dob_query->get_result();
 
-        <br>
-
-      </fieldset>
-
-    </section>
-
-    <!-- INPUT SECTION -->
-    <section class="block-of-text">
-      <fieldset>
-        <legend>Input</legend>
-
-        <textarea class="FormElement" name="inputQuery" id="input" cols="40" rows="10" placeholder="Type Query Here"><?php echo $inputQuery; ?></textarea>
-
-        <br>
-
-        <input type="submit" id="submit" name="submit" value="Submit" onclick="return checkInput();">
-
-      </fieldset>
-    </section>
-  </form>
-
-  <!-- OUTPUT SECTION -->
-  <form action="healthcare_worker_portal.php" method="post">
-
-    <section class="block-of-text">
-      <fieldset>
-        <legend>Output</legend>
-
-        <?php
-
-
-        if ($search_result != NULL) {
-          //output data of each row
-
-          if ($search_result->num_rows > 0) {
-            while ($row = $search_result->fetch_assoc()) {
-              echo "PID: " . $row["PID"] . " First Name: " . $row["name_first"] . " Last Name: " . $row["name_last"] . " DOB: " . $row["DOB"] . "<br>";
-            }
-          } else {
-            echo "0 results!";
+          // Did we get any results
+          if($flb_results->num_rows >0)
+          {
+            // Get the Query Results
+            while ($row = $flb_results->fetch_assoc()) {
+              echo '<section name="patientinfo" class="center">
+              <table name="patientinfo_table" class="center" style="width=95%;" border="3" cellpadding="1">
+              <tbody>
+                <!-- Populate table column names -->
+                <tr>
+                  <th> Patient ID </th> 
+                  <th> First name </th>
+                  <th> Last name </th>
+                  <th> Birthday </th>
+                  <th> Gender </th>
+                  <th> Address </th>
+                  <th> Email </th>
+                  <th> Phone </th>
+                  <th> Emergency Contact Name </th>
+                  <th> Emergency Phone Number </th>
+                </tr>
+                <!-- Populate patient information-->
+                <tr>
+                  <td>'.$row["PID"].'</td>
+                  <td>'.$row["name_first"].'</td>
+                  <td>'.$row["name_last"].'</td>
+                  <td>'.$row["DOB"].'</td>
+                  <td>'.$row["Gender"].'</td>
+                  <td>'.$row["address"].'</td>
+                  <td>'.$row["email"].'</td>
+                  <td>'.$row["phone"].'</td>
+                  <td>'.$row["Emergency_name"].'</td>
+                  <td>'.$row["Emergency_phone"].'</td>
+                </tr>
+                </tbody>
+              </table>
+            </section>';
+            } 
           }
+
         }
-        ?>
+        
+      break;
+      case "search_by_PID": 
+        //$inp_string = $_POST["searchbar-txt"];
+        if($inp_string == NULL){
+          echo("<ul>" . "Enter Patient ID" . "</ul>\n");
+        }
+        // Query the PatientInfo database for the information
+        $patient_id_query->bind_param("s",$inp_string);
+        $patient_id_query->execute();
+        $pid_results = $patient_id_query->get_result();
+
+        if($pid_results->num_rows >0)
+          {
+            // Get the Query Results
+            while ($row = $pid_results->fetch_assoc()) {
+              echo '<section name="patientinfo" class="center">
+              <table name="patientinfo_table" class="center" style="width=95%;" border="3" cellpadding="1">
+              <tbody>
+                <!-- Populate table column names -->
+                <tr>
+                  <th> Patient ID </th> 
+                  <th> First name </th>
+                  <th> Last name </th>
+                  <th> Birthday </th>
+                  <th> Gender </th>
+                  <th> Address </th>
+                  <th> Email </th>
+                  <th> Phone </th>
+                  <th> Emergency Contact Name </th>
+                  <th> Emergency Phone Number </th>
+                </tr>
+                <!-- Populate patient information-->
+                <tr>
+                  <td>'.$row["PID"].'</td>
+                  <td>'.$row["name_first"].'</td>
+                  <td>'.$row["name_last"].'</td>
+                  <td>'.$row["DOB"].'</td>
+                  <td>'.$row["Gender"].'</td>
+                  <td>'.$row["address"].'</td>
+                  <td>'.$row["email"].'</td>
+                  <td>'.$row["phone"].'</td>
+                  <td>'.$row["Emergency_name"].'</td>
+                  <td>'.$row["Emergency_phone"].'</td>
+                </tr>
+                </tbody>
+              </table>
+            </section>';
+
+            } 
+          }
 
 
-      </fieldset>
-    </section>
-  </form>
-</div>
+        
+      break;
+
+      case "search_by_FLE":
+        if($inp_string == NULL){
+          echo("<ul>" . "Enter Firstname, Lastname and Email" . "</ul>\n");
+        }
+        else{           
+          list($first_name, $last_name, $email_ad) = explode(",",$inp_string,3);
+          //remove whitespace from vars
+          $first_name = trim($first_name);
+          $last_name = trim($last_name);
+          $email_ad = trim($email_ad);
+
+          // Query the PatientInfo database for the information
+          $first_last_email_query->bind_param("sss",$first_name,$last_name,$email_ad);
+          $first_last_email_query->execute();
+          $fle_results = $first_last_email_query->get_result();
+  
+          // Did we get any results
+          if($fle_results->num_rows >0)
+          {
+            // Get the Query Results
+            while ($row = $fle_results->fetch_assoc()) {
+              echo '<section name="patientinfo" class="center">
+              <table name="patientinfo_table" class="center" style="width=95%;" border="3" cellpadding="1">
+              <tbody>
+                <!-- Populate table column names -->
+                <tr>
+                  <th> Patient ID </th> 
+                  <th> First name </th>
+                  <th> Last name </th>
+                  <th> Birthday </th>
+                  <th> Gender </th>
+                  <th> Address </th>
+                  <th> Email </th>
+                  <th> Phone </th>
+                  <th> Emergency Contact Name </th>
+                  <th> Emergency Phone Number </th>
+                </tr>
+                <!-- Populate patient information-->
+                <tr>
+                  <td>'.$row["PID"].'</td>
+                  <td>'.$row["name_first"].'</td>
+                  <td>'.$row["name_last"].'</td>
+                  <td>'.$row["DOB"].'</td>
+                  <td>'.$row["Gender"].'</td>
+                  <td>'.$row["address"].'</td>
+                  <td>'.$row["email"].'</td>
+                  <td>'.$row["phone"].'</td>
+                  <td>'.$row["Emergency_name"].'</td>
+                  <td>'.$row["Emergency_phone"].'</td>
+                </tr>
+                </tbody>
+              </table>
+            </section>';
+            } 
+          }
+  
+        }
+         
+        
+      break;
+
+    }
+  }
+}
+
+
+
+?>
+
+
 
   <?php $conn->close(); ?>
 </body>
