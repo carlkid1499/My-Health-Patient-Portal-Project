@@ -32,13 +32,17 @@ $healthprovider_name =  $conn->prepare("SELECT ProvName, ProvAddr FROM HealthPro
 
 # This is a query to search by First Name, Last Name, DOB
 # Values must be set before the query is run.
-$first_last_dob_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND DOB=?");
+$first_last_dob_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND DOB like ? ");
 
 # This query will search for a given PID
 $patient_id_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE PID=?");
 
 # This query will search for a given phone number.
 $phone_number_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE phone like ?");
-/***** END: Declare MySQL Query Statements *****/
 
+# This is a query to search by First Name, Last Name, email
+# Values must be set before the query is run.
+$first_last_email_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND email like ? ");
+
+/***** END: Declare MySQL Query Statements *****/
 ?>
