@@ -42,11 +42,17 @@ $get_planid_info_by_id_query = $conn->prepare("SELECT AnnualPrem, AnnualDeductib
 $get_insprov_info_by_id_query = $conn->prepare("SELECT Company, PlanID, Category, Address, Email, Phone FROM InsProvider WHERE CompanyID=?");
 # This is a query to search by First Name, Last Name, DOB
 # Values must be set before the query is run.
-$first_last_dob_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND DOB=?");
+$first_last_dob_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND DOB like ? ");
 
 # This query will search for a given PID
 $patient_id_query = $conn->prepare("SELECT name_first, name_last, DOB, Gender, address, email, phone, Emergency_name, Emergency_phone FROM myhealth2.PatientInfo WHERE PID=?");
 
 # This query will search for a given phone number.
 $phone_number_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE phone like ?");
+
+# This is a query to search by First Name, Last Name, email
+# Values must be set before the query is run.
+$first_last_email_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND email like ? ");
+
 /***** END: Declare MySQL Query Statements *****/
+?>
