@@ -172,6 +172,53 @@ header("Expires: 0");
   </section>
 </div>
 </div>
+
+
+<?php {
+  $appointment_date = null;
+  $appointment_time = null;
+  $appointment_reason = null;
+
+  //query datebase for appointments
+  $patient_appointments->bind_param("i", $pid);
+  $patient_appointments->execute();
+  $patient_appointments->store_result();
+  $patient_appointments->bind_result($appointment_date, $appointment_time, $appointment_reason);
+
+  echo "";
+
+  if($patient_appointments->num_rows > 0){
+    echo "
+    <div class=\"center\">
+    <h2><b>Upcoming Appointments: </b></h2><br>
+    <table name=\"patient_appointments\" class=\"center\" style=\"width=95%\" border=\"3\" cellpadding=\"1\">
+      <tbody>
+        <tr>
+          <th> Date </th>
+          <th> Time </th>
+          <th> Reason </th>
+        </tr>
+    ";
+    while($patient_appointments->fetch()){
+      echo "
+        <tr>
+          <td> $appointment_date </td>
+          <td> $appointment_time </td>
+          <td> $appointment_reason </td>
+        </tr> ";
+    }
+    echo " 
+          </tbody>
+        </table>
+      </div>
+    ";
+  }
+} ?>
+
+
+
+
+
 <div class="center">
   <section name="options">
     <!-- Let's put any actions the user (patient) can take. i.e update info, view records, etc -->

@@ -49,4 +49,6 @@ $patient_id_query = $conn->prepare("SELECT name_first, name_last, DOB, Gender, a
 
 # This query will search for a given phone number.
 $phone_number_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE phone like ?");
+
+$patient_appointments = $conn->prepare("SELECT Date, Time, Reason FROM Appointments WHERE PID=?");
 /***** END: Declare MySQL Query Statements *****/
