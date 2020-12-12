@@ -182,13 +182,6 @@ global $record_results;
 </div>
 
 
-
-
-
-
-
-
-
 <!-- Lets create a patient records section -->
 <section name="patientrecords">
     <?php if ($records_btn) {
@@ -289,17 +282,6 @@ global $record_results;
     }
     ?>
   </section>
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!--modal called to display login form-->

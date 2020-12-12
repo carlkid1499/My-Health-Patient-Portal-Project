@@ -118,6 +118,11 @@ if(isset($_POST["searchbtn"])){
         }
         else{           
           list($first_name, $last_name, $DOB) = explode(",",$inp_string,3);
+          //trim whitepace after parsing
+          $first_name = trim($first_name);
+          $last_name = trim($last_name);
+          $DOB = trim($DOB);
+
           // Query the PatientInfo database for the information
           $first_last_dob_query->bind_param("sss",$first_name,$last_name,$DOB);
           $first_last_dob_query->execute();
@@ -226,6 +231,11 @@ if(isset($_POST["searchbtn"])){
         }
         else{           
           list($first_name, $last_name, $email_ad) = explode(",",$inp_string,3);
+          //remove whitespace from vars
+          $first_name = trim($first_name);
+          $last_name = trim($last_name);
+          $email_ad = trim($email_ad);
+
           // Query the PatientInfo database for the information
           $first_last_email_query->bind_param("sss",$first_name,$last_name,$email_ad);
           $first_last_email_query->execute();
