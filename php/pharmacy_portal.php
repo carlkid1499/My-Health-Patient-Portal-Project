@@ -81,17 +81,84 @@ $pid = $_SESSION['pid'];
   <!-- This is the search bar: https://www.w3schools.com/howto/howto_css_search_button.asp -->
   <div class="container">
   <section class="seachbar-section">
-    <form class="searchbar" id="searchbard" action="healthcare_worker_portal.php" method="post" style="margin:auto; max-width=75%">
+    <form class="searchbar" id="searchbar" action="pharmacy_portal.php" method="post" style="margin:auto; max-width=75%">
       <input type="text" placeholder="Patient Search Criteria: Last name, First name, DOB" name="searchbar-text">
+    <div>
+    <button class="searchbtn" name="searchbtn" value="searchbar-button" onclick="return checkInput();">search</button>
+    </div>
     </form>
-  </div>
-  <div>
-    <button class="searchbtn" id="searchbar-button" value="searchbar-button" onclick="return checkInput();">search</button>
-  </div>
   </section>
+  </div>
 </div>
 
-  <?php $conn->close(); ?>
+<div class="container">
+  <?php 
+  if(isset($_POST["searchbtn"])){
+      $inp_string = $_POST["searchbar-text"];
+      if($inp_string == NULL){
+        echo("<ul>" . "<center>No Search Critera Found: Enter <b>Last Name</b>, <b>First Name</b>, and <b>DOB</b></center>" . "</ul>\n");
+      }
+      else{           
+        list($last_name, $first_name, $DOB) = explode(",",$inp_string,3);
+        //trim whitepace after parsing
+        $first_name = trim($first_name);
+        $last_name = trim($last_name);
+        $DOB = trim($DOB);
+        $pid = null;
+        $doctor_notes = null;
+        $doctor_recommendations = null;
+        $record_date = null;
+
+        // Query the PatientInfo database for the information
+        $first_last_dob_query->bind_param("sss",$first_name,$last_name,$DOB);
+        $first_last_dob_query->execute();
+        $flb_results = $first_last_dob_query->get_result();
+
+        // Did we get any results
+        if($flb_results->num_rows >0)
+        {
+          $row = $flb_results->fetch_assoc();
+          $pid = $row['PID'];
+
+          $patient_record_by_search->bind_param("i", $pid);
+          $patient_record_by_search->execute();
+          $patient_record_by_search->store_result();
+          $patient_record_by_search->bind_result($record_date, $doctor_notes, $doctor_recommendations);
+
+          if($patient_record_by_search->num_rows > 0){
+
+            //create table to display query results
+            echo "
+            <div class=\"center\">
+              <h2>Patient Notes: <b>$first_name $last_name</b></h2><br>
+            </div>
+            <table name=\"patient_notes\" class=\"pharmacy\" border=\"3\" cellpadding=\"1\">
+              <tbody style=\"width=80%\">
+                <tr>
+                  <th width=100px> Date </th>
+                  <th> Diagnosis </th>
+                  <th> Doctor Recommendations </th>
+                </tr>
+            ";
+            while($patient_record_by_search->fetch()){
+              echo "
+                <tr>
+                  <td width=50px> $record_date </td>
+                  <td> $doctor_notes </td>
+                  <td> $doctor_recommendations </td>
+                </tr> ";
+            }
+            echo " 
+                  </tbody>
+                </table>
+            ";
+          }
+        }
+      }
+  } ?>
+</div>
+        
+<?php $conn->close(); ?>
 </body>
 
 </html>
