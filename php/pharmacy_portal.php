@@ -135,7 +135,6 @@ $pid = $_SESSION['pid'];
             <table name=\"patient_notes\" class=\"pharmacy\" border=\"3\" cellpadding=\"1\">
               <tbody style=\"width=80%\">
                 <tr>
-                  <th> Patient ID </th>
                   <th width=100px> Date </th>
                   <th> Diagnosis </th>
                   <th> Doctor Recommendations </th>
@@ -144,7 +143,6 @@ $pid = $_SESSION['pid'];
             while($patient_record_by_search->fetch()){
               echo "
                 <tr>
-                  <td> $pid </td>
                   <td width=50px> $record_date </td>
                   <td> $doctor_notes </td>
                   <td> $doctor_recommendations </td>
