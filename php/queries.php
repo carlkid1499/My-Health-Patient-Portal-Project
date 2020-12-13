@@ -25,7 +25,7 @@ $patient_records = $conn->prepare("SELECT RecordTime, TCatID, PatientPayment FRO
 $treament_category = $conn->prepare("SELECT TreatmentCategory FROM TreatmentCategory WHERE TCatID=?");
 
 # Get Patient Notes Query
-$patient_notes = $conn->prepare("SELECT ProvID, NoteTime, DiagnosisNotes, DrRecommendations FROM PatientNotes WHERE PID=?");
+$patient_notes = $conn->prepare("SELECT ProvID, NoteTime, DiagnosisNotes, DrRecommendations FROM PatientNotes WHERE PID=? ORDER BY `NoteTime` DESC");
 
 # Get the Provider Name Query
 $healthprovider_name =  $conn->prepare("SELECT ProvName, ProvAddr FROM HealthProvider WHERE ProvID=?");
@@ -50,7 +50,7 @@ $patient_id_query = $conn->prepare("SELECT name_first, name_last, DOB, Gender, a
 # This query will search for a given phone number.
 $phone_number_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE phone like ?");
 
-$patient_appointments = $conn->prepare("SELECT Date, Time, Reason FROM Appointments WHERE PID=?");
+$patient_appointments = $conn->prepare("SELECT Date, Time, Reason FROM Appointments WHERE PID=? ORDER BY `Date` DESC");
 # This is a query to search by First Name, Last Name, email
 # Values must be set before the query is run.
 $first_last_email_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND email like ? ");

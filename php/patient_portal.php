@@ -350,7 +350,12 @@ header("Expires: 0");
           $time = $_POST['appointment_time'];
           $reason = trim($_POST['reason']);
 
-          $conn->query("INSERT INTO Appointments (PID, Date, Time, Reason) VALUES ('$pid_appt', '$date', '$time', '$reason')");
+          if($conn->query("INSERT INTO Appointments (PID, Date, Time, Reason) VALUES ('$pid_appt', '$date', '$time', '$reason')")){
+
+          }
+          else{
+            echo "Appointment already exists, please choose a different time";
+          }
 
         }?>
       </button>
