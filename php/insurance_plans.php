@@ -25,6 +25,9 @@ $get_enrolled_query->bind_param("i", $pid);
 $get_enrolled_query->execute();
 $get_enrolled_query->store_result();
 $get_enrolled_query->bind_result($planid, $companyid);
+
+# Declare globals
+global $err_msg;
 ?>
 <!--end of php section-->
 
@@ -116,7 +119,7 @@ $get_enrolled_query->bind_result($planid, $companyid);
             $get_insprov_info_by_id_query->execute();
             $get_insprov_info_by_id_query->store_result();
             $get_insprov_info_by_id_query->bind_result($company, $planid, $category, $address, $email, $phone);
-           
+
 
             // Declare storage variables
             $annualprem = null;
@@ -196,8 +199,7 @@ $get_enrolled_query->bind_result($planid, $companyid);
               $get_planid_info_by_id_query->close();
             }
           }
-        }
-        else {
+        } else {
           echo "<B> You are not enrolled! Select a state to begin! 
           Then select an Insurance Provider Plan for more information!
           <B>";
@@ -260,7 +262,7 @@ $get_enrolled_query->bind_result($planid, $companyid);
               <option value=\"WI\"> Wisconsin - WI </option>
               <option value=\"WY\"> Wyoming - WY </option>
             </select>
-            <input class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"button\" value=\"Submit\"/>
+            <input class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"submit_button\" value=\"submit\"/>
 
             </div>
           <div class=\"center\">
@@ -268,10 +270,11 @@ $get_enrolled_query->bind_result($planid, $companyid);
           ";
 
           // Get the drop down data
-          if (isset($_POST['State']))
+          if (isset($_POST['State'])) {
+            $current_state = $_POST['State'];
             //  Check To make sure it's not the DEFAULT
             if ($_POST['State'] == "DEFAULT")
-              echo "Please select a state!  Try again!";
+              $err_msg = "Please select a state!  Try again!";
             else {
               //  We take the state and query for it in the Insurance Provider table
               $state = $_POST['State'];
@@ -301,6 +304,9 @@ $get_enrolled_query->bind_result($planid, $companyid);
                 # Create the Ins Provider Table
                 echo "
                 <center>
+                <h2> Showing Results for the state: $current_state </h2>
+                <p> Please select the Insurace Providers you would like to look at! When you are ready hit the Compare Providers button towards the bottom! </p>
+                <form action=\"\" method=\"post\">
                 <table name=\"insplans_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
                 <tr>
                   <th> CheckBox </th>
@@ -315,11 +321,10 @@ $get_enrolled_query->bind_result($planid, $companyid);
                 </center>";
 
                 // get the resuts
-                $check_box_id = 0;
                 while ($search_for_insprov_by_state_query->fetch()) {
                   # Print each table row
                   echo "<tr>
-                  <td><input type=\"checkbox\" id=\"$check_box_id\" /></td>
+                  <td><input type=\"checkbox\" name=\"checkbox_list[]\" value=\"$companyid\" /></td>
                   <td>$companyid</td>
                   <td>$company</td>
                   <td>$planid</td>
@@ -328,18 +333,38 @@ $get_enrolled_query->bind_result($planid, $companyid);
                   <td>$phone</td>
                   <td>$email</td>
                   </tr>";
-                  // increment the id
-                  $check_box_id++;
                 }
 
                 // Close the Ins Provider Table and the query
-                echo "</table>";
+                echo "</table>
+                <input class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"compare_button\" value=\"Compare Providers\"/>
+                </form>
+                ";
                 $search_for_insprov_by_state_query->close();
               }
             }
+          }
         }
+
         // Close the query we are done with it
         $get_enrolled_query->close();
+        
+        // Now we can check which check boxes have been checked!
+        
+        if(isset($_POST['compare_button']) && !isset($_POST['checkbox_list']))
+          $err_msg = "Please select at least one Insurance Provider! Try again!";
+        
+        elseif(isset($_POST['compare_button']) && isset($_POST['checkbox_list']))
+        {
+          foreach ($_POST['checkbox_list'] as $check) {
+            echo "This is a test $check";
+          }
+        }
+          
+          
+        
+        // Lastly, echo any err_msg
+        echo $err_msg;  
         ?>
       </section>
 
