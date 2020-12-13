@@ -55,5 +55,7 @@ $patient_appointments = $conn->prepare("SELECT Date, Time, Reason FROM Appointme
 # Values must be set before the query is run.
 $first_last_email_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND email like ? ");
 
+$patient_record_by_search = $conn->prepare("SELECT * FROM PatientNotes WHERE PID=?");
+
 /***** END: Declare MySQL Query Statements *****/
 ?>
