@@ -50,6 +50,10 @@ padding: 20px;
   opacity: 1;
 }
 
+.text-left{
+  text-align: left !important;
+}
+
 .form-signin input[type="email"] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;

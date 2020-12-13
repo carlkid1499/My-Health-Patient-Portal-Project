@@ -132,8 +132,7 @@ header("Expires: 0");
 </div>
 
 <body>
-<div class="container">
-<div class="center">
+<div class="container center">
 
   <h2>Patient Portal: <?php echo " Welcome - <B>$name_first</B>"?></h2>
 
@@ -170,7 +169,6 @@ header("Expires: 0");
       </tbody>
     </table>
   </section>
-</div>
 </div>
 
 
