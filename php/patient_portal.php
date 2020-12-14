@@ -242,6 +242,11 @@ header("Expires: 0");
       <button class="portal" onclick="document.getElementById('make-appointment').style.display='block'" style="width:auto;"
         type="submit" name="make-appointment">Make Appointment
       </button>
+
+      <!--bring up form view billing -->
+      <button class="portal" onclick="document.getElementById('view-billing').style.display='block'" style="width:auto;"
+        type="submit" name="make-appointment">View  Billing
+      </button>
     </div>
   </section>
 </div>
@@ -528,7 +533,23 @@ header("Expires: 0");
   </form>
 </div>
 
-<!--modal called to display update information form-->
+<!--modal for patients to view billing -->
+<div id="view-billing" class="modal">
+
+  <form class="modal-content animate" method="post" style="max-width:95%">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('view-billing').style.display='none'" class="close" title="Close Modal">&times;
+      
+      </span>
+      <div class="center">
+        <h3>Billing Report</h3>
+      </div>
+    </div>
+    <div class="container">
+        
+    </div>
+  </form>
+</div>
 
 
 <!--JS to close modal window on click outside of window-->
