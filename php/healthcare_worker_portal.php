@@ -14,11 +14,20 @@ session_start();
 $username = $_SESSION['username'];
 $userid = $_SESSION['userid'];
 $isemployee = $_SESSION['isemployee'];
-$pid = $_SESSION['pid'];
 
 if($username == "pharmacy" || $username == "Pharmacy"){
   header('Location: pharmacy_portal.php');
 }
+
+$name_first = NULL;
+$name_last = NULL;
+$DOB = NULL;
+$gender = NULL;
+$address = NULL;
+$email = NULL;
+$phone = NULL;
+$e_name = NULL;
+$e_phone = NULL;
 
 # Global Vars
 global $records_btn;
@@ -114,6 +123,7 @@ header("Expires: 0");
 </div>
 <?php 
 if(isset($_POST["searchbtn"])){
+  global $PID;
   if (isset($_POST["search_by_options_list"])){
     $options_list = $_POST["search_by_options_list"];
     $inp_string = $_POST["searchbar-text"];
@@ -145,8 +155,25 @@ if(isset($_POST["searchbtn"])){
           {
             // Get the Query Results
             while ($row = $flb_results->fetch_assoc()) {
-              echo '<section name="patientinfo" class="center">
-              <table name="patientinfo_table" class="center" style="width=95%;" border="3" cellpadding="1">
+
+              
+              $_SESSION['PID'] = $row["PID"];
+              $name_first = $row["name_first"];
+              $name_last = $row["name_last"];
+              $DOB = $row["DOB"];
+              $gender = $row["Gender"];
+              $address = $row["address"];
+              $email = $row["email"];
+              $phone = $row["phone"];
+              $e_name = $row["Emergency_name"];
+              $e_phone = $row["Emergency_phone"];
+
+              echo "<section name=\"patientinfo\" class=\"center\">
+              <div class=\"center\">
+                <h2>Patient Notes: <b>$name_first $name_last</b></h2><br>
+              </div>
+
+              <table name=\"patientinfo_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
               <tbody>
                 <!-- Populate table column names -->
                 <tr>
@@ -163,20 +190,20 @@ if(isset($_POST["searchbtn"])){
                 </tr>
                 <!-- Populate patient information-->
                 <tr>
-                  <td>'.$row["PID"].'</td>
-                  <td>'.$row["name_first"].'</td>
-                  <td>'.$row["name_last"].'</td>
-                  <td>'.$row["DOB"].'</td>
-                  <td>'.$row["Gender"].'</td>
-                  <td>'.$row["address"].'</td>
-                  <td>'.$row["email"].'</td>
-                  <td>'.$row["phone"].'</td>
-                  <td>'.$row["Emergency_name"].'</td>
-                  <td>'.$row["Emergency_phone"].'</td>
+                  <td>$PID</td>
+                  <td>$name_first</td>
+                  <td>$name_last</td>
+                  <td>$DOB</td>
+                  <td>$gender</td>
+                  <td>$address</td>
+                  <td>$email</td>
+                  <td>$phone</td>
+                  <td>$e_name</td>
+                  <td>$e_phone</td>
                 </tr>
                 </tbody>
               </table>
-            </section>';
+            </section>";
             }
 
             echo "
@@ -209,6 +236,7 @@ if(isset($_POST["searchbtn"])){
         if($inp_string == NULL){
           echo("<ul>" . "Enter Patient ID" . "</ul>\n");
         }
+        $inp_string = trim($inp_string);
         // Query the PatientInfo database for the information
         $patient_id_query->bind_param("s",$inp_string);
         $patient_id_query->execute();
@@ -218,8 +246,23 @@ if(isset($_POST["searchbtn"])){
           {
             // Get the Query Results
             while ($row = $pid_results->fetch_assoc()) {
-              echo '<section name="patientinfo" class="center">
-              <table name="patientinfo_table" class="center" style="width=95%;" border="3" cellpadding="1">
+              $_SESSION['PID'] = $inp_string;
+              $name_first = $row["name_first"];
+              $name_last = $row["name_last"];
+              $DOB = $row["DOB"];
+              $gender = $row["Gender"];
+              $address = $row["address"];
+              $email = $row["email"];
+              $phone = $row["phone"];
+              $e_name = $row["Emergency_name"];
+              $e_phone = $row["Emergency_phone"];
+
+              echo "<section name=\"patientinfo\" class=\"center\">
+              <div class=\"center\">
+                <h2>Patient Notes: <b>$name_first $name_last</b></h2><br>
+              </div>
+
+              <table name=\"patientinfo_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
               <tbody>
                 <!-- Populate table column names -->
                 <tr>
@@ -236,20 +279,20 @@ if(isset($_POST["searchbtn"])){
                 </tr>
                 <!-- Populate patient information-->
                 <tr>
-                  <td>'.$row["PID"].'</td>
-                  <td>'.$row["name_first"].'</td>
-                  <td>'.$row["name_last"].'</td>
-                  <td>'.$row["DOB"].'</td>
-                  <td>'.$row["Gender"].'</td>
-                  <td>'.$row["address"].'</td>
-                  <td>'.$row["email"].'</td>
-                  <td>'.$row["phone"].'</td>
-                  <td>'.$row["Emergency_name"].'</td>
-                  <td>'.$row["Emergency_phone"].'</td>
+                  <td>$PID</td>
+                  <td>$name_first</td>
+                  <td>$name_last</td>
+                  <td>$DOB</td>
+                  <td>$gender</td>
+                  <td>$address</td>
+                  <td>$email</td>
+                  <td>$phone</td>
+                  <td>$e_name</td>
+                  <td>$e_phone</td>
                 </tr>
                 </tbody>
               </table>
-            </section>';
+            </section>";
 
             } 
 
@@ -300,8 +343,24 @@ if(isset($_POST["searchbtn"])){
           {
             // Get the Query Results
             while ($row = $fle_results->fetch_assoc()) {
-              echo '<section name="patientinfo" class="center">
-              <table name="patientinfo_table" class="center" style="width=95%;" border="3" cellpadding="1">
+              $_SESSION['PID'] = $row["PID"];
+              $pid_table = $_SESSION['PID'];
+              $name_first = $row["name_first"];
+              $name_last = $row["name_last"];
+              $DOB = $row["DOB"];
+              $gender = $row["Gender"];
+              $address = $row["address"];
+              $email = $row["email"];
+              $phone = $row["phone"];
+              $e_name = $row["Emergency_name"];
+              $e_phone = $row["Emergency_phone"];
+
+              echo "<section name=\"patientinfo\" class=\"center\">
+              <div class=\"center\">
+                <h2>Patient Notes: <b>$name_first $name_last</b></h2><br>
+              </div>
+
+              <table name=\"patientinfo_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
               <tbody>
                 <!-- Populate table column names -->
                 <tr>
@@ -318,20 +377,20 @@ if(isset($_POST["searchbtn"])){
                 </tr>
                 <!-- Populate patient information-->
                 <tr>
-                  <td>'.$row["PID"].'</td>
-                  <td>'.$row["name_first"].'</td>
-                  <td>'.$row["name_last"].'</td>
-                  <td>'.$row["DOB"].'</td>
-                  <td>'.$row["Gender"].'</td>
-                  <td>'.$row["address"].'</td>
-                  <td>'.$row["email"].'</td>
-                  <td>'.$row["phone"].'</td>
-                  <td>'.$row["Emergency_name"].'</td>
-                  <td>'.$row["Emergency_phone"].'</td>
+                  <td>$pid_table</td>
+                  <td>$name_first</td>
+                  <td>$name_last</td>
+                  <td>$DOB</td>
+                  <td>$gender</td>
+                  <td>$address</td>
+                  <td>$email</td>
+                  <td>$phone</td>
+                  <td>$e_name</td>
+                  <td>$e_phone</td> 
                 </tr>
                 </tbody>
               </table>
-            </section>';
+            </section>";
             }
             
             echo "
@@ -434,9 +493,10 @@ if(isset($_POST["searchbtn"])){
                   $new_ephone = $e_phone;
                   
                 // Run the update information query
-                $update_info->bind_param("sssssi", $new_address, $new_email, $new_phone, $new_ename, $new_ephone, $pid);
-                $rtval = $update_info->execute();
-                $update_info->close();
+                $update_info_doctor->bind_param("sssssssssi", $new_name_first, $new_name_last, $new_DOB, $new_gender, $new_address,
+                                                      $new_email, $new_phone, $new_ename, $new_ephone, $_SESSION['PID']);
+                $rtval = $update_info_doctor->execute();
+                $update_info_doctor->close();
 
                 // Check the return value for error
                 if($rtval)
@@ -482,17 +542,18 @@ if(isset($_POST["searchbtn"])){
         Ex: 09:15 AM</p>
       </div></br></br>
       <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $name_first?>" disabled="disabled" required></br></br>
-      <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last?>" disabled="disabled" required></br></br>
+      <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last?>" disabled="disabled" required></br></br> 
+      <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $_SESSION['PID']?>" disabled="disabled" required></br></br> 
       <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="reason" placeholder="Reason for Visit" required></textarea></br></br>
 
       <button class="loginbtn" type="submit" name="create">submit
       <!-- If the submit button is pushed, we need to process the data. If successfull we need to redirect to the patient portal -->
         <?php if (isset($_POST['create'])) {
           // Process the form information
-          $pid_appt = $_SESSION['pid'];
           $date = $_POST['appointment_date'];
           $time = $_POST['appointment_time'];
           $reason = trim($_POST['reason']);
+          $pid_appt = $_SESSION['PID'];
 
           if($conn->query("INSERT INTO Appointments (PID, Date, Time, Reason) VALUES ('$pid_appt', '$date', '$time', '$reason')")){
 
