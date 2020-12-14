@@ -1,6 +1,6 @@
 <?php
-/* This is the patient_portal.php file.
-* All Patient information will be accessed
+/* This is the insurance_plans.php file.
+* All Patient insurance information will be accessed
 * through this page.
 */
 

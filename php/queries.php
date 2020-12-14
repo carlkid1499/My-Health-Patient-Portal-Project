@@ -65,7 +65,10 @@ $get_health_provid_in_net_list = $conn->prepare("SELECT ProvID FROM Membership W
 $get_health_prov_info = $conn->prepare("SELECT ProvName, ProvAddr  FROM HealthProvider WHERE ProvID=?");
 
 # Insert into Enrolle Table
-$insert_into_enrolled = $conn->prepare("INSERT INTO Enrolled (PlanID, PID, CompanyID) VALUES ( ?, ?, (SELECT CompanyID FROM InsPlans WHERE PlanID=?))")
+$insert_into_enrolled = $conn->prepare("INSERT INTO Enrolled (PlanID, PID, CompanyID) VALUES ( ?, ?, (SELECT CompanyID FROM InsPlans WHERE PlanID=?))");
+
+# Get network name and health providers in network using just planid
+$get_in_net_health_prov_by_planid = $conn->prepare("SELECT ProvID FROM Membership WHERE NetworkID in (SELECT NetworkID FROM Network WHERE NetworkName in (SELECT Network FROM InsPlans WHERE  PlanID=?))");
 
 /***** END: Declare MySQL Query Statements *****/
 ?>
