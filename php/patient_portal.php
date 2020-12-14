@@ -185,7 +185,7 @@ header("Expires: 0");
 
   echo "";
 
-  if($patient_appointments->num_rows > 0){
+  if($patient_appointments->num_rows() > 0){
     echo "
     <div class=\"center\">
     <h2><b>Upcoming Appointments: </b></h2><br>

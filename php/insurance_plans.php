@@ -25,6 +25,9 @@ $get_enrolled_query->bind_param("i", $pid);
 $get_enrolled_query->execute();
 $get_enrolled_query->store_result();
 $get_enrolled_query->bind_result($planid, $companyid);
+
+# Declare globals
+global $err_msg;
 ?>
 <!--end of php section-->
 
@@ -76,6 +79,17 @@ $get_enrolled_query->bind_result($planid, $companyid);
       ?>
     </button>
   </form>
+  <!-- In-Network Health Providers Page Button-->
+  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                  ?>" method="post">
+    <button class="w3-bar-item w3-button" name="in-net-health-prov" type="submit">In-Network Health Providers
+      <!-- If the logout button is pushed -->
+      <?php if (isset($_POST['in-net-health-prov'])) {
+        header('Location: in_net_health_provs.php');
+      }
+      ?>
+    </button>
+  </form>
   <!--Logout Button-->
   <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                   ?>" method="post">
@@ -116,7 +130,7 @@ $get_enrolled_query->bind_result($planid, $companyid);
             $get_insprov_info_by_id_query->execute();
             $get_insprov_info_by_id_query->store_result();
             $get_insprov_info_by_id_query->bind_result($company, $planid, $category, $address, $email, $phone);
-           
+
 
             // Declare storage variables
             $annualprem = null;
@@ -140,8 +154,8 @@ $get_enrolled_query->bind_result($planid, $companyid);
               <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
               <tr>
                 <th> CompanyID </th>
-                <th> Company Name</th>
                 <th> PlanID </th>
+                <th> Company Name</th>
                 <th> Category </th>
                 <th> Address </th>
                 <th> Phone </th>
@@ -196,8 +210,7 @@ $get_enrolled_query->bind_result($planid, $companyid);
               $get_planid_info_by_id_query->close();
             }
           }
-        }
-        else {
+        } else {
           echo "<B> You are not enrolled! Select a state to begin! 
           Then select an Insurance Provider Plan for more information!
           <B>";
@@ -260,7 +273,7 @@ $get_enrolled_query->bind_result($planid, $companyid);
               <option value=\"WI\"> Wisconsin - WI </option>
               <option value=\"WY\"> Wyoming - WY </option>
             </select>
-            <input class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"button\" value=\"Submit\"/>
+            <input class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"submit_button\" value=\"submit\"/>
 
             </div>
           <div class=\"center\">
@@ -268,10 +281,11 @@ $get_enrolled_query->bind_result($planid, $companyid);
           ";
 
           // Get the drop down data
-          if (isset($_POST['State']))
+          if (isset($_POST['State'])) {
+            $_SESSION['current_state'] = $_POST['State'];
             //  Check To make sure it's not the DEFAULT
             if ($_POST['State'] == "DEFAULT")
-              echo "Please select a state!  Try again!";
+              $err_msg = "Please select a state!  Try again!";
             else {
               //  We take the state and query for it in the Insurance Provider table
               $state = $_POST['State'];
@@ -289,9 +303,9 @@ $get_enrolled_query->bind_result($planid, $companyid);
               $phone = null;
 
               if ($search_for_insprov_by_state_query->bind_result(
-                $companyid,
-                $company,
                 $planid,
+                $company,
+                $companyid,
                 $category,
                 $address,
                 $email,
@@ -299,8 +313,12 @@ $get_enrolled_query->bind_result($planid, $companyid);
               )) {
 
                 # Create the Ins Provider Table
+                $curr_state = $_SESSION['current_state'];
                 echo "
                 <center>
+                <h2> Showing Results for the state: $curr_state </h2>
+                <p> Please select the Insurace Providers you would like to look at! When you are ready hit the Compare Providers button towards the bottom! </p>
+                <form action=\"\" method=\"post\">
                 <table name=\"insplans_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
                 <tr>
                   <th> CheckBox </th>
@@ -315,11 +333,10 @@ $get_enrolled_query->bind_result($planid, $companyid);
                 </center>";
 
                 // get the resuts
-                $check_box_id = 0;
                 while ($search_for_insprov_by_state_query->fetch()) {
                   # Print each table row
                   echo "<tr>
-                  <td><input type=\"checkbox\" id=\"$check_box_id\" /></td>
+                  <td><input type=\"checkbox\" name=\"checkbox_list[]\" value=$companyid /></td>
                   <td>$companyid</td>
                   <td>$company</td>
                   <td>$planid</td>
@@ -328,18 +345,232 @@ $get_enrolled_query->bind_result($planid, $companyid);
                   <td>$phone</td>
                   <td>$email</td>
                   </tr>";
-                  // increment the id
-                  $check_box_id++;
                 }
 
                 // Close the Ins Provider Table and the query
-                echo "</table>";
+                echo "</table>
+                <input class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"compare_button\" value=\"Compare Providers\"/>
+                </form>
+                ";
                 $search_for_insprov_by_state_query->close();
               }
             }
+          }
         }
+
         // Close the query we are done with it
         $get_enrolled_query->close();
+
+        // Now we can check which check boxes have been checked!
+
+        if (isset($_POST['compare_button']) && !isset($_POST['checkbox_list']))
+          $err_msg = "Please select at least one Insurance Provider! Try again!";
+
+        elseif (isset($_POST['compare_button']) && isset($_POST['checkbox_list'])) {
+          # Declare some local vars in this scope
+          $company_name = null;
+          $company_id = null;
+          $compland_planid = null;
+          $company_planid_cat = null;
+          $company_address = null;
+          $company_phone = null;
+          $company_email = null;
+          $plan_annualprem = null;
+          $plan_annualdeductible = null;
+          $plan_annualcoverage_limit = null;
+          $plan_lifetimecoverage = null;
+          $plan_network = null;
+          echo "<h2> Showing Provider and Plan Information! </h2>";
+          echo "<p> To enroll hit the enroll button or click the network to see a list of health providers!";
+
+          # Open a form for all the content displayed!
+          echo "<form action=\"\" method=\"post\">";
+          foreach ($_POST['checkbox_list'] as $check) {
+            // We need to grab the information for each companyid, planid pair.
+
+            # Grab the Insurance Provider information
+            $company_id = $check;
+            $get_insprov_info_by_id_query->bind_param("i", $check);
+            $get_insprov_info_by_id_query->execute();
+            $get_insprov_info_by_id_query->store_result();
+            $get_insprov_info_by_id_query->bind_result($company_planid, $company_name, $company_planid_cat, $company_address, $company_email, $company_phone);
+            $get_insprov_info_by_id_query->num_rows();
+            $curr_state = $_SESSION['current_state'];
+
+            if ($get_insprov_info_by_id_query->num_rows() > 0) {
+              while ($get_insprov_info_by_id_query->fetch()) {
+                # First Create the Top table
+                echo "
+                <center>
+                <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+                <tr>
+                  <th> CompanyID </th>
+                  <th> Company Name</th>
+                  <th> PlanID </th>
+                  <th> Category </th>
+                  <th> Address </th>
+                  <th> Phone </th>
+                  <th> Email </th>
+                </tr>
+                </center>";
+
+                # Print Insurance Provider Table Results
+                echo "
+                <tr> 
+                  <td> $company_id </td>
+                  <td> $company_name </td>
+                  <td> $company_planid </td>
+                  <td> $company_planid_cat </td>
+                  <td> $company_address </td>
+                  <td> $company_phone </td>
+                  <td> $company_email </td>
+                </tr>
+                ";
+
+                # Grab the Insurance Plans information
+                $get_planid_info_by_id_query->bind_param("i", $company_planid);
+                $get_planid_info_by_id_query->execute();
+                $get_planid_info_by_id_query->store_result();
+                $get_planid_info_by_id_query->bind_result($plan_annualprem, $plan_annualdeductible, $plan_annualcoverage_limit, $plan_lifetimecoverage, $plan_network);
+
+                # Create the Bottom table
+                echo "
+                <center>
+                  <table name=\"insplan_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+                  <tr>
+                    <th>  </th>
+                    <th> Annual Prem </th>
+                    <th> Annual Deductible </th>
+                    <th> Annual Coverage Limit </th>
+                    <th> Life Time Coverage </th>
+                    <th> Network </th>
+                  </tr>
+                </center>
+                ";
+
+                if ($get_planid_info_by_id_query->num_rows() > 0) {
+                  while ($get_planid_info_by_id_query->fetch()) {
+                    # Print Insurance Plan Info Table Results
+                    echo "
+                    <tr> 
+                      <td> <button class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"enroll_list[]\" value=\"$company_planid\"/> Enroll </button> </td>
+                      <td> $plan_annualprem </td>
+                      <td> $plan_annualdeductible </td>
+                      <td> $plan_annualcoverage_limit </td>
+                      <td> $plan_lifetimecoverage </td>
+                      <td> <button class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"network_list[]\" value=\"$company_planid,$plan_network\"/> $plan_network </button> </td>
+                    </tr>
+                    ";
+
+                    # Close the Bottom Table
+                    echo "</table>";
+                  }
+                }
+
+                # Close the Top table
+                echo "</table>";
+                # Close the form and add some space
+                echo "</form>";
+                echo "<br><br>";
+              }
+            }
+          }
+          # Close the queries we used!
+          $get_insprov_info_by_id_query->close();
+          $get_planid_info_by_id_query->close();
+        }
+
+        # Check if an Enroll or Network Button was hit
+        if (isset($_POST['enroll_list'])) {
+          foreach ($_POST['enroll_list'] as $id) {
+            # Run queries to enroll the user!
+            // Enroll User into the planid
+            $insert_into_enrolled->bind_param("iii", $id, $pid, $id);
+            $rtval = $insert_into_enrolled->execute();
+            if($rtval)
+              $err_msg = "Succes! You have been enrolled! Refresh page to see changes!";
+            else
+              $err_msg = "Error: Please try again or contact tech support!";
+            }
+        }
+
+        # Check if a Network Button was hit
+        if (isset($_POST['network_list'])) {
+          foreach ($_POST['network_list'] as $id_net) {
+            # Split the $id_net string into $id and $net
+            $str_arr = explode(",", $id_net);
+            echo "Now listing network Health Providers for the plan $str_arr[0] in network $str_arr[1] <br>";
+            $_SESSION['curr_planid'] = (int)$str_arr[0];
+            # Go grab the network information
+            $network_string = "%$str_arr[1]%";
+            $health_provider_id = null;
+            $health_provider_name = null;
+            $health_provider_address = null;
+            $get_health_provid_in_net_list->bind_param("s", $network_string);
+            $get_health_provid_in_net_list->execute();
+            $get_health_provid_in_net_list->store_result();
+            $get_health_provid_in_net_list->bind_result($health_provider_id);
+
+            # Create the Health Provider Table
+            echo "
+            <form action=\"\" method=\"post\">
+            <center>
+            <table name=\"healthprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+            <tr>
+              <th> Name </th>
+              <th> Address </th>
+            </tr>";
+
+            if ($get_health_provid_in_net_list->num_rows() > 0) {
+              while ($get_health_provid_in_net_list->fetch()) {
+                # Now we grab health provider information by ProvID
+                $get_health_prov_info->bind_param("i", $health_provider_id);
+                $get_health_prov_info->execute();
+                $get_health_prov_info->store_result();
+                $get_health_prov_info->bind_result($health_provider_name, $health_provider_address);
+
+                if ($get_health_prov_info->num_rows() > 0) {
+                  while ($get_health_prov_info->fetch()) {
+                    # Insert rows into the Health Provider Table
+                    echo "
+                    <tr> 
+                      <td> $health_provider_name </td>
+                      <td> $health_provider_address </td>
+                    </tr>";
+                  }
+                }
+              }
+            }
+
+            # Close the Health Provider Table and create a button
+            echo "</table>
+            <p>  Would you like to enroll into plan $str_arr[0] in network $str_arr[1]?
+            <button class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"enroll_button\"/> Enroll </button>
+            </center>
+            </form>";
+          }
+        }
+
+        #  Close the queries we used
+        $get_health_provid_in_net_list->close();
+        $get_health_prov_info->close();
+
+        if(isset($_POST['enroll_button']))
+        {
+          
+          echo $_SESSION['curr_planid'];
+          echo $pid;
+          // Enroll User into the planid
+          $insert_into_enrolled->bind_param("iii", $_SESSION['curr_planid'], $pid, $_SESSION['curr_planid']);
+          $rtval = $insert_into_enrolled->execute();
+          if($rtval)
+            $err_msg = "Succes! You have been enrolled! Refresh page to see changes!";
+          else
+            $err_msg = "Error: Please try again or contact tech support!";
+        }
+
+        // Lastly, echo any err_msg
+        echo $err_msg;
         ?>
       </section>
 
