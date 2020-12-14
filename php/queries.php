@@ -39,7 +39,7 @@ $search_for_insprov_by_state_query = $conn->prepare("SELECT * FROM InsProvider W
 
 $get_planid_info_by_id_query = $conn->prepare("SELECT AnnualPrem, AnnualDeductible, AnnualCoverageLimit, LifetimeCoverage, Network FROM InsPlans WHERE PlanID=?");
 
-$get_insprov_info_by_id_query = $conn->prepare("SELECT Company, PlanID, Category, Address, Email, Phone FROM InsProvider WHERE CompanyID=?");
+$get_insprov_info_by_id_query = $conn->prepare("SELECT PlanID, Company, Category, Address, Email, Phone FROM InsProvider WHERE CompanyID=?");
 # This is a query to search by First Name, Last Name, DOB
 # Values must be set before the query is run.
 $first_last_dob_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WHERE name_first like ? AND name_last like ? AND DOB like ? ");

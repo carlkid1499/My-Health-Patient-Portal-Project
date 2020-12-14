@@ -292,9 +292,9 @@ global $err_msg;
               $phone = null;
 
               if ($search_for_insprov_by_state_query->bind_result(
-                $companyid,
-                $company,
                 $planid,
+                $company,
+                $companyid,
                 $category,
                 $address,
                 $email,
@@ -324,7 +324,7 @@ global $err_msg;
                 while ($search_for_insprov_by_state_query->fetch()) {
                   # Print each table row
                   echo "<tr>
-                  <td><input type=\"checkbox\" name=\"checkbox_list[]\" value=\"$companyid\" /></td>
+                  <td><input type=\"checkbox\" name=\"checkbox_list[]\" value=$companyid /></td>
                   <td>$companyid</td>
                   <td>$company</td>
                   <td>$planid</td>
@@ -348,23 +348,82 @@ global $err_msg;
 
         // Close the query we are done with it
         $get_enrolled_query->close();
-        
+
         // Now we can check which check boxes have been checked!
-        
-        if(isset($_POST['compare_button']) && !isset($_POST['checkbox_list']))
+
+        if (isset($_POST['compare_button']) && !isset($_POST['checkbox_list']))
           $err_msg = "Please select at least one Insurance Provider! Try again!";
-        
-        elseif(isset($_POST['compare_button']) && isset($_POST['checkbox_list']))
-        {
+
+        elseif (isset($_POST['compare_button']) && isset($_POST['checkbox_list'])) {
+          # Declare some local vars in this scope
+          $company_name = null;
+          $company_id = null;
+          $compland_planid = null;
+          $company_planid_cat = null;
+          $company_address = null;
+          $company_phone = null;
+          $company_email = null;
+          $plan_annualprem = null;
+          $plan_annualdeductible = null;
+          $plan_annualcoverage_limit = null;
+          $plan_lifetimecoverage = null;
+          $plan_network = null;
+
+          # First Create the Table
+          echo "
+              <center>
+              <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+              <tr>
+                <th> CompanyID </th>
+                <th> Company Name</th>
+                <th> PlanID </th>
+                <th> Category </th>
+                <th> Address </th>
+                <th> Phone </th>
+                <th> Email </th>
+              </tr>
+              </center>";
+
           foreach ($_POST['checkbox_list'] as $check) {
-            echo "This is a test $check";
+            // We need to grab the information for each companyid, planid pair.
+
+            # Grab the Insurance Provider information
+            $company_id = $check;
+            echo $get_insprov_info_by_id_query->bind_param("i", $check);
+            echo $get_insprov_info_by_id_query->execute();
+            echo $get_insprov_info_by_id_query->store_result();
+            echo $get_insprov_info_by_id_query->bind_result($company_planid, $company_name, $company_planid_cat, $company_address, $company_email, $company_phone);
+            echo $get_insprov_info_by_id_query->num_rows();
+
+            if ($get_insprov_info_by_id_query->num_rows() > 0) {
+              while ($get_insprov_info_by_id_query->fetch()) {
+                # Print Insurance Provider Table Results
+                echo "
+              <tr> 
+                <td> $company_id </td>
+                <td> $company_name </td>
+                <td> $company_planid </td>
+                <td> $company_planid_cat </td>
+                <td> $company_address </td>
+                <td> $company_email </td>
+                <td> $company_phone </td>
+              </tr>
+              ";
+              }
+            }
+
+            # Grab the Insurance Plans information
+            $get_planid_info_by_id_query->bind_param("i", $company_planid);
+            $get_planid_info_by_id_query->execute();
+            $get_planid_info_by_id_query->store_result();
+            $get_planid_info_by_id_query->bind_result($plan_annualprem, $plan_annualdeductible, $plan_annualcoverage_limit, $plan_lifetimecoverage, $plan_network);
           }
         }
-          
-          
-        
+
+
+
         // Lastly, echo any err_msg
-        echo $err_msg;  
+        echo $err_msg;
         ?>
       </section>
 
