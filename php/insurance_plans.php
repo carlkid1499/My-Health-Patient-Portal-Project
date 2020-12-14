@@ -79,6 +79,17 @@ global $err_msg;
       ?>
     </button>
   </form>
+  <!-- In-Network Health Providers Page Button-->
+  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                  ?>" method="post">
+    <button class="w3-bar-item w3-button" name="in-net-health-prov" type="submit">In-Network Health Providers
+      <!-- If the logout button is pushed -->
+      <?php if (isset($_POST['in-net-health-prov'])) {
+        header('Location: in_net_health_provs.php');
+      }
+      ?>
+    </button>
+  </form>
   <!--Logout Button-->
   <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                   ?>" method="post">
@@ -143,8 +154,8 @@ global $err_msg;
               <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
               <tr>
                 <th> CompanyID </th>
-                <th> Company Name</th>
                 <th> PlanID </th>
+                <th> Company Name</th>
                 <th> Category </th>
                 <th> Address </th>
                 <th> Phone </th>
