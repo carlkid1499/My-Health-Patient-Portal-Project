@@ -425,7 +425,7 @@ global $err_msg;
                 # Create the Bottom table
                 echo "
                 <center>
-                  <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+                  <table name=\"insplan_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
                   <tr>
                     <th>  </th>
                     <th> Annual Prem </th>
@@ -447,7 +447,7 @@ global $err_msg;
                       <td> $plan_annualdeductible </td>
                       <td> $plan_annualcoverage_limit </td>
                       <td> $plan_lifetimecoverage </td>
-                      <td> <button class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"network_list[]\" value=\"$plan_network\"/> $plan_network </button> </td>
+                      <td> <button class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"network_list[]\" value=\"$company_planid,$plan_network\"/> $plan_network </button> </td>
                     </tr>
                     ";
 
@@ -469,19 +469,94 @@ global $err_msg;
           $get_planid_info_by_id_query->close();
         }
 
-        # Check if an Enroll or Network Button is hit
-        if(isset($_POST['enroll_list']))
-        {
-          foreach ($_POST['enroll_list'] as $id)
-          {
-            echo "You have been enrolled into Plan $id";
-            echo "Reresh the page to see changes!";
-
+        # Check if an Enroll or Network Button was hit
+        if (isset($_POST['enroll_list'])) {
+          foreach ($_POST['enroll_list'] as $id) {
             # Run queries to enroll the user!
+            // Enroll User into the planid
+            $insert_into_enrolled->bind_param("iii", $id, $pid, $id);
+            $rtval = $insert_into_enrolled->execute();
+            if($rtval)
+              $err_msg = "Succes! You have been enrolled! Refresh page to see changes!";
+            else
+              $err_msg = "Error: Please try again or contact tech support!";
+            }
+        }
+
+        # Check if a Network Button was hit
+        if (isset($_POST['network_list'])) {
+          foreach ($_POST['network_list'] as $id_net) {
+            # Split the $id_net string into $id and $net
+            $str_arr = explode(",", $id_net);
+            echo "Now listing network Health Providers for the plan $str_arr[0] in network $str_arr[1] <br>";
+            $_SESSION['curr_planid'] = (int)$str_arr[0];
+            # Go grab the network information
+            $network_string = "%$str_arr[1]%";
+            $health_provider_id = null;
+            $health_provider_name = null;
+            $health_provider_address = null;
+            $get_health_provid_in_net_list->bind_param("s", $network_string);
+            $get_health_provid_in_net_list->execute();
+            $get_health_provid_in_net_list->store_result();
+            $get_health_provid_in_net_list->bind_result($health_provider_id);
+
+            # Create the Health Provider Table
+            echo "
+            <form action=\"\" method=\"post\">
+            <center>
+            <table name=\"healthprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+            <tr>
+              <th> Name </th>
+              <th> Address </th>
+            </tr>";
+
+            if ($get_health_provid_in_net_list->num_rows() > 0) {
+              while ($get_health_provid_in_net_list->fetch()) {
+                # Now we grab health provider information by ProvID
+                $get_health_prov_info->bind_param("i", $health_provider_id);
+                $get_health_prov_info->execute();
+                $get_health_prov_info->store_result();
+                $get_health_prov_info->bind_result($health_provider_name, $health_provider_address);
+
+                if ($get_health_prov_info->num_rows() > 0) {
+                  while ($get_health_prov_info->fetch()) {
+                    # Insert rows into the Health Provider Table
+                    echo "
+                    <tr> 
+                      <td> $health_provider_name </td>
+                      <td> $health_provider_address </td>
+                    </tr>";
+                  }
+                }
+              }
+            }
+
+            # Close the Health Provider Table and create a button
+            echo "</table>
+            <p>  Would you like to enroll into plan $str_arr[0] in network $str_arr[1]?
+            <button class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"enroll_button\"/> Enroll </button>
+            </center>
+            </form>";
           }
         }
 
+        #  Close the queries we used
+        $get_health_provid_in_net_list->close();
+        $get_health_prov_info->close();
 
+        if(isset($_POST['enroll_button']))
+        {
+          
+          echo $_SESSION['curr_planid'];
+          echo $pid;
+          // Enroll User into the planid
+          $insert_into_enrolled->bind_param("iii", $_SESSION['curr_planid'], $pid, $_SESSION['curr_planid']);
+          $rtval = $insert_into_enrolled->execute();
+          if($rtval)
+            $err_msg = "Succes! You have been enrolled! Refresh page to see changes!";
+          else
+            $err_msg = "Error: Please try again or contact tech support!";
+        }
 
         // Lastly, echo any err_msg
         echo $err_msg;

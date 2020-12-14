@@ -58,5 +58,14 @@ $first_last_email_query = $conn->prepare("SELECT * FROM myhealth2.PatientInfo WH
 $patient_record_by_search = $conn->prepare("SELECT NoteTime, DiagnosisNotes, DrRecommendations FROM PatientNotes WHERE PID=? ORDER BY `NoteTime` DESC");
 #Try and sort records by date
 
+# Grab a list of Health Providers ID's in a Network
+$get_health_provid_in_net_list = $conn->prepare("SELECT ProvID FROM Membership WHERE NetworkID in (SELECT NetworkID FROM Network WHERE NetworkName like ?)");
+
+# Grab Health Provider Info
+$get_health_prov_info = $conn->prepare("SELECT ProvName, ProvAddr  FROM HealthProvider WHERE ProvID=?");
+
+# Insert into Enrolle Table
+$insert_into_enrolled = $conn->prepare("INSERT INTO Enrolled (PlanID, PID, CompanyID) VALUES ( ?, ?, (SELECT CompanyID FROM InsPlans WHERE PlanID=?))")
+
 /***** END: Declare MySQL Query Statements *****/
 ?>
