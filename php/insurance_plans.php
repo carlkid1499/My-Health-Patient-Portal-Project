@@ -271,7 +271,7 @@ global $err_msg;
 
           // Get the drop down data
           if (isset($_POST['State'])) {
-            $current_state = $_POST['State'];
+            $_SESSION['current_state'] = $_POST['State'];
             //  Check To make sure it's not the DEFAULT
             if ($_POST['State'] == "DEFAULT")
               $err_msg = "Please select a state!  Try again!";
@@ -302,9 +302,10 @@ global $err_msg;
               )) {
 
                 # Create the Ins Provider Table
+                $curr_state = $_SESSION['current_state'];
                 echo "
                 <center>
-                <h2> Showing Results for the state: $current_state </h2>
+                <h2> Showing Results for the state: $curr_state </h2>
                 <p> Please select the Insurace Providers you would like to look at! When you are ready hit the Compare Providers button towards the bottom! </p>
                 <form action=\"\" method=\"post\">
                 <table name=\"insplans_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
@@ -368,55 +369,115 @@ global $err_msg;
           $plan_annualcoverage_limit = null;
           $plan_lifetimecoverage = null;
           $plan_network = null;
+          echo "<h2> Showing Provider and Plan Information! </h2>";
+          echo "<p> To enroll hit the enroll button or click the network to see a list of health providers!";
 
-          # First Create the Table
-          echo "
-              <center>
-              <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
-              <tr>
-                <th> CompanyID </th>
-                <th> Company Name</th>
-                <th> PlanID </th>
-                <th> Category </th>
-                <th> Address </th>
-                <th> Phone </th>
-                <th> Email </th>
-              </tr>
-              </center>";
-
+          # Open a form for all the content displayed!
+          echo "<form action=\"\" method=\"post\">";
           foreach ($_POST['checkbox_list'] as $check) {
             // We need to grab the information for each companyid, planid pair.
 
             # Grab the Insurance Provider information
             $company_id = $check;
-            echo $get_insprov_info_by_id_query->bind_param("i", $check);
-            echo $get_insprov_info_by_id_query->execute();
-            echo $get_insprov_info_by_id_query->store_result();
-            echo $get_insprov_info_by_id_query->bind_result($company_planid, $company_name, $company_planid_cat, $company_address, $company_email, $company_phone);
-            echo $get_insprov_info_by_id_query->num_rows();
+            $get_insprov_info_by_id_query->bind_param("i", $check);
+            $get_insprov_info_by_id_query->execute();
+            $get_insprov_info_by_id_query->store_result();
+            $get_insprov_info_by_id_query->bind_result($company_planid, $company_name, $company_planid_cat, $company_address, $company_email, $company_phone);
+            $get_insprov_info_by_id_query->num_rows();
+            $curr_state = $_SESSION['current_state'];
 
             if ($get_insprov_info_by_id_query->num_rows() > 0) {
               while ($get_insprov_info_by_id_query->fetch()) {
+                # First Create the Top table
+                echo "
+                <center>
+                <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+                <tr>
+                  <th> CompanyID </th>
+                  <th> Company Name</th>
+                  <th> PlanID </th>
+                  <th> Category </th>
+                  <th> Address </th>
+                  <th> Phone </th>
+                  <th> Email </th>
+                </tr>
+                </center>";
+
                 # Print Insurance Provider Table Results
                 echo "
-              <tr> 
-                <td> $company_id </td>
-                <td> $company_name </td>
-                <td> $company_planid </td>
-                <td> $company_planid_cat </td>
-                <td> $company_address </td>
-                <td> $company_email </td>
-                <td> $company_phone </td>
-              </tr>
-              ";
+                <tr> 
+                  <td> $company_id </td>
+                  <td> $company_name </td>
+                  <td> $company_planid </td>
+                  <td> $company_planid_cat </td>
+                  <td> $company_address </td>
+                  <td> $company_phone </td>
+                  <td> $company_email </td>
+                </tr>
+                ";
+
+                # Grab the Insurance Plans information
+                $get_planid_info_by_id_query->bind_param("i", $company_planid);
+                $get_planid_info_by_id_query->execute();
+                $get_planid_info_by_id_query->store_result();
+                $get_planid_info_by_id_query->bind_result($plan_annualprem, $plan_annualdeductible, $plan_annualcoverage_limit, $plan_lifetimecoverage, $plan_network);
+
+                # Create the Bottom table
+                echo "
+                <center>
+                  <table name=\"insprovider_table\" class=\"center\" style=\"width=95%;\" border=\"3\" cellpadding=\"1\">
+                  <tr>
+                    <th>  </th>
+                    <th> Annual Prem </th>
+                    <th> Annual Deductible </th>
+                    <th> Annual Coverage Limit </th>
+                    <th> Life Time Coverage </th>
+                    <th> Network </th>
+                  </tr>
+                </center>
+                ";
+
+                if ($get_planid_info_by_id_query->num_rows() > 0) {
+                  while ($get_planid_info_by_id_query->fetch()) {
+                    # Print Insurance Plan Info Table Results
+                    echo "
+                    <tr> 
+                      <td> <button class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"enroll_list[]\" value=\"$company_planid\"/> Enroll </button> </td>
+                      <td> $plan_annualprem </td>
+                      <td> $plan_annualdeductible </td>
+                      <td> $plan_annualcoverage_limit </td>
+                      <td> $plan_lifetimecoverage </td>
+                      <td> <button class=\"w3-bar-item w3-button logoutbtn\" type=\"submit\" name=\"network_list[]\" value=\"$plan_network\"/> $plan_network </button> </td>
+                    </tr>
+                    ";
+
+                    # Close the Bottom Table
+                    echo "</table>";
+                  }
+                }
+
+                # Close the Top table
+                echo "</table>";
+                # Close the form and add some space
+                echo "</form>";
+                echo "<br><br>";
               }
             }
+          }
+          # Close the queries we used!
+          $get_insprov_info_by_id_query->close();
+          $get_planid_info_by_id_query->close();
+        }
 
-            # Grab the Insurance Plans information
-            $get_planid_info_by_id_query->bind_param("i", $company_planid);
-            $get_planid_info_by_id_query->execute();
-            $get_planid_info_by_id_query->store_result();
-            $get_planid_info_by_id_query->bind_result($plan_annualprem, $plan_annualdeductible, $plan_annualcoverage_limit, $plan_lifetimecoverage, $plan_network);
+        # Check if an Enroll or Network Button is hit
+        if(isset($_POST['enroll_list']))
+        {
+          foreach ($_POST['enroll_list'] as $id)
+          {
+            echo "You have been enrolled into Plan $id";
+            echo "Reresh the page to see changes!";
+
+            # Run queries to enroll the user!
           }
         }
 
