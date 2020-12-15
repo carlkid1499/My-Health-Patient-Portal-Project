@@ -76,54 +76,61 @@ header("Expires: 0");
 </head>
 
 <div class="w3-bar w3-theme-d5">
-<!--Home Button-->
-  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+    <!--Home Button-->
+    <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="w3-bar-item w3-button" name="home" type="submit">Home
-        <!-- If the logout button is pushed -->
-        <?php if(isset($_POST['home']))
-        {
-          header('Location: ../index.php');
-        } 
-        ?>
+        <button class="w3-bar-item w3-button" name="home" type="submit">Home
+            <!-- If the logout button is pushed -->
+            <?php if (isset($_POST['home'])) {
+                header('Location: ../index.php');
+            }
+            ?>
         </button>
-  </form>
-<!--Refresh Page Button-->
-  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+    </form>
+    <!--Refresh Page Button-->
+    <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="w3-bar-item w3-button" name="patient_portal" type="submit">Patient Portal
-        <!-- If the logout button is pushed -->
-        <?php if(isset($_POST['patient_portal']))
-        {
-          header('Location: patient_portal.php');
-        } 
-        ?>
+        <button class="w3-bar-item w3-button" name="patient_portal" type="submit">Patient Portal
+            <!-- If the logout button is pushed -->
+            <?php if (isset($_POST['patient_portal'])) {
+                header('Location: patient_portal.php');
+            }
+            ?>
         </button>
-  </form>
-<!--Insurance Plans Page Button-->
-<form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+    </form>
+    <!--Insurance Plans Page Button-->
+    <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="w3-bar-item w3-button" name="insurance_plans" type="submit">Insurance Plans
-        <!-- If the logout button is pushed -->
-        <?php if(isset($_POST['insurance_plans']))
-        {
-          header('Location: insurance_plans.php');
-        } 
-        ?>
+        <button class="w3-bar-item w3-button" name="insurance_plans" type="submit">Insurance Plans
+            <!-- If the logout button is pushed -->
+            <?php if (isset($_POST['insurance_plans'])) {
+                header('Location: insurance_plans.php');
+            }
+            ?>
         </button>
-  </form>
-<!--Logout Button-->
-  <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+    </form>
+    <!-- In-Network Health Providers Page Button-->
+    <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                     ?>" method="post">
-      <button class="w3-bar-item w3-button logoutbtn" name="logout" type="submit" style="float: right;">Logout
-        <!-- If the logout button is pushed -->
-        <?php if(isset($_POST['logout']))
-        {
-          header('Location: logout.php');
-        } 
-        ?>
+        <button class="w3-bar-item w3-button" name="in-net-health-prov" type="submit">In-Network Health Providers
+            <!-- If the logout button is pushed -->
+            <?php if (isset($_POST['in-net-health-prov'])) {
+                header('Location: in_net_health_provs.php');
+            }
+            ?>
         </button>
-  </form>
+    </form>
+    <!--Logout Button-->
+    <form class="form-options" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                    ?>" method="post">
+        <button class="w3-bar-item w3-button logoutbtn" name="logout" type="submit" style="float: right;">Logout
+            <!-- If the logout button is pushed -->
+            <?php if (isset($_POST['logout'])) {
+                header('Location: logout.php');
+            }
+            ?>
+        </button>
+    </form>
 
 </div>
 
