@@ -19,15 +19,10 @@ if($username == "pharmacy" || $username == "Pharmacy"){
   header('Location: pharmacy_portal.php');
 }
 
-$name_first = NULL;
-$name_last = NULL;
+$first_name = NULL;
+$last_name = NULL;
 $DOB = NULL;
-$gender = NULL;
-$address = NULL;
-$email = NULL;
-$phone = NULL;
-$e_name = NULL;
-$e_phone = NULL;
+$email_ad = NULL;
 
 # Global Vars
 global $records_btn;
@@ -170,6 +165,16 @@ if(isset($_POST["searchbtn"])){
               $e_name = $row["Emergency_name"];
               $e_phone = $row["Emergency_phone"];
 
+              $_SESSION['name_first'] = $row["name_first"];
+              $_SESSION['name_last'] = $row["name_last"];
+              $_SESSION['DOB'] = $row["DOB"];
+              $_SESSION['gender'] = $row["Gender"];
+              $_SESSION['address'] = $row["address"];
+              $_SESSION['email'] = $row["email"];
+              $_SESSION['phone'] = $row["phone"];
+              $_SESSION['e_name'] = $row["Emergency_name"];
+              $_SESSION['e_phone'] = $row["Emergency_phone"];
+
               echo "<section name=\"patientinfo\" class=\"center\">
               <div class=\"center\">
                 <h2>Patient Notes: <b>$name_first $name_last</b></h2><br>
@@ -258,6 +263,16 @@ if(isset($_POST["searchbtn"])){
               $phone = $row["phone"];
               $e_name = $row["Emergency_name"];
               $e_phone = $row["Emergency_phone"];
+
+              $_SESSION['name_first'] = $row["name_first"];
+              $_SESSION['name_last'] = $row["name_last"];
+              $_SESSION['DOB'] = $row["DOB"];
+              $_SESSION['gender'] = $row["Gender"];
+              $_SESSION['address'] = $row["address"];
+              $_SESSION['email'] = $row["email"];
+              $_SESSION['phone'] = $row["phone"];
+              $_SESSION['e_name'] = $row["Emergency_name"];
+              $_SESSION['e_phone'] = $row["Emergency_phone"];
 
               echo "<section name=\"patientinfo\" class=\"center\">
               <div class=\"center\">
@@ -357,6 +372,16 @@ if(isset($_POST["searchbtn"])){
               $e_name = $row["Emergency_name"];
               $e_phone = $row["Emergency_phone"];
 
+              $_SESSION['name_first'] = $row["name_first"];
+              $_SESSION['name_last'] = $row["name_last"];
+              $_SESSION['DOB'] = $row["DOB"];
+              $_SESSION['gender'] = $row["Gender"];
+              $_SESSION['address'] = $row["address"];
+              $_SESSION['email'] = $row["email"];
+              $_SESSION['phone'] = $row["phone"];
+              $_SESSION['e_name'] = $row["Emergency_name"];
+              $_SESSION['e_phone'] = $row["Emergency_phone"];
+
               echo "<section name=\"patientinfo\" class=\"center\">
               <div class=\"center\">
                 <h2>Patient Notes: <b>$name_first $name_last</b></h2><br>
@@ -442,15 +467,15 @@ if(isset($_POST["searchbtn"])){
   <section class="update_information" id="update_information">
           <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                         ?>" method="post">
-            <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $name_first ?>" ></br></br>
-            <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last ?>" ></br></br>
-            <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $DOB ?>" ></br></br>
-            <input type="text" class="form-signup" name="gender" placeholder="<?php echo $gender ?>" ></br></br>
-            <input type="text" class="form-signup" name="address" placeholder="<?php echo "Address: $address" ?>"></br></br>
-            <input type="text" class="form-signup" name="email" placeholder="<?php echo "Email: $email" ?>"></br></br>
-            <input type="text" class="form-signup" name="phone" placeholder="<?php echo "Phone number: $phone" ?>"></br></br>
-            <input type="text" class="form-signup" name="ename" placeholder="<?php echo "Emergency Contact Name: $e_name" ?>"></br></br>
-            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo "Emergency Contact Phone: $e_phone" ?>"></br></br>
+            <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $_SESSION['name_first'] ?>" ></br></br>
+            <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $_SESSION['name_last'] ?>" ></br></br>
+            <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $_SESSION['DOB'] ?>" ></br></br>
+            <input type="text" class="form-signup" name="gender" placeholder="<?php echo $_SESSION['gender'] ?>" ></br></br>
+            <input type="text" class="form-signup" name="address" placeholder="<?php echo "Address: "; echo $_SESSION['address'] ?>"></br></br>
+            <input type="text" class="form-signup" name="email" placeholder="<?php echo "Email: "; echo $_SESSION['email'] ?>"></br></br>
+            <input type="text" class="form-signup" name="phone" placeholder="<?php echo "Phone number: "; echo $_SESSION['phone'] ?>"></br></br>
+            <input type="text" class="form-signup" name="ename" placeholder="<?php echo "Emergency Contact Name: "; echo $_SESSION['e_name'] ?>"></br></br>
+            <input type="text" class="form-signup" name="ephone" placeholder="<?php echo "Emergency Contact Phone: "; echo $_SESSION['e_phone'] ?>"></br></br>
 
             <button class="loginbtn" type="submit" name="update_information">submit
               <!-- If the update information button is pushed -->
@@ -468,39 +493,39 @@ if(isset($_POST["searchbtn"])){
 
                 // Check if any values are empty
                 if($new_name_first == NULL)
-                  $new_name_first = $name_first;
+                  $new_name_first = $_SESSION['name_first'];
 
                 if($new_name_last == NULL)
-                  $new_name_last = $name_last;
+                  $new_name_last = $_SESSION['name_last'];
 
                 if($new_DOB == NULL)
-                  $new_DOB = $DOB;
+                  $new_DOB = $_SESSION['DOB'];
 
                 if($new_gender == NULL)
-                  $new_gender = $gender;
+                  $new_gender = $_SESSION['gender'];
 
                 if($new_address == NULL)
-                  $new_address = $address;
+                  $new_address = $_SESSION['address'];
 
                 if($new_email == NULL)
-                  $new_email = $email;
+                  $new_email = $_SESSION['email'];
 
                 if($new_phone == NULL)
-                  $new_phone = $phone;
+                  $new_phone = $_SESSION['phone'];
 
                 if($new_ename == NULL)
-                  $new_ename = $e_name;
+                  $new_ename = $_SESSION['e_name'];
 
                 if($new_ephone == NULL)
-                  $new_ephone = $e_phone;
+                  $new_ephone = $_SESSION['e_phone'];
                    
-              }
+              
                 // Run the update information query
                 $_SESSION['err_msg'] = $update_info_doctor->bind_param("sssssssssi", $new_name_first, $new_name_last, $new_DOB, $new_gender, $new_address,
                                                       $new_email, $new_phone, $new_ename, $new_ephone, $_SESSION['PID']);
                 $rtval = $update_info_doctor->execute();
                 $update_info_doctor->close();
-
+              }
               ?>
 
             </button>
@@ -538,9 +563,8 @@ if(isset($_POST["searchbtn"])){
       <span style="display:inline-block; width: 30px;"></span>
         Ex: 09:15 AM</p>
       </div></br></br>
-      <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $name_first?>" disabled="disabled" required></br></br>
-      <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $name_last?>" disabled="disabled" required></br></br> 
-      <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $_SESSION['PID']?>" disabled="disabled" required></br></br> 
+      <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $_SESSION['name_first']?>" disabled="disabled" required></br></br>
+      <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $_SESSION['name_last']?>" disabled="disabled" required></br></br> 
       <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="reason" placeholder="Reason for Visit" required></textarea></br></br>
 
       <button class="loginbtn" type="submit" name="create">submit
