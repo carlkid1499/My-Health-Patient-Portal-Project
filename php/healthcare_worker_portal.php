@@ -251,6 +251,7 @@ if(isset($_POST["searchbtn"])){
 
         if($pid_results->num_rows >0)
           {
+            $records_btn=true;
             // Get the Query Results
             while ($row = $pid_results->fetch_assoc()) {
               $_SESSION['PID'] = $inp_string;
@@ -358,6 +359,7 @@ if(isset($_POST["searchbtn"])){
           // Did we get any results
           if($fle_results->num_rows >0)
           {
+            $records_btn=true;
             // Get the Query Results
             while ($row = $fle_results->fetch_assoc()) {
               $_SESSION['PID'] = $row["PID"];
@@ -521,7 +523,7 @@ if(isset($_POST["searchbtn"])){
                    
               
                 // Run the update information query
-                $_SESSION['err_msg'] = $update_info_doctor->bind_param("sssssssssi", $new_name_first, $new_name_last, $new_DOB, $new_gender, $new_address,
+                $update_info_doctor->bind_param("sssssssssi", $new_name_first, $new_name_last, $new_DOB, $new_gender, $new_address,
                                                       $new_email, $new_phone, $new_ename, $new_ephone, $_SESSION['PID']);
                 $rtval = $update_info_doctor->execute();
                 $update_info_doctor->close();
@@ -761,7 +763,6 @@ if(isset($_POST["searchbtn"])){
       }
   }
 </script>
-  <?php echo $_SESSION['err_msg']; ?>
   <?php $conn->close(); ?>
 </body>
 
