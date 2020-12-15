@@ -19,7 +19,7 @@ if ($conn -> connect_error) {
 
 /***** BEGIN: Declare MySQL Query Statements *****/
 # Get Patient Records Query
-$patient_records = $conn->prepare("SELECT RecordTime, TCatID, PatientPayment FROM PatientRecords WHERE PID=?");
+$patient_records = $conn->prepare("SELECT RecordTime, TCatID, PatientPayment FROM PatientRecords WHERE PID=? ORDER BY 'RecordTime' DESC");
 
 # Get the Treatment Category Name Query
 $treament_category = $conn->prepare("SELECT TreatmentCategory FROM TreatmentCategory WHERE TCatID=?");
@@ -32,6 +32,9 @@ $healthprovider_name =  $conn->prepare("SELECT ProvName, ProvAddr FROM HealthPro
 
 # Update Information Query
 $update_info = $conn->prepare("UPDATE PatientInfo SET address=?, email=?, phone=?, Emergency_name=?, Emergency_phone=? WHERE PID=?");
+
+# update information by doctor query
+$update_info_doctor = $conn->prepare("UPDATE PatientInfo SET name_first=?, name_last=?, DOB=?, Gender=?, address=?, email=?, phone=?, Emergency_name=?, Emergency_phone=? WHERE PID=?");
 
 $get_enrolled_query = $conn->prepare("SELECT PlanID,CompanyID FROM Enrolled WHERE PID=?");
 

@@ -274,7 +274,7 @@ header("Expires: 0");
             <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $DOB ?>" disabled="disabled"></br></br>
             <input type="text" class="form-signup" name="gender" placeholder="<?php echo $gender ?>" disabled="disabled"></br></br>
             <input type="text" class="form-signup" name="address" placeholder="<?php echo "Your address: $address" ?>"></br></br>
-            <input type="text" class="form-signup" name="email" placeholder="<?php echo "Your emal: $email" ?>"></br></br>
+            <input type="text" class="form-signup" name="email" placeholder="<?php echo "Your email: $email" ?>"></br></br>
             <input type="text" class="form-signup" name="phone" placeholder="<?php echo "Your phone number: $phone" ?>"></br></br>
             <input type="text" class="form-signup" name="ename" placeholder="<?php echo "Emergency Contact Name: $e_name" ?>"></br></br>
             <input type="text" class="form-signup" name="ephone" placeholder="<?php echo "Emergency Contact Phone: $e_phone" ?>"></br></br>
