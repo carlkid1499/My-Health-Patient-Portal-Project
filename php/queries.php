@@ -74,7 +74,7 @@ $insert_into_enrolled = $conn->prepare("INSERT INTO Enrolled (PlanID, PID, Compa
 $get_in_net_health_prov_by_planid = $conn->prepare("SELECT ProvID FROM Membership WHERE NetworkID in (SELECT NetworkID FROM Network WHERE NetworkName in (SELECT Network FROM InsPlans WHERE  PlanID=?))");
 
 # Get The billing information for a user by PID
-$get_billing_info_by_pid = $conn->prepare("SELECT RecordTime, (SELECT treatmentcategory  FROM treatmentcategory WHERE treatmentcategory.TCatID=PatientRecords.TCatID) AS TreatmentCategoryName, CostToIns, CostToPatient, InsPayment, PatientPayment, (CostToPatient-PatientPayment) AS  PatientOwes FROM PatientRecords WHERE PatientRecords.PID=? ORDER BY RecordTime ASC");
+$get_billing_info_by_pid = $conn->prepare("SELECT RecordTime, (SELECT TreatmentCategory  FROM TreatmentCategory WHERE TreatmentCategory.TCatID=PatientRecords.TCatID) AS TreatmentCategoryName, CostToIns, CostToPatient, InsPayment, PatientPayment, (CostToPatient-PatientPayment) AS  PatientOwes FROM PatientRecords WHERE PatientRecords.PID=? ORDER BY RecordTime ASC");
 
 # Get the total amount for billing for a user by PID
 $get_billing_total_by_pid = $conn->prepare("SELECT SUM(CostToPatient-PatientPayment) AS  PatientTotal FROM PatientRecords WHERE PID=?");
