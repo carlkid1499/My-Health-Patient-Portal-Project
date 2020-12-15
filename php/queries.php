@@ -34,7 +34,7 @@ $healthprovider_name =  $conn->prepare("SELECT ProvName, ProvAddr FROM HealthPro
 $update_info = $conn->prepare("UPDATE PatientInfo SET address=?, email=?, phone=?, Emergency_name=?, Emergency_phone=? WHERE PID=?");
 
 # update information by doctor query
-$update_info_doctor = $conn->prepare("UPDATE PatientInfo SET name_first=?, name_last=?, DOB=?, gender=? address=?, email=?, phone=?, Emergency_name=?, Emergency_phone=? WHERE PID=?");
+$update_info_doctor = $conn->prepare("UPDATE PatientInfo SET name_first=?, name_last=?, DOB=?, Gender=?, address=?, email=?, phone=?, Emergency_name=?, Emergency_phone=? WHERE PID=?");
 
 $get_enrolled_query = $conn->prepare("SELECT PlanID,CompanyID FROM Enrolled WHERE PID=?");
 

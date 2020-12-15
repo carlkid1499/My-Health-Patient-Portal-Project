@@ -231,7 +231,7 @@ if(isset($_POST["searchbtn"])){
           }
 
         }
-        
+        $first_last_dob_query->close();
       break;
       case "search_by_PID": 
         //$inp_string = $_POST["searchbar-txt"];
@@ -320,7 +320,7 @@ if(isset($_POST["searchbtn"])){
             ";
           }
 
-
+        $patient_id_query->close();
         
       break;
 
@@ -418,7 +418,7 @@ if(isset($_POST["searchbtn"])){
           }
         }
          
-        
+        $first_last_email_query->close;
       break;
     }
   }
@@ -493,19 +493,14 @@ if(isset($_POST["searchbtn"])){
 
                 if($new_ephone == NULL)
                   $new_ephone = $e_phone;
-                  
+                   
+              }
                 // Run the update information query
-                $update_info_doctor->bind_param("sssssssssi", $new_name_first, $new_name_last, $new_DOB, $new_gender, $new_address,
+                $_SESSION['err_msg'] = $update_info_doctor->bind_param("sssssssssi", $new_name_first, $new_name_last, $new_DOB, $new_gender, $new_address,
                                                       $new_email, $new_phone, $new_ename, $new_ephone, $_SESSION['PID']);
                 $rtval = $update_info_doctor->execute();
                 $update_info_doctor->close();
 
-                // Check the return value for error
-                if($rtval)
-                  echo "Success!";
-                else
-                  echo "No Success!";
-              }
               ?>
 
             </button>
@@ -742,7 +737,7 @@ if(isset($_POST["searchbtn"])){
       }
   }
 </script>
-
+  <?php echo $_SESSION['err_msg']; ?>
   <?php $conn->close(); ?>
 </body>
 
