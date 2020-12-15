@@ -153,11 +153,13 @@ if(isset($_POST["searchbtn"])){
           // Did we get any results
           if($flb_results->num_rows >0)
           {
+            $records_btn=true;
             // Get the Query Results
             while ($row = $flb_results->fetch_assoc()) {
 
               
               $_SESSION['PID'] = $row["PID"];
+              $pid_table = $row["PID"];
               $name_first = $row["name_first"];
               $name_last = $row["name_last"];
               $DOB = $row["DOB"];
@@ -190,7 +192,7 @@ if(isset($_POST["searchbtn"])){
                 </tr>
                 <!-- Populate patient information-->
                 <tr>
-                  <td>$PID</td>
+                  <td>$pid_table</td>
                   <td>$name_first</td>
                   <td>$name_last</td>
                   <td>$DOB</td>
@@ -215,7 +217,7 @@ if(isset($_POST["searchbtn"])){
                     type=\"submit\"  name=\"update-info\">update information
                   </button>
 
-                  <button class=\"portal\" onclick=\"document.getElementById('view-records').style.display='block' <?php $records_btn=true; ?>\" style=\"width:auto;\"
+                  <button class=\"portal\" onclick=\"document.getElementById('view-records').style.display='block'\" style=\"width:auto;\"
                     type=\"submit\" name=\"view-records\">View Records
                   </button>
 
@@ -279,7 +281,7 @@ if(isset($_POST["searchbtn"])){
                 </tr>
                 <!-- Populate patient information-->
                 <tr>
-                  <td>$PID</td>
+                  <td>$inp_string</td>
                   <td>$name_first</td>
                   <td>$name_last</td>
                   <td>$DOB</td>
@@ -305,7 +307,7 @@ if(isset($_POST["searchbtn"])){
                     type=\"submit\"  name=\"update-info\">update information
                   </button>
 
-                  <button class=\"portal\" onclick=\"document.getElementById('view-records').style.display='block' <?php $records_btn=true; ?>\" style=\"width:auto;\"
+                  <button class=\"portal\" onclick=\"document.getElementById('view-records').style.display='block'\" style=\"width:auto;\"
                     type=\"submit\" name=\"view-records\">View Records
                   </button>
 
@@ -603,12 +605,12 @@ if(isset($_POST["searchbtn"])){
           $patientpayment = null;
 
           // Grab the information needed.
-          $patient_records->bind_param("i", $pid);
+          $patient_records->bind_param("i", $_SESSION['PID']);
           $patient_records->execute();
           $patient_records->store_result();
           $patient_records->bind_result($recordtime, $tcatid, $patientpayment);
 
-          $patient_notes->bind_param("i", $pid);
+          $patient_notes->bind_param("i", $_SESSION['PID']);
           $patient_notes->execute();
           $patient_notes->store_result();
           $patient_notes->bind_result($provid, $notetime, $diagnosisnotes, $drrecommendations);
@@ -668,11 +670,12 @@ if(isset($_POST["searchbtn"])){
               // if we get here all is well
               # Create the notestable
             echo "
+            <br>
             <table name=\"patientnotes_table\">
             <tr>
               <th> Provider Name </th>
               <th> Provider Address </th>
-              <th> Note Time </th>
+              <th  width=100px> Note Time </th>
               <th> Diagnosis Notes </th>
               <th> Dr. Recommendations </th>
             </tr>";
