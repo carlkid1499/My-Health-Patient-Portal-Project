@@ -9,6 +9,7 @@
    unset($_SESSION['userid']);
    unset($_SESSION['isemployee']);
    unset($_SESSION['pid']);
+   session_destroy();
    echo 'You have been logged out';
    header('Refresh: 2; URL = ../index.php');
    echo '<br> Feel free to close your browser session';
