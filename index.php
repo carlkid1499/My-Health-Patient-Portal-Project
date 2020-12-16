@@ -8,9 +8,11 @@ include 'php/queries.php';
 <html>
 
 <head>
-  <title>My Health Patient Portal</title>
-  <link href="/css/style.css" rel='stylesheet'>
-  <script src="/js/effects.js"></script>
+  <title>Welcome to My Health Portal</title>
+  <link href="css/welcome.css" rel='stylesheet'>
+  <link href="css/blue_theme.css" rel='stylesheet'>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <script src="js/effects.js"></script>
   <!--- SOURCE: https://www.w3schools.com/php/php_includes.asp --->
 </head>
 

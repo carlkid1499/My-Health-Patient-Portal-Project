@@ -134,46 +134,47 @@ if(isset($_POST["searchbtn"])){
           echo("<ul>" . "Enter Firstname, Lastname and DOB" . "</ul>\n");
         }
         else{           
-          list($first_name, $last_name, $DOB) = explode(",",$inp_string,3);
+          list($first_name, $last_name, $DOB_search) = explode(",",$inp_string,3);
           //trim whitepace after parsing
           $first_name = trim($first_name);
           $last_name = trim($last_name);
-          $DOB = trim($DOB);
+          $DOB_search = trim($DOB_search);
+
+          //declare null vars
+          $pid_table = NULL;
+          $name_first = NULL;
+          $name_last = NULL;
+          $DOB = NULL;
+          $gender = NULL;
+          $address = NULL;
+          $email = NULL;
+          $phone = NULL;
+          $e_name = NULL;
+          $e_phone = NULL;
 
           // Query the PatientInfo database for the information
-          $first_last_dob_query->bind_param("sss",$first_name,$last_name,$DOB);
+          $first_last_dob_query->bind_param("sss",$first_name,$last_name,$DOB_search);
           $first_last_dob_query->execute();
-          $flb_results = $first_last_dob_query->get_result();
-
+          $first_last_dob_query->store_result();
+          $first_last_dob_query->bind_result($pid_table, $name_first, $name_last, $DOB, $gender, $address, $email, $phone, $e_name, $e_phone);
+          
           // Did we get any results
-          if($flb_results->num_rows >0)
+          if($first_last_dob_query->num_rows >0)
           {
             $records_btn=true;
             // Get the Query Results
-            while ($row = $flb_results->fetch_assoc()) {
+            while ($first_last_dob_query->fetch()) {
 
-              
-              $_SESSION['PID'] = $row["PID"];
-              $pid_table = $row["PID"];
-              $name_first = $row["name_first"];
-              $name_last = $row["name_last"];
-              $DOB = $row["DOB"];
-              $gender = $row["Gender"];
-              $address = $row["address"];
-              $email = $row["email"];
-              $phone = $row["phone"];
-              $e_name = $row["Emergency_name"];
-              $e_phone = $row["Emergency_phone"];
-
-              $_SESSION['name_first'] = $row["name_first"];
-              $_SESSION['name_last'] = $row["name_last"];
-              $_SESSION['DOB'] = $row["DOB"];
-              $_SESSION['gender'] = $row["Gender"];
-              $_SESSION['address'] = $row["address"];
-              $_SESSION['email'] = $row["email"];
-              $_SESSION['phone'] = $row["phone"];
-              $_SESSION['e_name'] = $row["Emergency_name"];
-              $_SESSION['e_phone'] = $row["Emergency_phone"];
+              $_SESSION['PID'] = $pid_table;
+              $_SESSION['name_first'] = $name_first;
+              $_SESSION['name_last'] = $name_last;
+              $_SESSION['DOB'] = $DOB;
+              $_SESSION['gender'] = $gender;
+              $_SESSION['address'] = $address;
+              $_SESSION['email'] = $email;
+              $_SESSION['phone'] = $phone;
+              $_SESSION['e_name'] = $e_name;
+              $_SESSION['e_phone'] = $e_phone;
 
               echo "<section name=\"patientinfo\" class=\"center\">
               <div class=\"center\">
@@ -238,46 +239,50 @@ if(isset($_POST["searchbtn"])){
             </div>
             "; 
           }
-
         }
-        $first_last_dob_query->close();
       break;
+
       case "search_by_PID": 
         //$inp_string = $_POST["searchbar-txt"];
         if($inp_string == NULL){
           echo("<ul>" . "Enter Patient ID" . "</ul>\n");
         }
         $inp_string = trim($inp_string);
+
+        //declare null vars
+        $pid_table = NULL;
+        $name_first = NULL;
+        $name_last = NULL;
+        $DOB = NULL;
+        $gender = NULL;
+        $address = NULL;
+        $email = NULL;
+        $phone = NULL;
+        $e_name = NULL;
+        $e_phone = NULL;
+
         // Query the PatientInfo database for the information
         $patient_id_query->bind_param("s",$inp_string);
         $patient_id_query->execute();
-        $pid_results = $patient_id_query->get_result();
+        $patient_id_query->store_result();
+        $patient_id_query->bind_result($pid_table, $name_first, $name_last, $DOB, $gender, $address, $email, $phone, $e_name, $e_phone);
 
-        if($pid_results->num_rows >0)
+        if($patient_id_query->num_rows >0)
           {
             $records_btn=true;
             // Get the Query Results
-            while ($row = $pid_results->fetch_assoc()) {
-              $_SESSION['PID'] = $inp_string;
-              $name_first = $row["name_first"];
-              $name_last = $row["name_last"];
-              $DOB = $row["DOB"];
-              $gender = $row["Gender"];
-              $address = $row["address"];
-              $email = $row["email"];
-              $phone = $row["phone"];
-              $e_name = $row["Emergency_name"];
-              $e_phone = $row["Emergency_phone"];
+            while ($patient_id_query->fetch()) {
 
-              $_SESSION['name_first'] = $row["name_first"];
-              $_SESSION['name_last'] = $row["name_last"];
-              $_SESSION['DOB'] = $row["DOB"];
-              $_SESSION['gender'] = $row["Gender"];
-              $_SESSION['address'] = $row["address"];
-              $_SESSION['email'] = $row["email"];
-              $_SESSION['phone'] = $row["phone"];
-              $_SESSION['e_name'] = $row["Emergency_name"];
-              $_SESSION['e_phone'] = $row["Emergency_phone"];
+              $_SESSION['PID'] = $pid_table;
+              $_SESSION['name_first'] = $name_first;
+              $_SESSION['name_last'] = $name_last;
+              $_SESSION['DOB'] = $DOB;
+              $_SESSION['gender'] = $gender;
+              $_SESSION['address'] = $address;
+              $_SESSION['email'] = $email;
+              $_SESSION['phone'] = $phone;
+              $_SESSION['e_name'] = $e_name;
+              $_SESSION['e_phone'] = $e_phone;
 
               echo "<section name=\"patientinfo\" class=\"center\">
               <div class=\"center\">
@@ -342,10 +347,7 @@ if(isset($_POST["searchbtn"])){
               </section>
             </div>
             ";
-          }
-
-        $patient_id_query->close();
-        
+          }        
       break;
 
       case "search_by_FLE":
@@ -359,38 +361,41 @@ if(isset($_POST["searchbtn"])){
           $last_name = trim($last_name);
           $email_ad = trim($email_ad);
 
+          //declare null vars
+          $pid_table = NULL;
+          $name_first = NULL;
+          $name_last = NULL;
+          $DOB = NULL;
+          $gender = NULL;
+          $address = NULL;
+          $email = NULL;
+          $phone = NULL;
+          $e_name = NULL;
+          $e_phone = NULL;
+
           // Query the PatientInfo database for the information
           $first_last_email_query->bind_param("sss",$first_name,$last_name,$email_ad);
           $first_last_email_query->execute();
-          $fle_results = $first_last_email_query->get_result();
+          $first_last_email_query->store_result();
+          $first_last_email_query->bind_result($pid_table, $name_first, $name_last, $DOB, $gender, $address, $email, $phone, $e_name, $e_phone);
   
           // Did we get any results
-          if($fle_results->num_rows >0)
+          if($first_last_email_query->num_rows >0)
           {
             $records_btn=true;
             // Get the Query Results
-            while ($row = $fle_results->fetch_assoc()) {
-              $_SESSION['PID'] = $row["PID"];
-              $pid_table = $_SESSION['PID'];
-              $name_first = $row["name_first"];
-              $name_last = $row["name_last"];
-              $DOB = $row["DOB"];
-              $gender = $row["Gender"];
-              $address = $row["address"];
-              $email = $row["email"];
-              $phone = $row["phone"];
-              $e_name = $row["Emergency_name"];
-              $e_phone = $row["Emergency_phone"];
+            while ($first_last_email_query->fetch()) {
 
-              $_SESSION['name_first'] = $row["name_first"];
-              $_SESSION['name_last'] = $row["name_last"];
-              $_SESSION['DOB'] = $row["DOB"];
-              $_SESSION['gender'] = $row["Gender"];
-              $_SESSION['address'] = $row["address"];
-              $_SESSION['email'] = $row["email"];
-              $_SESSION['phone'] = $row["phone"];
-              $_SESSION['e_name'] = $row["Emergency_name"];
-              $_SESSION['e_phone'] = $row["Emergency_phone"];
+              $_SESSION['PID'] = $pid_table;
+              $_SESSION['name_first'] = $name_first;
+              $_SESSION['name_last'] = $name_last;
+              $_SESSION['DOB'] = $DOB;
+              $_SESSION['gender'] = $gender;
+              $_SESSION['address'] = $address;
+              $_SESSION['email'] = $email;
+              $_SESSION['phone'] = $phone;
+              $_SESSION['e_name'] = $e_name;
+              $_SESSION['e_phone'] = $e_phone;
 
               echo "<section name=\"patientinfo\" class=\"center\">
               <div class=\"center\">
@@ -456,8 +461,6 @@ if(isset($_POST["searchbtn"])){
             ";
           }
         }
-         
-        $first_last_email_query->close;
       break;
     }
   }
