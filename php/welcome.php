@@ -75,7 +75,7 @@ if ($conn->connect_error) {
   <h1><b>My Health Patient Portal</b></h1>
 </div>
 
-<div class="content background">
+<div class="content background container" style="height: 400px">
       <p>
         <br><br><br><br>
       </p>
