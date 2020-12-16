@@ -76,6 +76,9 @@ if ($conn->connect_error) {
 </div>
 
 <div class="content background">
+      <p>
+        <br><br><br><br>
+      </p>
 
   <div class="center">
     <button class="w3-button w3-xlarge w3-round w3-black w3-ripple" 
@@ -89,6 +92,9 @@ if ($conn->connect_error) {
       id="btnsignup" type="submit" name="signup">Create Account
     </button>
   </div>
+      <p>
+        <br><br><br><br>
+      </p>
 </div>
 
 <div class="footer w3-theme-d2 center">
