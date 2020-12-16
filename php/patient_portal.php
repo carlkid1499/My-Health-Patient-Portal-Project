@@ -17,6 +17,7 @@ $pid = $_SESSION['pid'];
 
 //Populate table column values but let's get that data first!
 // Variables for Patient information
+$pid_query = NULL;
 $name_first = NULL;
 $name_last = NULL;
 $DOB = NULL;
@@ -33,6 +34,7 @@ $patient_id_query->execute();
 
 // Did we get any results
 if ($patient_id_query->bind_result(
+  $pid_query,
   $name_first,
   $name_last,
   $DOB,
