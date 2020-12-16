@@ -229,6 +229,10 @@ if(isset($_POST["searchbtn"])){
                   <button class=\"portal\" onclick=\"document.getElementById('make-appointment').style.display='block'\" style=\"width:auto;\"
                     type=\"submit\" name=\"make-appointment\">Make Appointment
                   </button>
+
+                  <button class=\"portal\" onclick=\"document.getElementById('make-note-record').style.display='block'\" style=\"width:auto;\"
+                    type=\"submit\" name=\"make-appointment\">Make Note & Record
+                  </button>
                 </div>
               </section>
             </div>
@@ -329,6 +333,10 @@ if(isset($_POST["searchbtn"])){
 
                   <button class=\"portal\" onclick=\"document.getElementById('make-appointment').style.display='block'\" style=\"width:auto;\"
                     type=\"submit\" name=\"make-appointment\">Make Appointment
+                  </button>
+
+                  <button class=\"portal\" onclick=\"document.getElementById('make-note-record').style.display='block'\" style=\"width:auto;\"
+                    type=\"submit\" name=\"make-appointment\">Make Note & Record
                   </button>
                 </div>
               </section>
@@ -437,6 +445,10 @@ if(isset($_POST["searchbtn"])){
 
                   <button class=\"portal\" onclick=\"document.getElementById('make-appointment').style.display='block'\" style=\"width:auto;\"
                     type=\"submit\" name=\"make-appointment\">Make Appointment
+                  </button>
+
+                  <button class=\"portal\" onclick=\"document.getElementById('make-note-record').style.display='block'\" style=\"width:auto;\"
+                    type=\"submit\" name=\"make-appointment\">Make Note & Record
                   </button>
                 </div>
               </section>
@@ -746,6 +758,35 @@ if(isset($_POST["searchbtn"])){
           $records_btn = false;
         }
         ?>
+    </div>
+  </form>
+</div>
+
+<!--modal for patients to view records-->
+<div id="make-note-record" class="modal">
+
+  <form class="modal-content animate" method="post" style="max-width:95%">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('make-note-record').style.display='none'" class="close" title="Close Modal">&times;
+      
+      </span>
+      <div class="center">
+        <h3>Make Note & Record </h3>
+      </div>
+    </div>
+    <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+                                                        ?>" method="post">
+            <input type="text" class="form-signup" name="pid" placeholder="<?php echo $_SESSION['name_first'] ?>" ></br></br>
+            <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $_SESSION['name_first'] ?>" ></br></br>
+            <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $_SESSION['name_last'] ?>" ></br></br>
+            <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $_SESSION['DOB'] ?>" ></br></br>
+            <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="drrecommendations" placeholder="Enter Dr. Recommendations" required></textarea></br></br>
+            <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="diagnosisnotes" placeholder="Enter Diagnosis Notes" required></textarea></br></br>
+            <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="treatmentcategory" placeholder="Select a Treatment Category" required></textarea></br></br>
+            <button class="loginbtn" type="submit" name="create_record_notes">submit
+            </button>
+          </form>
+  
     </div>
   </form>
 </div>
