@@ -317,6 +317,8 @@ header("Expires: 0");
                   echo "Success!";
                 else
                   echo "No Success!";
+
+                echo "<meta http-equiv='refresh' content='0'>";
               }
               ?>
 

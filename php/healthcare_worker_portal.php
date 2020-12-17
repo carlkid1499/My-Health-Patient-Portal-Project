@@ -530,6 +530,8 @@ if(isset($_POST["searchbtn"])){
                                                       $new_email, $new_phone, $new_ename, $new_ephone, $_SESSION['PID']);
                 $rtval = $update_info_doctor->execute();
                 $update_info_doctor->close();
+
+                echo "<meta http-equiv='refresh' content='0'>";
               }
               ?>
 
