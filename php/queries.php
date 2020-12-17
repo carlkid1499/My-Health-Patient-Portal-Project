@@ -88,10 +88,10 @@ $get_health_provider_names = $conn->prepare("SELECT ProvName FROM HealthProvider
 #SELECT ProvID FROM healthprovider WHERE ProvName like 'Big River Hospital'
 
 # Insert into the PatientNotes Table
-$insert_into_patientnotes = $conn->prepare("INSERT INTO PatientNotes (PNI, PID, ProvID, NoteTime, DiagnosisNotes, DrRecommendations, Treatment) VALUES (NULL,?,(SELECT ProvID FROM HealthProvider WHERE ProvName like ?),NOW(),?,?,?)");
+$insert_into_patientnotes = $conn->prepare("INSERT INTO PatientNotes (PID, ProvID, NoteTime, DiagnosisNotes, DrRecommendations, Treatment) VALUES (?,(SELECT ProvID FROM HealthProvider WHERE ProvName like ?),NOW(),?,?,?)");
 #INSERT INTO patientnotes (PID, ProvID, NoteTime, DiagnosisNotes, DrRecommendations, Treatment) VALUES (1111,(SELECT ProvID FROM HealthProvider WHERE ProvName like "Big River Hospital"),NOW(),"test","test",1)
 # Insert into the PatientRecords Table
-#$insert_into_patientrecords
+#$insert_into_patientrecords = $conn->prepare("INSERT INTO PatientRecords (PID, RecordTime, TCatID, CostToIns, CostToPatient, InsPayment, PatientPayment) VALUES(?,?,?,?,?,?,?)");
 
 
 /***** END: Declare MySQL Query Statements *****/
