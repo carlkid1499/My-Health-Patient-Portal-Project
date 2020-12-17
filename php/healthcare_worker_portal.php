@@ -214,6 +214,45 @@ if(isset($_POST["searchbtn"])){
             </section>";
             }
 
+            $appointment_date = NULL;
+            $appointment_time = NULL;
+            $appointment_reason = NULL;
+
+            //query datebase for appointments
+            $patient_appointments->bind_param("i", $_SESSION['PID']);
+            $patient_appointments->execute();
+            $patient_appointments->store_result();
+            $patient_appointments->bind_result($appointment_date, $appointment_time, $appointment_reason);
+
+            echo "";
+
+            if ($patient_appointments->num_rows() > 0) {
+              echo "
+            <div class=\"center\">
+            <h3>Upcoming Appointments: </h3><br>
+            <table name=\"patient_appointments\" class=\"center\" style=\"width=95%\" border=\"3\" cellpadding=\"1\">
+              <tbody>
+                <tr>
+                  <th> Date </th>
+                  <th> Time </th>
+                  <th> Reason </th>
+                </tr>
+            ";
+              while ($patient_appointments->fetch()) {
+                echo "
+                <tr>
+                  <td> $appointment_date </td>
+                  <td> $appointment_time </td>
+                  <td> $appointment_reason </td>
+                </tr> ";
+              }
+              echo " 
+                  </tbody>
+                </table>
+              </div>
+            ";
+            }
+
             echo "
             <div class=\"center\">
               <section name=\"options\">
@@ -318,6 +357,45 @@ if(isset($_POST["searchbtn"])){
             </section>";
 
             } 
+
+            $appointment_date = NULL;
+            $appointment_time = NULL;
+            $appointment_reason = NULL;
+
+            //query datebase for appointments
+            $patient_appointments->bind_param("i", $_SESSION['PID']);
+            $patient_appointments->execute();
+            $patient_appointments->store_result();
+            $patient_appointments->bind_result($appointment_date, $appointment_time, $appointment_reason);
+
+            echo "";
+
+            if ($patient_appointments->num_rows() > 0) {
+              echo "
+            <div class=\"center\">
+            <h3>Upcoming Appointments: </h3><br>
+            <table name=\"patient_appointments\" class=\"center\" style=\"width=95%\" border=\"3\" cellpadding=\"1\">
+              <tbody>
+                <tr>
+                  <th> Date </th>
+                  <th> Time </th>
+                  <th> Reason </th>
+                </tr>
+            ";
+              while ($patient_appointments->fetch()) {
+                echo "
+                <tr>
+                  <td> $appointment_date </td>
+                  <td> $appointment_time </td>
+                  <td> $appointment_reason </td>
+                </tr> ";
+              }
+              echo " 
+                  </tbody>
+                </table>
+              </div>
+            ";
+            }
 
             echo "
             <div class=\"center\">
@@ -426,6 +504,45 @@ if(isset($_POST["searchbtn"])){
               </table>
             </section>";
             }
+
+            $appointment_date = NULL;
+            $appointment_time = NULL;
+            $appointment_reason = NULL;
+
+            //query datebase for appointments
+            $patient_appointments->bind_param("i", $_SESSION['PID']);
+            $patient_appointments->execute();
+            $patient_appointments->store_result();
+            $patient_appointments->bind_result($appointment_date, $appointment_time, $appointment_reason);
+
+            echo "";
+
+            if ($patient_appointments->num_rows() > 0) {
+              echo "
+            <div class=\"center\">
+            <h3>Upcoming Appointments: </h3><br>
+            <table name=\"patient_appointments\" class=\"center\" style=\"width=95%\" border=\"3\" cellpadding=\"1\">
+              <tbody>
+                <tr>
+                  <th> Date </th>
+                  <th> Time </th>
+                  <th> Reason </th>
+                </tr>
+            ";
+              while ($patient_appointments->fetch()) {
+                echo "
+                <tr>
+                  <td> $appointment_date </td>
+                  <td> $appointment_time </td>
+                  <td> $appointment_reason </td>
+                </tr> ";
+              }
+              echo " 
+                  </tbody>
+                </table>
+              </div>
+            ";
+            }
             
             echo "
             <div class=\"center\">
@@ -530,6 +647,7 @@ if(isset($_POST["searchbtn"])){
                                                       $new_email, $new_phone, $new_ename, $new_ephone, $_SESSION['PID']);
                 $rtval = $update_info_doctor->execute();
                 $update_info_doctor->close();
+
               }
               ?>
 

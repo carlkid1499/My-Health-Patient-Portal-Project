@@ -317,6 +317,8 @@ header("Expires: 0");
                   echo "Success!";
                 else
                   echo "No Success!";
+
+                echo "<meta http-equiv='refresh' content='0'>";
               }
               ?>
 
@@ -372,6 +374,8 @@ header("Expires: 0");
                 } else {
                   echo "Appointment already exists, please choose a different time";
                 }
+
+                echo "<meta http-equiv='refresh' content='0'>";
               } ?>
             </button>
           </form>
