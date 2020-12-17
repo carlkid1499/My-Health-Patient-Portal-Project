@@ -78,5 +78,11 @@ $get_billing_info_by_pid = $conn->prepare("SELECT RecordTime, (SELECT TreatmentC
 
 # Get the total amount for billing for a user by PID
 $get_billing_total_by_pid = $conn->prepare("SELECT SUM(CostToPatient-PatientPayment) AS  PatientTotal FROM PatientRecords WHERE PID=?");
+
+# Grab a list of Treatment Category Names
+$get_treament_category_names = $conn->prepare("SELECT TreatmentCategory FROM TreatmentCategory");
+
+# Grab a list of Health Provider Names
+$get_health_provider_names = $conn->prepare("SELECT ProvName FROM HealthProvider");
 /***** END: Declare MySQL Query Statements *****/
 ?>

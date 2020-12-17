@@ -27,7 +27,7 @@ $email_ad = NULL;
 # Global Vars
 global $records_btn;
 global $record_results;
-
+global $err_msg;
 # Tell Browser not to cache anything
 header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
 header("Pragma: no-cache"); // HTTP 1.0.
@@ -270,8 +270,8 @@ if(isset($_POST["searchbtn"])){
                     type=\"submit\" name=\"make-appointment\">Make Appointment
                   </button>
 
-                  <button class=\"portal\" onclick=\"document.getElementById('make-note-record').style.display='block'\" style=\"width:auto;\"
-                    type=\"submit\" name=\"make-appointment\">Make Note & Record
+                  <button class=\"portal\" onclick=\"document.getElementById('make-note').style.display='block'\" style=\"width:auto;\"
+                    type=\"submit\" name=\"make-record\">Make Note
                   </button>
                 </div>
               </section>
@@ -418,13 +418,13 @@ if(isset($_POST["searchbtn"])){
                     type=\"submit\" name=\"make-appointment\">Make Appointment
                   </button>
 
-                  <button class=\"portal\" onclick=\"document.getElementById('make-note-record').style.display='block'\" style=\"width:auto;\"
-                    type=\"submit\" name=\"make-appointment\">Make Note & Record
+                  <button class=\"portal\" onclick=\"document.getElementById('make-note').style.display='block'\" style=\"width:auto;\"
+                    type=\"submit\" name=\"make-record\">Make Note
                   </button>
                 </div>
               </section>
             </div>
-            ";
+            "; 
           }        
       break;
 
@@ -561,7 +561,7 @@ if(isset($_POST["searchbtn"])){
                     type=\"submit\"  name=\"update-info\">update information
                   </button>
 
-                  <button class=\"portal\" onclick=\"document.getElementById('view-records').style.display='block' <?php $records_btn=true; ?>\" style=\"width:auto;\"
+                  <button class=\"portal\" onclick=\"document.getElementById('view-records').style.display='block'\" style=\"width:auto;\"
                     type=\"submit\" name=\"view-records\">View Records
                   </button>
 
@@ -569,8 +569,8 @@ if(isset($_POST["searchbtn"])){
                     type=\"submit\" name=\"make-appointment\">Make Appointment
                   </button>
 
-                  <button class=\"portal\" onclick=\"document.getElementById('make-note-record').style.display='block'\" style=\"width:auto;\"
-                    type=\"submit\" name=\"make-appointment\">Make Note & Record
+                  <button class=\"portal\" onclick=\"document.getElementById('make-note').style.display='block'\" style=\"width:auto;\"
+                    type=\"submit\" name=\"make-record\">Make Note
                   </button>
                 </div>
               </section>
@@ -883,12 +883,12 @@ if(isset($_POST["searchbtn"])){
   </form>
 </div>
 
-<!--modal for patients to view records-->
-<div id="make-note-record" class="modal">
+<!--modal for doctor to make a note -->
+<div id="make-note" class="modal">
 
   <form class="modal-content animate" method="post" style="max-width:95%">
     <div class="imgcontainer">
-      <span onclick="document.getElementById('make-note-record').style.display='none'" class="close" title="Close Modal">&times;
+      <span onclick="document.getElementById('make-note').style.display='none'" class="close" title="Close Modal">&times;
       
       </span>
       <div class="center">
@@ -897,16 +897,86 @@ if(isset($_POST["searchbtn"])){
     </div>
     <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                         ?>" method="post">
-            <input type="text" class="form-signup" name="pid" placeholder="<?php echo $_SESSION['name_first'] ?>" ></br></br>
-            <input type="text" class="form-signup" name="name_first" placeholder="<?php echo $_SESSION['name_first'] ?>" ></br></br>
-            <input type="text" class="form-signup" name="name_last" placeholder="<?php echo $_SESSION['name_last'] ?>" ></br></br>
-            <input type="text" class="form-signup" name="DOB" placeholder="<?php echo $_SESSION['DOB'] ?>" ></br></br>
+            <input type="text" class="form-signup" name="pid" placeholder="<?php echo "PID: " . $_SESSION['PID']  ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="name_first" placeholder="<?php echo "First Name: " . $_SESSION['name_first'] ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="name_last" placeholder="<?php echo "Last Name: " . $_SESSION['name_last'] ?>" disabled="disabled"></br></br>
+            <input type="text" class="form-signup" name="DOB" placeholder="<?php echo "DOB: " . $_SESSION['DOB'] ?>" disabled="disabled"></br></br>
             <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="drrecommendations" placeholder="Enter Dr. Recommendations" required></textarea></br></br>
             <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="diagnosisnotes" placeholder="Enter Diagnosis Notes" required></textarea></br></br>
-            <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="treatmentcategory" placeholder="Select a Treatment Category" required></textarea></br></br>
-            <button class="loginbtn" type="submit" name="create_record_notes">submit
+            <p> Select a Treatment Category: </p>
+            <select class="form-signup" name="treatmentcat">
+            <option value="DEFAULT"> </option>
+            <!-- Print out the drop down menu -->
+            <?php 
+            $treament_category_name = null;
+            $get_treament_category_names->execute();
+            $get_treament_category_names->store_result();
+            $get_treament_category_names->bind_result($treament_category_name);
+
+            if($get_treament_category_names->num_rows()>0)
+            {
+              while($get_treament_category_names->fetch())
+              {
+                echo "<option value=$treament_category_name>" . $treament_category_name . "</option>";
+              }
+            }
+            $get_treament_category_names->close();
+            ?>
+            </select>
+
+            <p> Select a Health Provider: </p>
+            <select class="form-signup" name="healthprovider">
+            <option value="DEFAULT"> </option>
+            <!-- Print out the drop down menu -->
+            <?php 
+            $health_provider_name = null;
+            $get_health_provider_names->execute();
+            $get_health_provider_names->store_result();
+            $get_health_provider_names->bind_result($health_provider_name);
+
+            if($get_health_provider_names->num_rows()>0)
+            {
+              while($get_health_provider_names->fetch())
+              {
+                echo "<option value=$health_provider_name>" . $health_provider_name . "</option>";
+              }
+            }
+            $get_health_provider_names->close();
+            ?>
+            </select>
+            
+            <button class="loginbtn" type="submit" name="create_notes">submit
             </button>
           </form>
+
+          <?php 
+            if(isset($_POST["create_notes"]) && !isset($_POST["treatmentcat"]) && !isset($_POST["healthprovider"]))
+              $err_msg = "Error: No Treatment Category or Health Provider was selected!";
+            elseif(isset($_POST["create_notes"]) && !isset($_POST["treatmentcat"]) && isset($_POST["healthprovider"]))
+              $err_msg = "Error: No Treatment Category or Health Provider was selected!";
+            elseif(isset($_POST["create_notes"]) && isset($_POST["treatmentcat"]) && !isset($_POST["healthprovider"]))
+              $err_msg = "Error: No Treatment Category or Health Provider was selected!";
+            elseif(isset($_POST["create_notes"]) && isset($_POST["treatmentcat"]) && isset($_POST["healthprovider"]))
+            {
+              if($_POST["treatmentcat"] == "DEFAULT")
+                $err_msg = "Error: No Treatment Category was selected!";
+              
+                else{
+                  $treatmentcat = $_POST["treatmentcat"];
+                  $drrecommendations = trim($_POST["drrecommendations"]);
+                  $diagnosisnotes = trim($_POST["diagnosisnotes"]);
+
+                  
+
+
+
+
+                }
+              
+
+              
+            }
+          ?>
   
     </div>
   </form>
@@ -925,7 +995,7 @@ if(isset($_POST["searchbtn"])){
       }
   }
 </script>
-  <?php $conn->close(); ?>
+  <?php echo $err_msg; $conn->close(); ?>
 </body>
 
 </html>
