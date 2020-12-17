@@ -903,6 +903,8 @@ if(isset($_POST["searchbtn"])){
             <input type="text" class="form-signup" name="DOB" placeholder="<?php echo "DOB: " . $_SESSION['DOB'] ?>" disabled="disabled"></br></br>
             <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="drrecommendations" placeholder="Enter Dr. Recommendations" required></textarea></br></br>
             <textarea class="reason" rows="2" cols="80" style="resize:none" wrap="soft" maxlength="255" name="diagnosisnotes" placeholder="Enter Diagnosis Notes" required></textarea></br></br>
+            <p> Was the Patient Treated? (Checked=Yes, Unchecked=No): 
+            <input type="checkbox" name="checkbox" value=1 /> </p>
             <p> Select a Treatment Category: </p>
             <select class="form-signup" name="treatmentcat">
             <option value="DEFAULT"> </option>
@@ -958,15 +960,33 @@ if(isset($_POST["searchbtn"])){
               $err_msg = "Error: No Treatment Category or Health Provider was selected!";
             elseif(isset($_POST["create_notes"]) && isset($_POST["treatmentcat"]) && isset($_POST["healthprovider"]))
             {
-              if($_POST["treatmentcat"] == "DEFAULT")
-                $err_msg = "Error: No Treatment Category was selected!";
+              if(($_POST["treatmentcat"] == "DEFAULT") || ($_POST["healthprovider"] == "DEFAULT"))
+                $err_msg = "Error: No Treatment Category or Health Provider was selected!";
               
                 else{
                   $treatmentcat = $_POST["treatmentcat"];
+                  $healthprovider = $_POST["healthprovider"];
                   $drrecommendations = trim($_POST["drrecommendations"]);
                   $diagnosisnotes = trim($_POST["diagnosisnotes"]);
+                  $treated = null;
+                  $pid = $_SESSION["PID"];
+
+                  if(isset($_POST["checkbox"]))
+                    $treated = 1;
+                  else
+                    $treaded = 0;
 
                   
+                  # Now we insert into notes & records
+
+                  $insert_into_patientnotes->bind_param("isssi", $pid, $treatmentcat, $diagnosisnotes, $drrecommendations, $treated);
+                  $rtal = $insert_into_patientnotes->execute();
+                  if($rtal)
+                    $err_msg = "Submission Success!";
+                  else
+                    $err_msg = "Submission Failure!";
+                  
+                  $insert_into_patientnotes->close();
 
 
 

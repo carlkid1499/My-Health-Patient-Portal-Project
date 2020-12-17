@@ -67,7 +67,7 @@ $get_health_provid_in_net_list = $conn->prepare("SELECT ProvID FROM Membership W
 # Grab Health Provider Info
 $get_health_prov_info = $conn->prepare("SELECT ProvName, ProvAddr  FROM HealthProvider WHERE ProvID=?");
 
-# Insert into Enrolle Table
+# Insert into Enrolled Table
 $insert_into_enrolled = $conn->prepare("INSERT INTO Enrolled (PlanID, PID, CompanyID) VALUES ( ?, ?, (SELECT CompanyID FROM InsPlans WHERE PlanID=?))");
 
 # Get network name and health providers in network using just planid
@@ -84,5 +84,15 @@ $get_treament_category_names = $conn->prepare("SELECT TreatmentCategory FROM Tre
 
 # Grab a list of Health Provider Names
 $get_health_provider_names = $conn->prepare("SELECT ProvName FROM HealthProvider");
+
+#SELECT ProvID FROM healthprovider WHERE ProvName like 'Big River Hospital'
+
+# Insert into the PatientNotes Table
+$insert_into_patientnotes = $conn->prepare("INSERT INTO PatientNotes (PNI, PID, ProvID, NoteTime, DiagnosisNotes, DrRecommendations, Treatment) VALUES (NULL,?,(SELECT ProvID FROM HealthProvider WHERE ProvName like ?),NOW(),?,?,?)");
+#INSERT INTO patientnotes (PID, ProvID, NoteTime, DiagnosisNotes, DrRecommendations, Treatment) VALUES (1111,(SELECT ProvID FROM HealthProvider WHERE ProvName like "Big River Hospital"),NOW(),"test","test",1)
+# Insert into the PatientRecords Table
+#$insert_into_patientrecords
+
+
 /***** END: Declare MySQL Query Statements *****/
 ?>
