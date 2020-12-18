@@ -13,7 +13,7 @@ session_start();
 # Grab all the session values
 $username = $_SESSION['username'];
 $userid = $_SESSION['userid'];
-$isemployee = $_SESSION['isemployee'];
+$employeetype = $_SESSION['employeetype'];
 
 $first_name = NULL;
 $last_name = NULL;

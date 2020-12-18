@@ -152,27 +152,25 @@ if ($conn->connect_error) {
             $_SESSION['employeetype'] = $row["EmployeeType"];
             $_SESSION['pid'] = $row["PID"];
           }
-          // Now we check to see if we have a Patient or Worker
-          if($_SESSION['employeetype'] == 0)
-          {
-            //  We have a Patient
-            header('Location: php/patient_portal.php');
-          }
-          else if ($_SESSION['employeetype'] == 1)
-          {
-            // We have a doctor
-            header('Location: php/healthcare_worker_portal.php');
-          }
-          else if ($_SESSION['employeetype'] == 2)
-          {
-            //we have a pharmacist
-            header('Location: php/pharmacy_portal.php');
-          }
-          else
-          {
-            // Error
-            $msg = "Something went wrong please try again! If the error continues contact support@support.com";
-          }
+
+          switch($_SESSION['employeetype']){
+            case "0":
+              header('Location: php/patient_portal.php');
+            break;
+
+            case "1":
+              //we have a doctor
+              header('Location: php/healthcare_worker_portal.php');
+            break;
+
+            case "2":
+              //we have a pharmacist
+              header('Location: php/pharmacy_portal.php');
+            break;
+
+            default:
+              echo "Error processing employee type";
+          };
         }
       }
       ?>
