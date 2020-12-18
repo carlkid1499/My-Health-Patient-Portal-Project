@@ -12,7 +12,7 @@ session_start();
 # Grab all the session values
 $username = $_SESSION['username'];
 $userid = $_SESSION['userid'];
-$isemployee = $_SESSION['isemployee'];
+$employeetype = $_SESSION['employeetype'];
 $pid = $_SESSION['pid'];
 
 //Populate table column values but let's get that data first!
