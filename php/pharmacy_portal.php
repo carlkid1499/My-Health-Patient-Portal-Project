@@ -13,7 +13,7 @@ session_start();
 # Grab all the session values
 $username = $_SESSION['username'];
 $userid = $_SESSION['userid'];
-$isemployee = $_SESSION['isemployee'];
+$employeetype = $_SESSION['employeetype'];
 
 ?>
 
@@ -22,7 +22,7 @@ $isemployee = $_SESSION['isemployee'];
 <html>
 
 <head>
-  <title>Healthcare Worker Portal </title>
+  <title>Healthcare Pharmacy Portal </title>
   <link href='../css/welcome.css' rel='stylesheet'>
   <link href='../css/patient_portal.css' rel='stylesheet'>
   <link href="../css/blue_theme.css" rel='stylesheet'>
@@ -77,7 +77,7 @@ $isemployee = $_SESSION['isemployee'];
 
 <body>
 <div class="center">
-  <h2>Healthcare Worker Portal: <?php echo " Welcome - $username"?></h2>
+  <h2>Healthcare Pharmacy Portal: <?php echo " Welcome - $username"?></h2>
   <!-- This is the search bar: https://www.w3schools.com/howto/howto_css_search_button.asp -->
   <div class="container">
   <section class="seachbar-section">

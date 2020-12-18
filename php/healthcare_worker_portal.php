@@ -15,10 +15,6 @@ $username = $_SESSION['username'];
 $userid = $_SESSION['userid'];
 $isemployee = $_SESSION['isemployee'];
 
-if($username == "pharmacy" || $username == "Pharmacy"){
-  header('Location: pharmacy_portal.php');
-}
-
 $first_name = NULL;
 $last_name = NULL;
 $DOB = NULL;
@@ -895,6 +891,7 @@ if(isset($_POST["searchbtn"])){
         <h3>Make Note & Record </h3>
       </div>
     </div>
+    <div class="container"
     <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                         ?>" method="post">
             <input type="text" class="form-signup" name="pid" placeholder="<?php echo "PID: " . $_SESSION['PID']  ?>" disabled="disabled"></br></br>
@@ -1008,6 +1005,7 @@ if(isset($_POST["searchbtn"])){
             }
           ?>
   
+    </div>
     </div>
   </form>
 </div>
