@@ -69,7 +69,7 @@ if __name__ == "__main__":
     insert_insprovider = """INSERT INTO InsProvider(CompanyID, Company, PlanID, Category, Address, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
     insert_insplans = """Update myhealth2.InsPlans SET AnnualPrem=%s, AnnualDeductible=%s, AnnualCoverageLimit=%s, LifetimeCoverage=%s WHERE InsPlans.PlanID=%s"""
     insert_patientrecords = """INSERT INTO PatientRecords(PID, RecordTime, TCatID, CostToIns, CostToPatient, InsPayment, PatientPayment) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-    insert_patientnotes = """Update myhealth2.PatientNotes SET ProvID=%s, DiagnosisNotes=%s, DrRecommendations=%s, Treatment=%s WHERE PatientNotes.PNI=%s"""
+    insert_patientnotes = """INSERT INTO myhealth2.PatientNotes(PID,ProvID,NoteTime, DiagnosisNotes,DrRecommendations,Treatment) VALUE(%s,%s,%s,%s,%s,%s)"""
     insert_healthprovider = """Update myhealth2.HealthProvider SET ProvAddr=%s WHERE HealthProvider.ProvID=%s"""
     insert_membership = """INSERT INTO myhealth2.Membership(ProvID, NetworkID) VALUES(%s, %s)"""
     insert_costs = """INSERT INTO myhealth2.Costs(CompanyID, TCatID, AllowedCost, InNetworkCoverage, OutNetworkCoverage, FullDeductible) VALUES (%s, %s, %s, %s, %s, %s)"""
@@ -284,7 +284,7 @@ if __name__ == "__main__":
 
             elif args.patient_notes:
                 # First we grab all the PatientNotes by ID
-                sqlquery = """SELECT PNI FROM PatientNotes"""
+                sqlquery = """SELECT RecordTime,PID FROM PatientRecords"""
                 mycursor.execute(sqlquery)
                 resultsq = mycursor.fetchall()
 
@@ -299,7 +299,7 @@ if __name__ == "__main__":
                     ran_treatment = random.randint(0, 1)
 
                     if args.verbose:
-                        print("PNI: ", row['PNI'])
+                        print("RecordTime: ", row['RecordTime'])
                         print("ran_provid:", ran_provid)
                         print("ran_diagnosisnotes:", ran_diagnosisnotes)
                         print("ran_drrecommendations:", ran_drrecommendations)
@@ -308,7 +308,7 @@ if __name__ == "__main__":
                     # Check to make sure the connection stuff is present
                     if args.host and args.port and args.user and args.password and args.database:
                         mycursor.execute(insert_patientnotes,
-                                         (ran_provid, ran_diagnosisnotes, ran_drrecommendations, ran_treatment, row['PNI']))
+                                         ( row['PID'],ran_provid, row['RecordTime'],ran_diagnosisnotes, ran_drrecommendations, ran_treatment))
                         mydb.commit()
                         counter = counter + 1
                 print("Commited:", counter, " records to PatientNotes")
