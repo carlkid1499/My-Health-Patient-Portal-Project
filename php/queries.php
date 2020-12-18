@@ -80,7 +80,7 @@ $get_billing_info_by_pid = $conn->prepare("SELECT RecordTime, (SELECT TreatmentC
 $get_billing_total_by_pid = $conn->prepare("SELECT SUM(CostToPatient-PatientPayment) AS  PatientTotal FROM PatientRecords WHERE PID=?");
 
 # Grab a list of Treatment Category Names
-$get_treament_category_names = $conn->prepare("SELECT TreatmentCategory FROM TreatmentCategory");
+$get_treatment_category_names = $conn->prepare("SELECT * FROM TreatmentCategory");
 
 # Grab a list of Health Provider Names
 $get_health_provider_names = $conn->prepare("SELECT ProvName FROM HealthProvider");
@@ -92,7 +92,7 @@ $insert_into_patientnotes = $conn->prepare("INSERT INTO PatientNotes (PID, ProvI
 #INSERT INTO patientnotes (PID, ProvID, NoteTime, DiagnosisNotes, DrRecommendations, Treatment) VALUES (1111,(SELECT ProvID FROM HealthProvider WHERE ProvName like "Big River Hospital"),NOW(),"test","test",1)
 
 # Get Treatment Category Name
-$get_treament_categoryid = $conn->prepare("SELECT TCatID FROM TreatmentCategory WHERE TreatmentCategory=?");
+#$get_treament_categoryid = $conn->prepare("SELECT TCatID FROM TreatmentCategory WHERE TreatmentCategory=?");
 
 # Insert into the PatientRecords Table
 $insert_into_patientrecords = $conn->prepare("INSERT INTO PatientRecords (PID, RecordTime, TCatID, CostToIns, CostToPatient, InsPayment, PatientPayment) VALUES(?,NOW(),?,?,?,?,?)");

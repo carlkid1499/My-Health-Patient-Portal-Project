@@ -906,23 +906,24 @@ if(isset($_POST["searchbtn"])){
             <p> Was the Patient Treated? (Checked=Yes, Unchecked=No): 
             <input type="checkbox" name="checkbox" value=1 /> </p>
             <p> Select a Treatment Category: </p>
-            <select class="form-signup" name="treatmentcatname">
+            <select class="form-signup" name="treatmentcatid">
             <option value="DEFAULT"> </option>
             <!-- Print out the drop down menu -->
             <?php 
-            $treament_category_name = null;
-            $get_treament_category_names->execute();
-            $get_treament_category_names->store_result();
-            $get_treament_category_names->bind_result($treament_category_name);
+            $treatment_category_name = null;
+            $treatment_category_id = null;
+            $get_treatment_category_names->execute();
+            $get_treatment_category_names->store_result();
+            $get_treatment_category_names->bind_result($treatment_category_id, $treatment_category_name);
 
-            if($get_treament_category_names->num_rows()>0)
+            if($get_treatment_category_names->num_rows()>0)
             {
-              while($get_treament_category_names->fetch())
+              while($get_treatment_category_names->fetch())
               {
-                echo "<option value=\"$treament_category_name\">" . $treament_category_name . "</option>";
+                echo "<option value=$treatment_category_id>" . $treatment_category_name . "</option>";
               }
             }
-            $get_treament_category_names->close();
+            $get_treatment_category_names->close();
             ?>
             </select>
 
@@ -952,28 +953,27 @@ if(isset($_POST["searchbtn"])){
           </form>
 
           <?php 
-            if(isset($_POST["create_notes"]) && !isset($_POST["treatmentcatname"]) && !isset($_POST["healthprovider"]))
+            if(isset($_POST["create_notes"]) && !isset($_POST["treatmentcatid"]) && !isset($_POST["healthprovider"]))
               $err_msg = "Error: No Treatment Category or Health Provider was selected!";
 
-            elseif(isset($_POST["create_notes"]) && !isset($_POST["treatmentcatname"]) && isset($_POST["healthprovider"]))
+            elseif(isset($_POST["create_notes"]) && !isset($_POST["treatmentcatid"]) && isset($_POST["healthprovider"]))
               $err_msg = "Error: No Treatment Category or Health Provider was selected!";
 
-            elseif(isset($_POST["create_notes"]) && isset($_POST["treatmentcatname"]) && !isset($_POST["healthprovider"]))
+            elseif(isset($_POST["create_notes"]) && isset($_POST["treatmentcatid"]) && !isset($_POST["healthprovider"]))
               $err_msg = "Error: No Treatment Category or Health Provider was selected!";
 
-            elseif(isset($_POST["create_notes"]) && isset($_POST["treatmentcatname"]) && isset($_POST["healthprovider"]))
+            elseif(isset($_POST["create_notes"]) && isset($_POST["treatmentcatid"]) && isset($_POST["healthprovider"]))
             {
               
-              if(($_POST["treatmentcatname"] == "DEFAULT") || ($_POST["healthprovider"] == "DEFAULT"))
+              if(($_POST["treatmentcatid"] == "DEFAULT") || ($_POST["healthprovider"] == "DEFAULT"))
                 $err_msg = "Error: No Treatment Category or Health Provider was selected!";
               
                 else{
-                  $treatmentcat = $_POST["treatmentcatname"];
+                  $treatmentcatid = $_POST["treatmentcatid"];
                   $healthprovider = $_POST["healthprovider"];
                   $drrecommendations = trim($_POST["drrecommendations"]);
                   $diagnosisnotes = trim($_POST["diagnosisnotes"]);
                   $treated = null;
-                  $treament_categoryid = null;
                   $pid = $_SESSION["PID"];
 
                   if(!isset($_POST["checkbox"]))
@@ -986,23 +986,11 @@ if(isset($_POST["searchbtn"])){
                   $insert_into_patientnotes->bind_param("isssi", $pid, $healthprovider, $diagnosisnotes, $drrecommendations, $treated);
                   $rtal = $insert_into_patientnotes->execute();
                   
-                  $err_msg = $treatmentcat;
+                  $err_msg = $treatmentcatid;
 
-                  $get_treament_categoryid->bind_param("s", $treamentcat);
-                  $get_treament_categoryid->execute();
-                  $get_treament_categoryid->store_result();
-                  $get_treament_categoryid->bind_result($treament_categoryid);
-
-                  if($get_treament_categoryid->num_rows()>0)
-                  {
-                    while($get_treament_categoryid->fetch())
-                    {
-                      $err_msg = "THis is a test: $treatment_categoryid";
-                      $insert_into_patientrecords->bind_param("iiiiii", $pid, $treament_categoryid, rand(100,10000),rand(100,10000),rand(100,10000),rand(100,10000));
-                      $insert_into_patientrecords->execute();
-                    }
-                  }
-                    
+                  $err_msg = "THis is a test: $treatment_categoryid";
+                  $insert_into_patientrecords->bind_param("iiiiii", $pid, $treatmentcatid, rand(100,10000),rand(100,10000),rand(100,10000),rand(100,10000));
+                  $insert_into_patientrecords->execute();
 
                   #if($rtal)
                   #  $err_msg = "Submission Success!";
