@@ -86,7 +86,7 @@ header("Expires: 0");
 </div>
 
 <div class="header w3-theme-d2">  
-  <h1><b>My Health Patient Portal</b></h1>
+  <h1><b>My Health Worker Portal</b></h1>
 </div>
 
 <body>
