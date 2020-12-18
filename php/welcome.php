@@ -232,7 +232,7 @@ if ($conn->connect_error) {
           
           if (isset($_POST['submit'])) {
             if(trim($_POST['select_user_type']) == "null"){
-              echo("Please select an account type");
+              $msg="Please select an account type";
             }
             else{
               // Process the form information
@@ -307,7 +307,7 @@ if ($conn->connect_error) {
       }
   }
 </script>
-
+<br>
   <?php echo "$msg" ?>
   <?php $conn->close(); ?>
 
