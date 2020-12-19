@@ -12,11 +12,12 @@ session_start();
 # Grab all the session values
 $username = $_SESSION['username'];
 $userid = $_SESSION['userid'];
-$isemployee = $_SESSION['isemployee'];
+$employeetype = $_SESSION['employeetype'];
 $pid = $_SESSION['pid'];
 
 //Populate table column values but let's get that data first!
 // Variables for Patient information
+$pid_query = NULL;
 $name_first = NULL;
 $name_last = NULL;
 $DOB = NULL;
@@ -33,6 +34,7 @@ $patient_id_query->execute();
 
 // Did we get any results
 if ($patient_id_query->bind_result(
+  $pid_query,
   $name_first,
   $name_last,
   $DOB,
@@ -315,6 +317,8 @@ header("Expires: 0");
                   echo "Success!";
                 else
                   echo "No Success!";
+
+                echo "<meta http-equiv='refresh' content='0'>";
               }
               ?>
 
@@ -370,6 +374,8 @@ header("Expires: 0");
                 } else {
                   echo "Appointment already exists, please choose a different time";
                 }
+
+                echo "<meta http-equiv='refresh' content='0'>";
               } ?>
             </button>
           </form>

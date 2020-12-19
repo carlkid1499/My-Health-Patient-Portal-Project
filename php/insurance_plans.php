@@ -177,7 +177,7 @@ global $err_msg;
               }
 
               // Close the Ins Provider Table and the query
-              echo "</table>";
+              echo "</table><br>";
               $get_insprov_info_by_id_query->close();
             }
 

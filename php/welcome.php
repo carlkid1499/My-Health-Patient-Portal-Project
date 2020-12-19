@@ -75,7 +75,10 @@ if ($conn->connect_error) {
   <h1><b>My Health Patient Portal</b></h1>
 </div>
 
-<div class="content background">
+<div class="content background container" style="height: 400px">
+      <p>
+        <br><br><br><br>
+      </p>
 
   <div class="center">
     <button class="w3-button w3-xlarge w3-round w3-black w3-ripple" 
@@ -89,6 +92,9 @@ if ($conn->connect_error) {
       id="btnsignup" type="submit" name="signup">Create Account
     </button>
   </div>
+      <p>
+        <br><br><br><br>
+      </p>
 </div>
 
 <div class="footer w3-theme-d2 center">
@@ -137,31 +143,34 @@ if ($conn->connect_error) {
           $_SESSION['timeout'] = time();
           $_SESSION['username'] = $username;
           $_SESSION['userid'] = NULL;
-          $_SESSION['isemployee'] = NULL;
+          $_SESSION['employeetype'] = NULL;
           $_SESSION['pid'] = NULL;
 
           // Get the Query Results
           while ($row = $results->fetch_assoc()) {
             $_SESSION['userid'] = $row["UserID"];
-            $_SESSION['isemployee'] = $row["IsEmployee"];
+            $_SESSION['employeetype'] = $row["EmployeeType"];
             $_SESSION['pid'] = $row["PID"];
           }
-          // Now we check to see if we have a Patient or Worker
-          if($_SESSION['isemployee'] == 0)
-          {
-            //  We have a Patient
-            header('Location: php/patient_portal.php');
-          }
-          else if ($_SESSION['isemployee'] == 1)
-          {
-            // We have a Worker
-            header('Location: php/healthcare_worker_portal.php');
-          }
-          else
-          {
-            // Error
-            $msg = "Something went wrong please try again! If the error continues contact support@support.com";
-          }
+
+          switch($_SESSION['employeetype']){
+            case "0":
+              header('Location: php/patient_portal.php');
+            break;
+
+            case "1":
+              //we have a doctor
+              header('Location: php/healthcare_worker_portal.php');
+            break;
+
+            case "2":
+              //we have a pharmacist
+              header('Location: php/pharmacy_portal.php');
+            break;
+
+            default:
+              echo "Error processing employee type";
+          };
         }
       }
       ?>
@@ -203,6 +212,14 @@ if ($conn->connect_error) {
   <section class="signup_area" id="signup_area">
     <form class="form-signup" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
                                                   ?>" method="post">
+      <div class = "container">
+        <select name="select_user_type">
+          <option name="user_type" value="null">Account Type:</option>
+          <option name="user_type" value="0">Patient</option>
+          <option name="user_type" value="1">Doctor/Nurse</option>
+          <option name="user_type" value="2">Pharmacist</option>
+        </select>
+      </div>
       <input type="text" class="form-signup" name="pid" placeholder="Patient ID" required></br></br>
       <input type="text" class="form-signup" name="name_first" placeholder="First Name" required></br></br>
       <input type="text" class="form-signup" name="name_last" placeholder="Last Name" required></br></br>
@@ -211,49 +228,59 @@ if ($conn->connect_error) {
       <input type="password" class="form-control" name="retype_password" placeholder="retype password" required>
       <button class="loginbtn" type="submit" name="submit">submit
         <!-- If the submit button is pushed, we need to process the data. If successfull we need to redirect to the patient portal -->
-        <?php if (isset($_POST['submit'])) {
-          // Process the form information
-          // Now we check if the password files match. Strip whitespace first
-          if (trim($_POST['password']) == trim($_POST['retype_password'])) {
-            // passwords match yay, lets process !
-            $pid = trim($_POST['pid']);
-            $name_first = trim($_POST['name_first']);
-            $name_last = trim($_POST['name_last']);
-            $password = trim($_POST['password']);
-            $username = trim($_POST['username']);
-            // We retrieve and update data based on the PID, first lets check if the PID is valid
-            // Query the PatientInfo database for the information
-            $results = $conn->query("SELECT PID FROM PatientInfo WHERE PID='$pid' AND name_first='$name_first' AND name_last='$name_last'");
-
-            // Check if results is NULL, if it is the PID doesn't exist
-            if ($results == NULL) {
-              $msg = "Not a valid Patient ID, please contact tech support!";
-            } else {
-              // Create a random UserID. Max is unsigned int for mysql
-              $userid = rand(1, 4294967295);
-              // Check if it already exists in the table/DB.
-              $results = $conn->query("SELECT UserID FROM Users WHERE UserID='$userid'");
-              if ($results != NULL) {
-                // We need to insert into the Users table with the info provied
-                $results = $conn->query("INSERT INTO Users (UserID, PID, Username, UserPassword, IsEmployee) VALUES ('$userid','$pid', '$username', '$password', 0)");
-                if($results != NULL)
-                {
-                  // If we get here we inserted into users successfully
-                  header('Location: index.php');
-                }
-                else
-                {
-                  $msg = "error creating account please try again or contact support";
-                }
-              } else {
-                $msg = "We ran into an error please try again or contact support!";
-              }
+        <?php 
+          
+          if (isset($_POST['submit'])) {
+            if(trim($_POST['select_user_type']) == "null"){
+              $msg="Please select an account type";
             }
+            else{
+              // Process the form information
+              // Now we check if the password files match. Strip whitespace first
+              if (trim($_POST['password']) == trim($_POST['retype_password'])) {
+                // passwords match yay, lets process !
+                $pid = trim($_POST['pid']);
+                $name_first = trim($_POST['name_first']);
+                $name_last = trim($_POST['name_last']);
+                $password = trim($_POST['password']);
+                $username = trim($_POST['username']);
+                $account_type = trim($_POST['select_user_type']);
+
+                // We retrieve and update data based on the PID, first lets check if the PID is valid
+                // Query the PatientInfo database for the information
+                $results = $conn->query("SELECT PID FROM PatientInfo WHERE PID='$pid' AND name_first='$name_first' AND name_last='$name_last'");
+
+                // Check if results is NULL, if it is the PID doesn't exist
+                if ($results == NULL) {
+                  $msg = "Not a valid Patient ID, please contact tech support!";
+                } 
+                else {
+                  // Create a random UserID. Max is unsigned int for mysql
+                  $userid = rand(1, 4294967295);
+                  // Check if it already exists in the table/DB.
+                  $results = $conn->query("SELECT UserID FROM Users WHERE UserID='$userid'");
+                  if ($results != NULL) {
+                    // We need to insert into the Users table with the info provied
+                    $results = $conn->query("INSERT INTO Users (UserID, PID, Username, UserPassword, EmployeeType) VALUES ('$userid','$pid', '$username', '$password', $account_type)");
+                  if($results != NULL)
+                    {
+                      // If we get here we inserted into users successfully
+                      header('Location: index.php');
+                    }
+                    else{
+                      $msg = "error creating account please try again or contact support";
+                    }
+                  } 
+                  else {
+                    $msg = "We ran into an error please try again or contact support!";
+                  }
+                }
+              }
+              else {
+              $msg = "password field did not match! Please try again!";
+              }
+            }  
           }
-          else {
-            $msg = "password field did not match! Please try again!";
-          }
-        } 
         ?>
       </button>
     </form>
@@ -280,7 +307,7 @@ if ($conn->connect_error) {
       }
   }
 </script>
-
+<br>
   <?php echo "$msg" ?>
   <?php $conn->close(); ?>
 
