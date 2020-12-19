@@ -1,2 +1,6 @@
-# CS360
-This is the repo for the CS 360 assignment. We have chosen to do the MyHealth Patient Portal project. Our team has three members.
+# My Health Patient Portal  Repo
+
+## XAMMP Project ZIP
+
+It is hosted on IPFS.
+https://ipfs.io/ipfs/QmXhPRzRRvNHcZ1XBMVm4Y6tQckJFWrZCQ34PxDas3yc9p?filename=xampp.zip
