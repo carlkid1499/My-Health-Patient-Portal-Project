@@ -4,9 +4,6 @@
 
 | Carlos SantosDepartment of Computer EngineeringUniversity of Idaho, USAPort3116@vandals.uidaho.edu | Keller LawsonDepartment of Computer ScienceUniversity of Idaho, USALaws1689@vandals.uidaho.edu |
 | --- | --- |
-|
- |
- |
 
 ## ABSTRACT
 
@@ -22,9 +19,8 @@ SQL; PHP; MySQL; JavaScript; HTML; Database; Faker; Python;
 
 ## 1 INTRODUCTION
 
-The scope of this paper is to describe the major components of our My Health Patient Portal. From here on out MHPP will refer to My Health Patient Portal. The MHPP project has three major pieces to it. The front end or what is referred to as the user interface. This is talked about in section 3. It also has a back end or typically referred to as the RDMS which stands for Relation Database Management System. The RDMS is mentioned in section 1.1, 2, and 5. Finally, we have a third component which is test data generation in section 4.
+The scope of this paper is to describe the major components of our My Health Patient Portal. From here on out MHPP will refer to My Health Patient Portal. The MHPP project has three major pieces to it. The front end or what is referred to as the user interface. This is talked about in section 3. It also has a back end or typically referred to as the RDMS which stands for Relation Database Management System. The RDMS is mentioned in section 1.1, 2, and 5. Finally, we have a third component which is test data generation in section 4.1.
 
-  1.
 ### RDMS using MySQL
 
 For our RDMS, we are using MySQL to host our main schema myhealth2 which contains all of our tables. MySQL is one of the most popular open-source SQL databases and because of this has a lot of forum and community support to assist us when creating our database. While MySQL can lack in speed when scaled to massive databases, it was the proper choice to support our project in its current state.
@@ -399,21 +395,21 @@ In conclusion, after completing this project, there were many challenges that we
 
 ## REFERENCES
 
-1. 2020. Python Faker Package - [https://faker.readthedocs.io/en/master/](https://faker.readthedocs.io/en/master/) : August 1, 2020.
-2. 2020. Generator Python Script - [https://github.com/carlkid1499/CS360/tree/master/python-scripts](https://github.com/carlkid1499/CS360/tree/master/python-scripts) : August 1, 2020.
-3. 2020. GitHub Repository CS360- [https://github.com/carlkid1499/CS360](https://github.com/carlkid1499/CS360) : August 1, 2020.
-4. 2020. GitHub Repository CS360, queries.php - [https://github.com/carlkid1499/CS360/blob/master/php/queries.php](https://github.com/carlkid1499/CS360/blob/master/php/queries.php) : August 1, 2020.
-5. 2020. W3Schools CSS Templates - [https://www.w3schools.com/css/css\_templates.asp](https://www.w3schools.com/css/css_templates.asp) : August 1, 2020.
-6. 2020. MySQL Workbench - [https://dev.mysql.com/downloads/installer/](https://dev.mysql.com/downloads/installer/) : August 1, 2020.
-7. 2020. XAMPP - [https://www.apachefriends.org/download.html](https://www.apachefriends.org/download.html) : August 1, 2020.
-8. 2020. Python 3.9 - [https://www.python.org/downloads/](https://www.python.org/downloads/) : August 1, 2020.
+1. Python Faker Package - [https://faker.readthedocs.io/en/master/](https://faker.readthedocs.io/en/master/) : August 1, 2020.
+2. Generator Python Script - [https://github.com/carlkid1499/CS360/tree/master/python-scripts](https://github.com/carlkid1499/CS360/tree/master/python-scripts) : August 1, 2020.
+3. GitHub Repository CS360- [https://github.com/carlkid1499/CS360](https://github.com/carlkid1499/CS360) : August 1, 2020.
+4. GitHub Repository CS360, queries.php - [https://github.com/carlkid1499/CS360/blob/master/php/queries.php](https://github.com/carlkid1499/CS360/blob/master/php/queries.php) : August 1, 2020.
+5. W3Schools CSS Templates - [https://www.w3schools.com/css/css\_templates.asp](https://www.w3schools.com/css/css_templates.asp) : August 1, 2020.
+6. MySQL Workbench - [https://dev.mysql.com/downloads/installer/](https://dev.mysql.com/downloads/installer/) : August 1, 2020.
+7. XAMPP - [https://www.apachefriends.org/download.html](https://www.apachefriends.org/download.html) : August 1, 2020.
+8. Python 3.9 - [https://www.python.org/downloads/](https://www.python.org/downloads/) : August 1, 2020.
 9. 2020 Mysql-connector Package - [https://pypi.org/project/mysql-connector-python/](https://pypi.org/project/mysql-connector-python/) : August 1, 2020.
-10. 2020. Random Python Package - [https://docs.python.org/3/library/random.html](https://docs.python.org/3/library/random.html) : August 1, 2020.
-11. 2020. Argparse Python Package - [https://docs.python.org/3/library/argparse.html](https://docs.python.org/3/library/argparse.html) : August 1, 2020.
-12. 2020. Datetime Python Package - [https://docs.python.org/3/library/datetime.html](https://docs.python.org/3/library/datetime.html) : August 1, 2020.
-13. 2020. Dateutil Python Package - [https://dateutil.readthedocs.io/en/stable/index.html](https://dateutil.readthedocs.io/en/stable/index.html) : August 1, 2020.
-14. 2020. My Health Project Requirements - [https://github.com/carlkid1499/CS360/projects](https://github.com/carlkid1499/CS360/projects) : August 1, 2020.
-15. 2020. Mayo Clinic Health System - [https://www.mayoclinichealthsystem.org/services-and-treatments?letter=All](https://www.mayoclinichealthsystem.org/services-and-treatments?letter=All) : August 1, 2020.
+10. Random Python Package - [https://docs.python.org/3/library/random.html](https://docs.python.org/3/library/random.html) : August 1, 2020.
+11. Argparse Python Package - [https://docs.python.org/3/library/argparse.html](https://docs.python.org/3/library/argparse.html) : August 1, 2020.
+12. Datetime Python Package - [https://docs.python.org/3/library/datetime.html](https://docs.python.org/3/library/datetime.html) : August 1, 2020.
+13. Dateutil Python Package - [https://dateutil.readthedocs.io/en/stable/index.html](https://dateutil.readthedocs.io/en/stable/index.html) : August 1, 2020.
+14. My Health Project Requirements - [https://github.com/carlkid1499/CS360/projects](https://github.com/carlkid1499/CS360/projects) : August 1, 2020.
+15.  Mayo Clinic Health System - [https://www.mayoclinichealthsystem.org/services-and-treatments?letter=All](https://www.mayoclinichealthsystem.org/services-and-treatments?letter=All) : August 1, 2020.
 
 ## XAMMP Project ZIP
 
