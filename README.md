@@ -2,7 +2,7 @@
 
 ## My Health Patient Portal (MHPP)∗
 
-| Carlos SantosDepartment of Computer Engineering University of Idaho, USA Port3116@vandals.uidaho.edu | Keller Lawson Department of Computer Science University of Idaho, USA Laws1689@vandals.uidaho.edu |
+| Carlos Santos Department of Computer Engineering University of Idaho, USA Port3116@vandals.uidaho.edu | Keller Lawson Department of Computer Science University of Idaho, USA Laws1689@vandals.uidaho.edu |
 | --- | --- |
 
 ## ABSTRACT
